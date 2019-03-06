@@ -1,4 +1,4 @@
-package com.eliottgray.searchtree.binarytree;
+package com.eliottgray.searchtrees.binarytree;
 
 import org.junit.Test;
 
@@ -205,43 +205,40 @@ public class AVLTreeTest {
     @Test
     public void testRandomTree(){
 
-        // Collect a number of random keys with which to populate the tree.
-        int size = 1000000;
+        AVLTree avlTree = new AVLTree();
+
+        // Collect a number of random keys with which to populate the tree, and populate.
+        int size = 10000000;
         Set<Integer> previousEntries = new HashSet<>();
         for (int i = 0; i < size; i++){
             int randomNum = ThreadLocalRandom.current().nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
             previousEntries.add(randomNum);
-        }
-
-        // Populate a new tree.
-        AVLTree AVLTree = new AVLTree();
-        for (Integer entry : previousEntries){
-            AVLTree.insert(entry);
+            avlTree.insert(randomNum);
         }
 
         // Validate that the expected number of keys are in the tree.
-        assertTrue(UnitTestUtilities.validateAVLTree(AVLTree));
-        assertEquals(previousEntries.size(), AVLTree.size());
+        assertTrue(UnitTestUtilities.validateAVLTree(avlTree));
+        assertEquals(previousEntries.size(), avlTree.size());
 
         // Validate that all expected keys are within the tree.
         for (Integer entry : previousEntries){
-            assertTrue(AVLTree.contains(entry));
+            assertTrue(avlTree.contains(entry));
         }
 
         // Iterate through entries, remove one at a time, and periodically check size and validate tree.
         int checkThreshold = previousEntries.size() / 10;  // Check 10 times or so.
         int counter = previousEntries.size();
         for (Integer entry : previousEntries){
-            AVLTree.delete(entry);
+            avlTree.delete(entry);
             counter -= 1;
             if (counter % checkThreshold == 0){
-                assertTrue(UnitTestUtilities.validateAVLTree(AVLTree));
-                assertEquals(AVLTree.size(), counter);
+                assertTrue(UnitTestUtilities.validateAVLTree(avlTree));
+                assertEquals(avlTree.size(), counter);
             }
-            assertFalse(AVLTree.contains(entry));
+            assertFalse(avlTree.contains(entry));
 
         }
-        assertTrue(AVLTree.isEmpty());
-        assertTrue(UnitTestUtilities.validateAVLTree(AVLTree));
+        assertTrue(avlTree.isEmpty());
+        assertTrue(UnitTestUtilities.validateAVLTree(avlTree));
     }
 }

@@ -1,4 +1,4 @@
-package com.eliottgray.searchtree.binarytree;
+package com.eliottgray.searchtrees.binarytree;
 
 import java.util.ArrayList;
 import java.util.List;
