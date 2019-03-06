@@ -1,4 +1,4 @@
-package com.eliottgray.orchard.binarytree;
+package com.eliottgray.searchtree.binarytree;
 
 import org.junit.Test;
 

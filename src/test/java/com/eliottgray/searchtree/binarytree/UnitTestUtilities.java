@@ -1,4 +1,4 @@
-package com.eliottgray.orchard.binarytree;
+package com.eliottgray.searchtree.binarytree;
 
 class UnitTestUtilities {
 
