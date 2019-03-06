@@ -128,7 +128,7 @@ public class AVLNodeTest {
     }
 
     /**
-     * Test behavior when insert() method is called on a non-root com.eliottgray.orchard.binarytree.AVLNode.
+     * Test behavior when insert() method is called on a non-root node.
      */
     @Test(expected=IllegalStateException.class)
     public void testInvalidInsert_nonRootNode(){

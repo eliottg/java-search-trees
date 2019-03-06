@@ -63,7 +63,7 @@ class AVLNode {
     /**
      * Perform recursive insertion, starting from root node.  This method must only be called on the Root node.
      * If a node other than the root is called for insertion, the root will be found, and the insertion begin there.
-     * @param newAVLNode       com.eliottgray.orchard.binarytree.AVLNode to insert.
+     * @param newAVLNode    Node to insert.
      * @return              Root node of tree.
      */
     AVLNode insert(AVLNode newAVLNode){
@@ -73,7 +73,7 @@ class AVLNode {
 
     /**
      * Perform recursive insertion.
-     * @param newAVLNode       com.eliottgray.orchard.binarytree.AVLNode to insert.
+     * @param newAVLNode    Node to insert.
      * @param root          Root node of tree, to be overridden in case of replacement by a tree rotation.
      * @return              Root node of tree.
      */
@@ -401,7 +401,7 @@ class AVLNode {
      */
     private void validateIsRoot(){
         if (this.parent != null) {
-            throw new IllegalStateException("Illegal method call on non-root com.eliottgray.orchard.binarytree.AVLNode.");
+            throw new IllegalStateException("Illegal method call on non-root Node.");
         }
     }
 
