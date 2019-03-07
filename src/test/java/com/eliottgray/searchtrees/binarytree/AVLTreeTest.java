@@ -12,42 +12,13 @@ public class AVLTreeTest {
 
     @Test
     public void testConstructor_emptyTree(){
-        AVLTree avlTree = new AVLTree();
+        AVLTree<Integer, String> avlTree = new AVLTree<>();
         assertTrue(avlTree.isEmpty());
-        assertFalse(avlTree.contains(3));
+        assertNull(avlTree.get(3));
 
-        avlTree.insert(3);
+        avlTree.insert(3, "Three");
         assertFalse(avlTree.isEmpty());
-        assertTrue(avlTree.contains(3));
-
-        UnitTestUtilities.validateAVLTree(avlTree);
-    }
-
-    @Test
-    public void testConstructor_withInitialArray_emptyArray(){
-        Integer[] array = new Integer[]{};
-        AVLTree avlTree = new AVLTree(array);
-        assertTrue(avlTree.isEmpty());
-        assertFalse(avlTree.contains(3));
-
-        avlTree.insert(3);
-        assertFalse(avlTree.isEmpty());
-        assertTrue(avlTree.contains(3));
-
-        UnitTestUtilities.validateAVLTree(avlTree);
-    }
-
-    @Test
-    public void testConstructor_withInitialArray_singletonArray(){
-        Integer[] array = new Integer[]{1};
-        AVLTree avlTree = new AVLTree(array);
-        assertFalse(avlTree.isEmpty());
-        assertTrue(avlTree.contains(1));
-        assertFalse(avlTree.contains(3));
-
-        avlTree.insert(3);
-        assertFalse(avlTree.isEmpty());
-        assertTrue(avlTree.contains(3));
+        assertEquals("Three", avlTree.get(3));
 
         UnitTestUtilities.validateAVLTree(avlTree);
     }
@@ -61,17 +32,20 @@ public class AVLTreeTest {
      *          3
      */
     @Test
-    public void testConstructor_withInitialArray_orderedArray_leftRotation(){
-        Integer[] array = new Integer[]{1, 2, 3};
-        AVLTree avlTree = new AVLTree(array);
+    public void testConstructor_orderedArray_leftRotation(){
+        AVLTree<Integer, String> avlTree = new AVLTree<>();
+        avlTree.insert(1, "One");
+        avlTree.insert(2, "Two");
+        avlTree.insert(3, "Three");
         assertFalse(avlTree.isEmpty());
-        assertTrue(avlTree.contains(1));
-        assertTrue(avlTree.contains(2));
-        assertTrue(avlTree.contains(3));
-        assertFalse(avlTree.contains(4));
+        assertEquals("One", avlTree.get(1));
+        assertEquals("Two", avlTree.get(2));
+        assertEquals("Three", avlTree.get(3));
+        assertNull(avlTree.get(4));
 
         // Verify that tree rotates left to 2 as root.
-        assertEquals(2, avlTree.getRoot().getKey());
+        Integer expected = 2;
+        assertEquals(expected, avlTree.getRoot().getKey());
 
         UnitTestUtilities.validateAVLTree(avlTree);
     }
@@ -85,17 +59,20 @@ public class AVLTreeTest {
      *    1
      */
     @Test
-    public void testConstructor_withInitialArray_orderedArray_rightRotation(){
-        Integer[] array = new Integer[]{3, 2, 1};
-        AVLTree avlTree = new AVLTree(array);
+    public void testConstructor_orderedArray_rightRotation(){
+        AVLTree<Integer, String> avlTree = new AVLTree<>();
+        avlTree.insert(3, "Three");
+        avlTree.insert(2, "Two");
+        avlTree.insert(1, "One");
         assertFalse(avlTree.isEmpty());
-        assertTrue(avlTree.contains(1));
-        assertTrue(avlTree.contains(2));
-        assertTrue(avlTree.contains(3));
-        assertFalse(avlTree.contains(4));
+        assertEquals("One", avlTree.get(1));
+        assertEquals("Two", avlTree.get(2));
+        assertEquals("Three", avlTree.get(3));
+        assertNull(avlTree.get(4));
 
         // Verify that tree rotates right to 2 as root.
-        assertEquals(2, avlTree.getRoot().getKey());
+        Integer expected = 2;
+        assertEquals(expected, avlTree.getRoot().getKey());
 
         UnitTestUtilities.validateAVLTree(avlTree);
     }
@@ -112,13 +89,15 @@ public class AVLTreeTest {
      */
     @Test
     public void testDelete(){
-        Integer[] array = new Integer[]{3, 2, 1, 4};
-        AVLTree avlTree = new AVLTree(array);
-
-        assertTrue(avlTree.contains(4));
+        AVLTree<Integer, String> avlTree = new AVLTree<>();
+        avlTree.insert(2, "Two");
+        avlTree.insert(1, "One");
+        avlTree.insert(3, "Three");
+        avlTree.insert(4, "Four");
+        assertEquals("Four", avlTree.get(4));
         avlTree.delete(4);
 
-        assertFalse(avlTree.contains(4));
+        assertNull(avlTree.get(4));
 
         UnitTestUtilities.validateAVLTree(avlTree);
     }
@@ -128,17 +107,17 @@ public class AVLTreeTest {
      */
     @Test
     public void testGetSize(){
-        AVLTree avlTree = new AVLTree();
+        AVLTree<Integer, Integer> avlTree = new AVLTree<>();
         assertEquals(0, avlTree.size());
 
         // Insert new values and test size.
-        avlTree.insert(3);
+        avlTree.insert(3, null);
         assertEquals(1, avlTree.size());
-        avlTree.insert(4);
+        avlTree.insert(4, null);
         assertEquals(2, avlTree.size());
 
         // Inserting duplicate value does not increase size.
-        avlTree.insert(3);
+        avlTree.insert(3, null);
         assertEquals(2, avlTree.size());
 
         // Deleting value not in tree does not decrease size.
@@ -159,14 +138,14 @@ public class AVLTreeTest {
      */
     @Test
     public void testToSortedArray(){
-        AVLTree avlTree = new AVLTree();
+        AVLTree<Integer, Integer> avlTree = new AVLTree<>();
 
         List<Integer> emptyList = avlTree.toAscendingList();
         assertTrue(emptyList.isEmpty());
 
         List<Integer> inputValues = new ArrayList<Integer>(){{add(50); add(2); add(10); add(4); add(1);}};
         for (Integer integer : inputValues) {
-            avlTree.insert(integer);
+            avlTree.insert(integer, integer);
         }
 
         Collections.sort(inputValues);
@@ -181,14 +160,14 @@ public class AVLTreeTest {
      */
     @Test
     public void testToReversedArray(){
-        AVLTree avlTree = new AVLTree();
+        AVLTree<Integer, Integer> avlTree = new AVLTree<>();
 
         List<Integer> emptyList = avlTree.toDescendingList();
         assertTrue(emptyList.isEmpty());
 
         List<Integer> inputValues = new ArrayList<Integer>(){{add(50); add(2); add(10); add(4); add(1);}};
         for (Integer integer : inputValues) {
-            avlTree.insert(integer);
+            avlTree.insert(integer, integer);
         }
 
         Collections.sort(inputValues);
@@ -197,48 +176,5 @@ public class AVLTreeTest {
         assertEquals(inputValues, sortedList);
 
         UnitTestUtilities.validateAVLTree(avlTree);
-    }
-
-    /**
-     * Construct a tree with random keys, and periodically validate that the state of the tree is valid.
-     */
-    @Test
-    public void testRandomTree(){
-
-        AVLTree avlTree = new AVLTree();
-
-        // Collect a number of random keys with which to populate the tree, and populate.
-        int size = 10000000;
-        Set<Integer> previousEntries = new HashSet<>();
-        for (int i = 0; i < size; i++){
-            int randomNum = ThreadLocalRandom.current().nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
-            previousEntries.add(randomNum);
-            avlTree.insert(randomNum);
-        }
-
-        // Validate that the expected number of keys are in the tree.
-        assertTrue(UnitTestUtilities.validateAVLTree(avlTree));
-        assertEquals(previousEntries.size(), avlTree.size());
-
-        // Validate that all expected keys are within the tree.
-        for (Integer entry : previousEntries){
-            assertTrue(avlTree.contains(entry));
-        }
-
-        // Iterate through entries, remove one at a time, and periodically check size and validate tree.
-        int checkThreshold = previousEntries.size() / 10;  // Check 10 times or so.
-        int counter = previousEntries.size();
-        for (Integer entry : previousEntries){
-            avlTree.delete(entry);
-            counter -= 1;
-            if (counter % checkThreshold == 0){
-                assertTrue(UnitTestUtilities.validateAVLTree(avlTree));
-                assertEquals(avlTree.size(), counter);
-            }
-            assertFalse(avlTree.contains(entry));
-
-        }
-        assertTrue(avlTree.isEmpty());
-        assertTrue(UnitTestUtilities.validateAVLTree(avlTree));
     }
 }

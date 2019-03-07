@@ -11,37 +11,21 @@ import java.util.List;
  * 2) Space Complexity.  Given that each new data point creates a separate object, more memory that is necessary will not be allocated.
  * 3) Easy ordering.  Traversal of all elements in-order results in an ordered list; not something typically done with Hash Tables.
  * */
-public class AVLTree {
-    private AVLNode root;
+public class AVLTree<Key extends Comparable<Key>, Value> {
+
+    private AVLNode<Key, Value> root;
 
     /**
      * Empty tree, for adding items later.
      */
     public AVLTree(){}
 
-    /**
-     * Tree with initial data.
-     * @param initialData
-     */
-    public AVLTree(Integer[] initialData){ /// @todo accept different basic Java collections types - arrays, arrayList, sets, collections, etc.
-        if (initialData.length == 0){
-            return;
-        } else {
-            root = new AVLNode(initialData[0]);
-        }
-        for (int i = 1; i < initialData.length; i++){
-            int value = initialData[i];
-            AVLNode newAVLNode = new AVLNode(value);
-            root = root.insert(newAVLNode);
-        }
+    public void delete(Key key){
+        root = root.delete(key);
     }
 
-    public void delete(int value){
-        root = root.delete(value);
-    }
-
-    public void insert(int value){
-        AVLNode newAVLNode = new AVLNode(value);
+    public void insert(Key key, Value value){
+        AVLNode<Key, Value> newAVLNode = new AVLNode<>(key, value);
         if (isEmpty()){
             root = newAVLNode;
         } else {
@@ -53,20 +37,20 @@ public class AVLTree {
         return root == null;
     }
 
-    public AVLNode getRoot(){
+    public AVLNode<Key, Value> getRoot(){
         return root;
     }
 
     /**
-     * Determine if a node representing the given value is contained within the tree.
-     * @param value     int value to search for.
+     * Retrieve the value for a given key within the tree.  Return null if not available.
+     * @param key     int value to search for.
      * @return          presence of value in tree.
      */
-    public boolean contains(int value){
+    public Value get(Key key){
         if (root == null){
-            return false;
+            return null;
         } else {
-            return root.contains(value);
+            return root.retrieve(key);
         }
     }
 
@@ -78,7 +62,7 @@ public class AVLTree {
         }
     }
 
-    public List<Integer> toAscendingList(){
+    public List<Value> toAscendingList(){
         if (root == null){
             return new ArrayList<>();
         } else {
@@ -86,7 +70,7 @@ public class AVLTree {
         }
     }
 
-    public List<Integer> toDescendingList(){
+    public List<Value> toDescendingList(){
         if (root == null){
             return new ArrayList<>();
         } else {

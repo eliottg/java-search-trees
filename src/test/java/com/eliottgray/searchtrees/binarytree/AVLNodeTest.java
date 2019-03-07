@@ -10,14 +10,14 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class AVLNodeTest {
-    private AVLNode root;
-    private AVLNode zero;
-    private AVLNode one;
-    private AVLNode two;
-    private AVLNode three;
-    private AVLNode four;
-    private AVLNode five;
-    private AVLNode six;
+    private AVLNode<Integer, String> root;
+    private AVLNode<Integer, String> zero;
+    private AVLNode<Integer, String> one;
+    private AVLNode<Integer, String> two;
+    private AVLNode<Integer, String> three;
+    private AVLNode<Integer, String> four;
+    private AVLNode<Integer, String> five;
+    private AVLNode<Integer, String> six;
 
     /**
      * Set up test fixtures.
@@ -25,13 +25,13 @@ public class AVLNodeTest {
     @Before
     public void setUp(){
         // Create test nodes for insertion, deletion, etc.
-        zero = new AVLNode(0);
-        one = new AVLNode(1);
-        two = new AVLNode(2);
-        three = new AVLNode(3);
-        four = new AVLNode(4);
-        five = new AVLNode(5);
-        six = new AVLNode(6);
+        zero = new AVLNode<>(0, "Zero");
+        one = new AVLNode<>(1, "One");
+        two = new AVLNode<>(2, "Two");
+        three = new AVLNode<>(3, "Three");
+        four = new AVLNode<>(4, "Four");
+        five = new AVLNode<>(5, "Five");
+        six = new AVLNode<>(6, "Six");
     }
 
     /**
@@ -39,8 +39,8 @@ public class AVLNodeTest {
      */
     @Test
     public void testSingleNode(){
-        int value = 400;
-        root = new AVLNode(value);
+        Integer value = 400;
+        root = new AVLNode<>(value, null);
         assertFalse(root.hasLeft());
         assertFalse(root.hasRight());
         assertFalse(root.hasParent());
@@ -100,7 +100,6 @@ public class AVLNodeTest {
      */
     @Test
     public void testDuplicateKey(){
-        /// @todo When Value object is provided for a Key (instead of key = value) test replacing Value when Key is duplicated.
 
         // Establish initial graph.
         root = five;
@@ -108,21 +107,35 @@ public class AVLNodeTest {
         assertEquals(2, root.getSize());
 
         // Add duplicate nodes.
-        AVLNode duplicateOne = new AVLNode(1);
+        AVLNode<Integer, String> duplicateOne = new AVLNode<>(1, null);
         root = root.insert(duplicateOne);
-        AVLNode duplicateFive = new AVLNode(5);
-        root = root.insert(duplicateFive);
 
         // Test graph for duplicates.
         assertEquals(five, root);
         assertTrue(five.hasLeft());
         assertFalse(five.hasRight());
-        assertEquals(five.getLeft(), one);
+        assertEquals(five.getLeft(), duplicateOne);
         assertFalse(five.hasParent());
-        assertTrue(one.hasParent());
-        assertEquals(one.getParent(), five);
-        assertFalse(one.hasLeft());
-        assertFalse(one.hasRight());
+        assertTrue(duplicateOne.hasParent());
+        assertEquals(duplicateOne.getParent(), five);
+        assertFalse(duplicateOne.hasLeft());
+        assertFalse(duplicateOne.hasRight());
+        assertEquals(2, root.getSize());
+        UnitTestUtilities.validateAVLNode(root);
+
+        AVLNode<Integer, String> duplicateFive = new AVLNode<>(5, null);
+        root = root.insert(duplicateFive);
+
+        // Test graph for duplicates.
+        assertEquals(duplicateFive, root);
+        assertTrue(duplicateFive.hasLeft());
+        assertFalse(duplicateFive.hasRight());
+        assertEquals(duplicateFive.getLeft(), duplicateOne);
+        assertFalse(duplicateFive.hasParent());
+        assertTrue(duplicateOne.hasParent());
+        assertEquals(duplicateOne.getParent(), duplicateFive);
+        assertFalse(duplicateOne.hasLeft());
+        assertFalse(duplicateOne.hasRight());
         assertEquals(2, root.getSize());
         UnitTestUtilities.validateAVLNode(root);
     }
@@ -133,12 +146,12 @@ public class AVLNodeTest {
     @Test(expected=IllegalStateException.class)
     public void testInvalidInsert_nonRootNode(){
         // Establish initial graph.
-        root = new AVLNode(5);    // Root.
-        AVLNode one = new AVLNode(1);     // Not root.
+        root = new AVLNode<>(5, null);    // Root.
+        AVLNode<Integer, String> one = new AVLNode<>(1, null);     // Not root.
         root.insert(one);
 
         // Insert new node at non-root node.
-        AVLNode ten = new AVLNode(10);
+        AVLNode<Integer, String> ten = new AVLNode<>(10, null);
         one.insert(ten);  // This should cause exception.
     }
 
@@ -495,16 +508,16 @@ public class AVLNodeTest {
         root = root.insert(six);
 
         // Test if root is found.
-        assertTrue(root.contains(five.getKey()));
+        assertEquals(five.getValue(), root.retrieve(five.getKey()));
 
         // Test if left leaf is found.
-        assertTrue(root.contains(four.getKey()));
+        assertEquals(four.getValue(), root.retrieve(four.getKey()));
 
         // Test if right leaf is found.
-        assertTrue(root.contains(six.getKey()));
+        assertEquals(six.getValue(), root.retrieve(six.getKey()));
 
         // Test if unavailable node is reported as unavailable.
-        assertFalse(root.contains(zero.getKey()));
+        assertNull(root.retrieve(zero.getKey()));
     }
 
     /**
@@ -514,7 +527,7 @@ public class AVLNodeTest {
     public void testContains_notAtRoot(){
         root = five;
         root = root.insert(four);
-        four.contains(four.getKey());  // Should cause exception, due to being called on non-root.
+        four.retrieve(four.getKey());  // Should cause exception, due to being called on non-root.
     }
 
     /**
@@ -530,13 +543,13 @@ public class AVLNodeTest {
         root = root.insert(three);
 
         // Test in order.
-        List<Integer> expectedList = Arrays.asList(0, 1, 2, 3, 5, 6);
-        List<Integer> actualInOrderList = root.inOrderTraversal();
+        List<String> expectedList = Arrays.asList(zero.getValue(), one.getValue(), two.getValue(), three.getValue(), five.getValue(), six.getValue());
+        List<String> actualInOrderList = root.inOrderTraversal();
         assertEquals(expectedList, actualInOrderList);
 
         // Test out order.
         Collections.reverse(expectedList);
-        List<Integer> actualOutOrderList = root.outOrderTraversal();
+        List<String> actualOutOrderList = root.outOrderTraversal();
         assertEquals(expectedList, actualOutOrderList);
 
         UnitTestUtilities.validateAVLNode(root);

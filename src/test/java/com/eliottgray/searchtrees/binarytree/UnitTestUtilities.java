@@ -32,7 +32,7 @@ class UnitTestUtilities {
         int leftSize = node.hasLeft() ? node.getLeft().getSize() : 0;
         int rightSize = node.hasRight() ? node.getRight().getSize() : 0;
         if ((leftSize + rightSize + 1) != node.getSize()){
-            throw new IllegalStateException(String.format("Invalid size for key %d, size %d, left size %d, right size %d", node.getKey(), node.getSize(), leftSize, rightSize));
+            throw new IllegalStateException(String.format("Invalid size for key %s, size %d, left size %d, right size %d", node.getKey().toString(), node.getSize(), leftSize, rightSize));
         }
 
         // Validate height.
@@ -40,16 +40,16 @@ class UnitTestUtilities {
         int rightHeight = node.hasRight() ? node.getRight().getHeight() + 1 : 0;
         int maxSubtreeHeight = leftHeight >= rightHeight ? leftHeight : rightHeight;
         if (maxSubtreeHeight != node.getHeight()){
-            throw new IllegalStateException(String.format("Invalid height for key %d, height %d, left height %d, right height %d", node.getKey(), node.getHeight(), leftHeight, rightHeight));
+            throw new IllegalStateException(String.format("Invalid height for key %s, height %d, left height %d, right height %d", node.getKey().toString(), node.getHeight(), leftHeight, rightHeight));
         }
 
         // Validate relative order.
-        if (node.hasLeft() && node.getLeft().getKey() >= node.getKey()){
-            throw new IllegalStateException(String.format("Invalid left key for key %d, left key %d", node.getKey(), node.getLeft().getKey()));
+        if (node.hasLeft() && node.getLeft().getKey().compareTo(node.getKey()) >= 0){
+            throw new IllegalStateException(String.format("Invalid left key for key %s, left key %s", node.getKey().toString(), node.getLeft().getKey().toString()));
 
         }
-        if (node.hasRight() && node.getRight().getKey() <= node.getKey()){
-            throw new IllegalStateException(String.format("Invalid right key for key %d, right key %d", node.getKey(), node.getRight().getKey()));
+        if (node.hasRight() && node.getRight().getKey().compareTo(node.getKey()) <= 0){
+            throw new IllegalStateException(String.format("Invalid right key for key %s, right key %s", node.getKey().toString(), node.getRight().getKey().toString()));
         }
         return true;
     }
