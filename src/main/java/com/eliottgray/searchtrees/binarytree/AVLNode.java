@@ -1,6 +1,5 @@
 package com.eliottgray.searchtrees.binarytree;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 

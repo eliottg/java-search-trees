@@ -37,7 +37,7 @@ public class AVLTree<Key extends Comparable<Key>, Value> {
         return root == null;
     }
 
-    public AVLNode<Key, Value> getRoot(){
+    AVLNode<Key, Value> getRoot(){
         return root;
     }
 
