@@ -16,7 +16,7 @@ class AVLNode <Key extends Comparable<Key>, Value> {
     AVLNode (Key key, Value value){
         this.key = key;
         this.value = value;
-        this.height = 0;
+        this.height = 1;
         this.size = 1;
     }
 
@@ -46,7 +46,7 @@ class AVLNode <Key extends Comparable<Key>, Value> {
      */
     private int getLeftHeight(){
         if (hasLeft()){
-            return 1 + left.height;
+            return left.height;
         } else {
             return 0;
         }
@@ -57,7 +57,7 @@ class AVLNode <Key extends Comparable<Key>, Value> {
      */
     private int getRightHeight(){
         if (hasRight()){
-            return 1 + right.height;
+            return right.height;
         } else {
             return 0;
         }
@@ -212,15 +212,16 @@ class AVLNode <Key extends Comparable<Key>, Value> {
         int leftSize = 0;
         int rightSize = 0;
         if (hasLeft()){
-            leftHeight = 1 + left.height;
+            leftHeight = left.height;
             leftSize = left.size;
         }
         if (hasRight()){
-            rightHeight = 1 + right.height;
+            rightHeight = right.height;
             rightSize = right.size;
         }
         this.size = 1 + leftSize + rightSize;
         this.height = rightHeight > leftHeight ? rightHeight : leftHeight;
+        this.height += 1;
 
         if (parent != null){
             this.parent.recalculateHeightAndSize();

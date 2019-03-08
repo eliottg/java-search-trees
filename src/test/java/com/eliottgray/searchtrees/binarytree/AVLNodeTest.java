@@ -295,9 +295,9 @@ public class AVLNodeTest {
         // Test deletion of a node with no children.
         root = root.delete(6);
         assertNull(five.getRight());
-        assertEquals(0, five.getHeight());
+        assertEquals(1, five.getHeight());
         assertEquals(four, root);
-        assertEquals(2, root.getHeight());
+        assertEquals(3, root.getHeight());
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of a node with one child.
@@ -305,8 +305,8 @@ public class AVLNodeTest {
         assertEquals(four, root);
         assertEquals(three, root.getLeft());
         assertEquals(five, root.getRight());
-        assertEquals(1, root.getHeight());
-        assertEquals(0, three.getHeight());
+        assertEquals(2, root.getHeight());
+        assertEquals(1, three.getHeight());
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of a node with no children.
@@ -320,7 +320,7 @@ public class AVLNodeTest {
         assertEquals(three, root);
         assertNull(root.getLeft());
         assertNull(root.getRight());
-        assertEquals(0, root.getHeight());
+        assertEquals(1, root.getHeight());
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of Root with no child.
@@ -346,7 +346,7 @@ public class AVLNodeTest {
         root = root.insert(one);
 
         assertEquals(three, root);
-        assertEquals(2, root.getHeight());
+        assertEquals(3, root.getHeight());
         UnitTestUtilities.validateAVLNode(root);
 
         // Deletion should cause rotation.
@@ -354,7 +354,7 @@ public class AVLNodeTest {
         assertEquals(two, root);
         assertEquals(one, root.getLeft());
         assertEquals(three, root.getRight());
-        assertEquals(1, root.getHeight());
+        assertEquals(2, root.getHeight());
         UnitTestUtilities.validateAVLNode(root);
 
     }
@@ -377,7 +377,7 @@ public class AVLNodeTest {
         root = root.insert(five);
 
         assertEquals(three, root);
-        assertEquals(2, root.getHeight());
+        assertEquals(3, root.getHeight());
         UnitTestUtilities.validateAVLNode(root);
 
         // Deletion should cause rotation.
@@ -385,7 +385,7 @@ public class AVLNodeTest {
         assertEquals(four, root);
         assertEquals(three, root.getLeft());
         assertEquals(five, root.getRight());
-        assertEquals(1, root.getHeight());
+        assertEquals(2, root.getHeight());
         UnitTestUtilities.validateAVLNode(root);
 
     }
@@ -415,7 +415,7 @@ public class AVLNodeTest {
 
 
         assertEquals(four, root);
-        assertEquals(3, root.getHeight());
+        assertEquals(4, root.getHeight());
         assertEquals(-1, root.getBalanceFactor());
         UnitTestUtilities.validateAVLNode(root);
 
@@ -424,7 +424,7 @@ public class AVLNodeTest {
         assertEquals(three, root);
         assertEquals(one, three.getLeft());
         assertEquals(six, three.getRight());
-        assertEquals(2, three.getHeight());
+        assertEquals(3, three.getHeight());
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of root when Right subtree is longer OR subtrees are same size.
@@ -432,7 +432,7 @@ public class AVLNodeTest {
         assertEquals(five, root);
         assertEquals(one, root.getLeft());
         assertEquals(six, root.getRight());
-        assertEquals(2, root.getHeight());
+        assertEquals(3, root.getHeight());
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of non-root.
@@ -441,8 +441,8 @@ public class AVLNodeTest {
         assertEquals(two, root.getLeft());
         assertEquals(six, root.getRight());
         assertEquals(zero, two.getLeft());
-        assertEquals(2, root.getHeight());
-        assertEquals(1, two.getHeight());
+        assertEquals(3, root.getHeight());
+        assertEquals(2, two.getHeight());
         UnitTestUtilities.validateAVLNode(root);
     }
 

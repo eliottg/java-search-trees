@@ -36,10 +36,11 @@ class UnitTestUtilities {
         }
 
         // Validate height.
-        int leftHeight = node.hasLeft() ? node.getLeft().getHeight() + 1 : 0;
-        int rightHeight = node.hasRight() ? node.getRight().getHeight() + 1 : 0;
+        int leftHeight = node.hasLeft() ? node.getLeft().getHeight() : 0;
+        int rightHeight = node.hasRight() ? node.getRight().getHeight() : 0;
         int maxSubtreeHeight = leftHeight >= rightHeight ? leftHeight : rightHeight;
-        if (maxSubtreeHeight != node.getHeight()){
+        int expectedHeight = maxSubtreeHeight + 1;
+        if (expectedHeight != node.getHeight()){
             throw new IllegalStateException(String.format("Invalid height for key %s, height %d, left height %d, right height %d", node.getKey().toString(), node.getHeight(), leftHeight, rightHeight));
         }
 
