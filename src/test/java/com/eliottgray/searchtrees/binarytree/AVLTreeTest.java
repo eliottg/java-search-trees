@@ -177,4 +177,23 @@ public class AVLTreeTest {
 
         UnitTestUtilities.validateAVLTree(avlTree);
     }
+
+    /**
+     * Test retrieval of Values corresponding to an inclusive range of Keys.
+     */
+    @Test
+    public void testGetRange(){
+        AVLTree<Integer, Integer> avlTree = new AVLTree<>();
+
+        List<Integer> inputValues = new ArrayList<Integer>(){{add(1); add(2); add(3); add(4); add(5);}};
+        for (Integer integer : inputValues) {
+            avlTree.insert(integer, integer);
+        }
+
+        List<Integer> expectedRange = new ArrayList<Integer>(){{add(2); add(3); add(4);}};
+        Integer start = 2;
+        Integer end = 4;
+        List<Integer> actualRange = avlTree.getRange(start, end);
+        assertEquals(expectedRange, actualRange);
+    }
 }

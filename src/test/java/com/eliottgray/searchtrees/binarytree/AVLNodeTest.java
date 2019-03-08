@@ -3,6 +3,7 @@ package com.eliottgray.searchtrees.binarytree;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -553,5 +554,34 @@ public class AVLNodeTest {
         assertEquals(expectedList, actualOutOrderList);
 
         UnitTestUtilities.validateAVLNode(root);
+    }
+
+    /**
+     * Test correct retrieval of a subset of Values based on a range of Keys.
+     */
+    @Test
+    public void testGetRangeList_presentInTree(){
+        root = one;
+
+        root = root.insert(two);
+        root = root.insert(three);
+        root = root.insert(four);
+        root = root.insert(five);
+
+        List<String> expectedValues = new ArrayList<String>(){{add(two.getValue()); add(three.getValue()); add(four.getValue());}};
+        List<String> actualValues = root.getRange(two.getKey(), four.getKey());
+        assertEquals(expectedValues, actualValues);
+    }
+
+    /**
+     * Test correct retrieval of a subset of Values based on a range of Keys.
+     */
+    @Test
+    public void testGetRangeList_notPresentInTree(){
+        root = one;
+
+        List<String> expectedValues = new ArrayList<>();
+        List<String> actualValues = root.getRange(two.getKey(), four.getKey());
+        assertEquals(expectedValues, actualValues);
     }
 }

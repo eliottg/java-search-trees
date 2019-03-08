@@ -133,6 +133,27 @@ class AVLNode <Key extends Comparable<Key>, Value> {
         return result;
     }
 
+    public List<Value> getRange(Key start, Key end){
+        validateIsRoot();
+        List<Value> result = new ArrayList<>();
+        return this.getRange(start, end, result);
+    }
+
+    private List<Value> getRange(Key start, Key end, List<Value> result){
+        boolean isLessThan = start.compareTo(this.key) <= 0;
+        boolean isGreaterThan = end.compareTo(this.key) >= 0;
+        if (isLessThan && this.hasLeft()){
+            result = left.getRange(start, end, result);
+        }
+        if (isLessThan && isGreaterThan){
+            result.add(this.value);
+        }
+        if (isGreaterThan && this.hasRight()){
+            result = right.getRange(start, end, result);
+        }
+        return result;
+    }
+
     public List<Value> inOrderTraversal(){
         validateIsRoot();
         List<Value> result = new ArrayList<>(this.size);

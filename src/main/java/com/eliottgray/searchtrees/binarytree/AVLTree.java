@@ -77,4 +77,12 @@ public class AVLTree<Key extends Comparable<Key>, Value> {
             return root.outOrderTraversal();
         }
     }
+
+    public List<Value> getRange(Key start, Key end){
+        if (root == null){
+            return new ArrayList<>();
+        } else {
+            return root.getRange(start, end);
+        }
+    }
 }
