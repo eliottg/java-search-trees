@@ -50,12 +50,6 @@ public class AVLTree_ITCase {
         List<Integer> actualInOrderValues = avlTree.toAscendingList();
         assertEquals(expectedValues, actualInOrderValues);
 
-        // Validate out-order.
-        Collections.reverse(expectedValues);
-        List<Integer> actualOutOrderValues = avlTree.toDescendingList();
-        assertEquals(expectedValues, actualOutOrderValues);
-
-
         // Validate tree after
         assertTrue(UnitTestUtilities.validateAVLTree(avlTree));
         assertEquals(previousEntries.size(), avlTree.size());

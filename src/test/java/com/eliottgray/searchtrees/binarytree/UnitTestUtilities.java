@@ -2,17 +2,17 @@ package com.eliottgray.searchtrees.binarytree;
 
 class UnitTestUtilities {
 
-    static boolean validateAVLTree(AVLTree avlTree){
+    static <Key extends Comparable<Key>> boolean validateAVLTree(AVLTree<Key> avlTree){
         if (avlTree.isEmpty()){
             return true;
         } else {
-            AVLNode root = avlTree.getRoot();
+            AVLNode<Key> root = avlTree.getRoot();
             return validateAVLNode(root);
         }
     }
 
 
-    static boolean validateAVLNode(AVLNode node){
+    static <Key extends Comparable<Key>> boolean validateAVLNode(AVLNode<Key> node){
 
         if (node == null){
             return true;

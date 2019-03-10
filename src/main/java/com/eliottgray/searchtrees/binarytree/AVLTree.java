@@ -83,14 +83,6 @@ public class AVLTree<Key extends Comparable<Key>>{
         }
     }
 
-    public List<Key> toDescendingList(){
-        if (root == null){
-            return new ArrayList<>();
-        } else {
-            return root.outOrderTraversal();
-        }
-    }
-
     public List<Key> getRange(Key start, Key end){
         if (root == null){
             return new ArrayList<>();

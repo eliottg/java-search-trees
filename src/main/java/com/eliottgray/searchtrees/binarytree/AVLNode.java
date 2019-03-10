@@ -34,7 +34,7 @@ class AVLNode <Key extends Comparable<Key>> {
      * Else, balance factor is zero.
      * @return      integer describing the balance factor.
      */
-    int getBalanceFactor(){ return getRightHeight() - getLeftHeight(); }
+    private int getBalanceFactor(){ return getRightHeight() - getLeftHeight(); }
 
     /**
      * @return  Height of left subtree.
@@ -144,22 +144,6 @@ class AVLNode <Key extends Comparable<Key>> {
         result.add(this.key);
         if (this.hasRight()){
             result = right.inOrderTraversal(result);
-        }
-        return result;
-    }
-
-    List<Key> outOrderTraversal(){
-        List<Key> result = new ArrayList<>(this.size);
-        return this.outOrderTraversal(result);
-    }
-
-    private List<Key> outOrderTraversal(List<Key> result){
-        if (this.hasRight()){
-            result = right.outOrderTraversal(result);
-        }
-        result.add(this.key);
-        if (this.hasLeft()){
-            result = left.outOrderTraversal(result);
         }
         return result;
     }
@@ -289,16 +273,22 @@ class AVLNode <Key extends Comparable<Key>> {
      * @return          Root node.
      */
     AVLNode<Key> delete(Key key, Comparator<Key> comparator){
-        AVLNode<Key> root = this;
+        AVLNode<Key> root;
         if (comparator.compare(key, this.key) < 0) {
             if (this.hasLeft()) {
                 this.setLeftAndRecalculate(this.left.delete(key, comparator));
                 root = rotateLeftIfUnbalanced();
+            } else {
+                // Key is not in this tree.
+                root = this;
             }
         } else if (comparator.compare(key, this.key) > 0){
             if (this.hasRight()){
                 this.setRightAndRecalculate(this.right.delete(key, comparator));
                 root = rotateRightIfUnbalanced();
+            } else {
+                // Key is not in this tree.
+                root = this;
             }
         } else {
             // Found key!  Now to delete. (delete = return left child, right child, or null;

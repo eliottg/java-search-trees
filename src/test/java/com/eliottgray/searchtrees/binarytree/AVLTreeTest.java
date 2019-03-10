@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -11,8 +12,11 @@ import static org.junit.Assert.*;
 public class AVLTreeTest {
 
 
+    /**
+     * Test construction of an AVL Tree, adding a key, and testing for presence.
+     */
     @Test
-    public void testConstructor_emptyTree(){
+    public void testConstor_insert_contains(){
         AVLTree<Integer> avlTree = new AVLTree<>();
         assertTrue(avlTree.isEmpty());
         assertFalse(avlTree.contains(3));
@@ -20,60 +24,6 @@ public class AVLTreeTest {
         avlTree.insert(3);
         assertFalse(avlTree.isEmpty());
         assertTrue(avlTree.contains(3));
-
-        UnitTestUtilities.validateAVLTree(avlTree);
-    }
-
-    /**
-     * Add initial data which forces a left rotation.
-     *      1
-     *       \            2
-     *        2    ->    / \
-     *         \        1   3
-     *          3
-     */
-    @Test
-    public void testConstructor_orderedArray_leftRotation(){
-        AVLTree<Integer> avlTree = new AVLTree<>();
-        avlTree.insert(1);
-        avlTree.insert(2);
-        avlTree.insert(3);
-        assertFalse(avlTree.isEmpty());
-        assertTrue(avlTree.contains(1));
-        assertTrue(avlTree.contains(2));
-        assertTrue(avlTree.contains(3));
-        assertFalse(avlTree.contains(4));
-
-        // Verify that tree rotates left to 2 as root.
-        Integer expected = 2;
-        assertEquals(expected, avlTree.getRoot().getKey());
-
-        UnitTestUtilities.validateAVLTree(avlTree);
-    }
-
-    /**
-     * Add initial data which forces a right rotation.
-     *        3
-     *       /             2
-     *      2      ->     / \
-     *     /             1   3
-     *    1
-     */
-    @Test
-    public void testConstructor_orderedArray_rightRotation(){
-        AVLTree<Integer> avlTree = new AVLTree<>();
-        avlTree.insert(3);
-        avlTree.insert(2);
-        avlTree.insert(1);
-        assertFalse(avlTree.isEmpty());
-        assertTrue(avlTree.contains(1));
-        assertTrue(avlTree.contains(2));
-        assertTrue(avlTree.contains(3));
-        assertFalse(avlTree.contains(4));
-
-        // Verify that tree rotates right to 2 as root.
-        Integer expected = 2;
-        assertEquals(expected, avlTree.getRoot().getKey());
 
         UnitTestUtilities.validateAVLTree(avlTree);
     }
@@ -157,40 +107,23 @@ public class AVLTreeTest {
     }
 
     /**
-     * Test representation of tree as a descending, ordered list.
-     */
-    @Test
-    public void testToReversedArray(){
-        AVLTree<Integer> avlTree = new AVLTree<>();
-
-        List<Integer> emptyList = avlTree.toDescendingList();
-        assertTrue(emptyList.isEmpty());
-
-        List<Integer> inputValues = new ArrayList<Integer>(){{add(50); add(2); add(10); add(4); add(1);}};
-        for (Integer integer : inputValues) {
-            avlTree.insert(integer);
-        }
-
-        Collections.sort(inputValues);
-        Collections.reverse(inputValues);
-        List<Integer> sortedList = avlTree.toDescendingList();
-        assertEquals(inputValues, sortedList);
-
-        UnitTestUtilities.validateAVLTree(avlTree);
-    }
-
-    /**
      * Test retrieval of Values corresponding to an inclusive range of Keys.
      */
     @Test
     public void testGetRange(){
         AVLTree<Integer> avlTree = new AVLTree<>();
 
+        // Test that an empty AVLTree returns no values.
+        List<Integer> shouldBeEmpty = avlTree.getRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        assertTrue(shouldBeEmpty.isEmpty());
+
+        // Insert values.
         List<Integer> inputValues = new ArrayList<Integer>(){{add(1); add(2); add(3); add(4); add(5);}};
         for (Integer integer : inputValues) {
             avlTree.insert(integer);
         }
 
+        // Test correct retrieval of a specific range.
         List<Integer> expectedRange = new ArrayList<Integer>(){{add(2); add(3); add(4);}};
         Integer start = 2;
         Integer end = 4;
@@ -199,72 +132,35 @@ public class AVLTreeTest {
     }
 
     /**
-     * Test a variety of operations with a different comparable object, and a different comparator.
+     * Test overriding default comparator with a custom one.
+     *
+     * The comparator in this example stores and sorts Integers based on Absolute Value, instead of actual value.
      */
     @Test
-    public void testCustomComparable_withDefaultComparator(){
-        AVLTree<CustomComparable> defaultComparatorTree = new AVLTree<>();
+    public void testCustomComparator(){
 
-        String blue = "BLUE";
-        String red = "RED";
-        Integer one = 1;
-        Integer two = 2;
-        CustomComparable blueOne = new CustomComparable(blue, one);
-        CustomComparable blueTwo = new CustomComparable(blue, two);
-        CustomComparable redOne = new CustomComparable(red, one);
-        CustomComparable redTwo = new CustomComparable(red, two);
-
-        defaultComparatorTree.insert(redTwo);
-        defaultComparatorTree.insert(redOne);
-
-        assertTrue(defaultComparatorTree.contains(redOne));
-        assertTrue(defaultComparatorTree.contains(redTwo));
-        assertFalse(defaultComparatorTree.contains(blueOne));
-        assertFalse(defaultComparatorTree.contains(blueTwo));
-        assertEquals(2, defaultComparatorTree.size());
-
-        defaultComparatorTree.insert(blueTwo);
-        defaultComparatorTree.insert(blueOne);
-
-        assertTrue(defaultComparatorTree.contains(redOne));
-        assertTrue(defaultComparatorTree.contains(redTwo));
-        assertTrue(defaultComparatorTree.contains(blueOne));
-        assertTrue(defaultComparatorTree.contains(blueTwo));
-        assertEquals(4, defaultComparatorTree.size());
-
-        defaultComparatorTree.delete(redTwo);
-
-        assertTrue(defaultComparatorTree.contains(redOne));
-        assertFalse(defaultComparatorTree.contains(redTwo));
-        assertTrue(defaultComparatorTree.contains(blueOne));
-        assertTrue(defaultComparatorTree.contains(blueTwo));
-        assertEquals(3, defaultComparatorTree.size());
-
-
-
-    }
-
-
-    private class CustomComparable implements Comparable<CustomComparable>{
-
-        private String color;
-        private Integer number;
-
-        private CustomComparable(String color, Integer number){
-            this.color = color;
-            this.number = number;
-        }
-
-        @Override
-        public int compareTo(CustomComparable o) {
-            int colorResult = this.color.compareTo(o.color);
-            if (colorResult < 0){
-                return -1;
-            } else if (colorResult > 0){
-                return 1;
-            } else {
-                return this.number.compareTo(o.number);
+        // Create comparator that compares all Integers by their absolute value.
+        Comparator<Integer> customComparator = new Comparator<Integer>() {
+            @Override
+            public int compare(Integer one, Integer two) {
+                Integer absoluteValueOne = Math.abs(one);
+                Integer absoluteValueTwo = Math.abs(two);
+                return absoluteValueOne.compareTo(absoluteValueTwo);
             }
+        };
+
+        AVLTree<Integer> avlTree = new AVLTree<>(customComparator);
+
+        // Insert values.
+        List<Integer> inputValues = new ArrayList<Integer>(){{add(-900); add(-800); add(1); add(2); add(3);}};
+        for (Integer integer : inputValues) {
+            avlTree.insert(integer);
         }
+
+        // Due to custom comparator sorting based on Absolute Value, larger negative values should come after smaller positive values.
+        List<Integer> expectedOrder = new ArrayList<Integer>(){{add(1); add(2); add(3); add(-800); add(-900);}};
+        List<Integer> actualOrder = avlTree.toAscendingList();
+
+        assertEquals(expectedOrder, actualOrder);
     }
 }
