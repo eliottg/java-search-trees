@@ -11,7 +11,6 @@ class AVLNode <Key extends Comparable<Key>, Value> {
     private int size;
     private AVLNode<Key, Value> left;
     private AVLNode<Key, Value> right;
-    private AVLNode<Key, Value> parent;
 
     AVLNode (Key key, Value value){
         this.key = key;
@@ -26,11 +25,9 @@ class AVLNode <Key extends Comparable<Key>, Value> {
     int getSize(){ return this.size; }
     AVLNode<Key, Value> getLeft(){ return this.left; }
     AVLNode<Key, Value> getRight(){ return this.right; }
-    AVLNode<Key, Value> getParent(){ return parent; }
 
     boolean hasLeft(){ return left != null; }
     boolean hasRight(){ return right != null; }
-    boolean hasParent(){ return parent != null; }
 
     /**
      * Describes the relative height of the left and right subtrees.
@@ -44,67 +41,55 @@ class AVLNode <Key extends Comparable<Key>, Value> {
     /**
      * @return  Height of left subtree.
      */
-    private int getLeftHeight(){
-        if (hasLeft()){
-            return left.height;
-        } else {
-            return 0;
-        }
-    }
+    private int getLeftHeight(){ return hasLeft() ? left.height : 0; }
 
     /**
      * @return  Height of right subtree.
      */
-    private int getRightHeight(){
-        if (hasRight()){
-            return right.height;
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * Perform recursive insertion, starting from root node.  This method must only be called on the Root node.
-     * If a node other than the root is called for insertion, the root will be found, and the insertion begin there.
-     * @param newAVLNode    Node to insert.
-     * @return              Root node of tree.
-     */
-    AVLNode<Key, Value> insert(AVLNode<Key, Value> newAVLNode){
-        validateIsRoot();
-        return insert(newAVLNode, this);
-    }
+    private int getRightHeight(){ return hasRight() ? right.height : 0; }
 
     /**
      * Perform recursive insertion.
      * @param newAVLNode    Node to insert.
-     * @param root          Root node of tree, to be overridden in case of replacement by a tree rotation.
      * @return              Root node of tree.
      */
-    private AVLNode<Key, Value> insert(AVLNode<Key, Value> newAVLNode, AVLNode<Key, Value> root){
+    AVLNode<Key, Value> insert(AVLNode<Key, Value> newAVLNode){
+        // This position in the tree is currently occupied by me.
+        AVLNode<Key, Value> root = this;   /// @todo is it less/more efficient to just return in the various blocks?
+
+        // If key is to left of current:
         if (newAVLNode.key.compareTo(this.key) < 0){
+
             if (this.hasLeft()){
-                root = this.left.insert(newAVLNode, root);
-                root = rotateRightIfUnbalanced(root);
+                // Insert down left subtree, retrieve new left subtree, and attach here.
+                this.setLeftAndRecalculate(this.left.insert(newAVLNode));
+                // Rotate if necessary, replacing this node as the head of this tree.
+                root = rotateRightIfUnbalanced();
             } else {
-                this.setLeft(newAVLNode);
+                // I have no left, so I simply set it here.
+                this.setLeftAndRecalculate(newAVLNode);
             }
+
+        // If key is to right of current:
         } else if (newAVLNode.key.compareTo(this.key) > 0){
+            // Insert down right subtree, retrieve new subtree head, and attach here.
             if (this.hasRight()){
-                root = this.right.insert(newAVLNode, root);
-                root = rotateLeftIfUnbalanced(root);
+                this.setRightAndRecalculate(this.right.insert(newAVLNode));
+                // Rotate if necessary, replacing this node as the head of this tree.
+                root = rotateLeftIfUnbalanced();
             } else {
-                this.setRight(newAVLNode);
+                // I have no right, so I simply set it here.
+                this.setRightAndRecalculate(newAVLNode);
             }
         } else {
             // Duplicate key found; replace with parent.
-            supplantChildNodeWithParent(newAVLNode);
-            newAVLNode.setLeft(this.left);
-            newAVLNode.setRight(this.right);
-            recalculateHeightAndSize();
-            if (newAVLNode.parent == null){
-                root = newAVLNode;
-            }
+            newAVLNode.left = this.left;
+            newAVLNode.right = this.right;
+            newAVLNode.recalculateHeightAndSize();
+            root = newAVLNode;
         }
+
+        // Return whatever occupies this position of the tree, which may still be me, or not.
         return root;
     }
 
@@ -113,8 +98,7 @@ class AVLNode <Key extends Comparable<Key>, Value> {
      * @param key   Key to find.
      * @return      Value for key; else null.
      */
-    public Value retrieve(Key key){
-        validateIsRoot();
+    Value retrieve(Key key){
         AVLNode<Key, Value> current = this;
         Value result = null;
         boolean complete = false;
@@ -133,8 +117,7 @@ class AVLNode <Key extends Comparable<Key>, Value> {
         return result;
     }
 
-    public List<Value> getRange(Key start, Key end){
-        validateIsRoot();
+    List<Value> getRange(Key start, Key end){
         List<Value> result = new ArrayList<>();
         return this.getRange(start, end, result);
     }
@@ -154,8 +137,7 @@ class AVLNode <Key extends Comparable<Key>, Value> {
         return result;
     }
 
-    public List<Value> inOrderTraversal(){
-        validateIsRoot();
+    List<Value> inOrderTraversal(){
         List<Value> result = new ArrayList<>(this.size);
         return this.inOrderTraversal(result);
     }
@@ -171,8 +153,7 @@ class AVLNode <Key extends Comparable<Key>, Value> {
         return result;
     }
 
-    public List<Value> outOrderTraversal(){
-        validateIsRoot();
+    List<Value> outOrderTraversal(){
         List<Value> result = new ArrayList<>(this.size);
         return this.outOrderTraversal(result);
     }
@@ -188,23 +169,15 @@ class AVLNode <Key extends Comparable<Key>, Value> {
         return result;
     }
 
-    private void setLeft(AVLNode<Key, Value> left){
+    private void setLeftAndRecalculate(AVLNode<Key, Value> left){
         this.left = left;
-        if (left != null){
-            left.setParent(this);
-        }
         recalculateHeightAndSize();
     }
 
-    private void setRight(AVLNode<Key, Value> right){
+    private void setRightAndRecalculate(AVLNode<Key, Value> right){
         this.right = right;
-        if (right != null){
-            right.setParent(this);
-        }
         recalculateHeightAndSize();
     }
-
-    private void setParent(AVLNode<Key, Value> parent) { this.parent = parent; }
 
     private void recalculateHeightAndSize(){
         int leftHeight = 0;
@@ -223,49 +196,37 @@ class AVLNode <Key extends Comparable<Key>, Value> {
         this.height = rightHeight > leftHeight ? rightHeight : leftHeight;
         this.height += 1;
 
-        if (parent != null){
-            this.parent.recalculateHeightAndSize();
-        }
     }
 
-    private AVLNode<Key, Value> rotateRightIfUnbalanced(AVLNode<Key, Value> root){
+    private AVLNode<Key, Value> rotateRightIfUnbalanced(){
+
         if (this.getBalanceFactor() < -1){
             // Left side is longer, so rotate right.
 
             // If left subtree is larger on the right, left subtree must be rotated left before this node rotates right.
             if (this.left.getBalanceFactor() > 0){
-                this.left.rotateLeft();
-            }
-
-            // If current node is Root of tree, rotation will replace root with child; left child is now root.
-            if (this.parent == null){
-                root = this.left;
+                this.left = this.left.rotateLeft();
             }
 
             // Replace current node with left child, moving current down and right.
-            this.rotateRight();
+            return this.rotateRight();
         }
-        return root;
+        return this;
     }
 
-    private AVLNode<Key, Value> rotateLeftIfUnbalanced(AVLNode<Key, Value> root){
+    private AVLNode<Key, Value> rotateLeftIfUnbalanced(){
         if (this.getBalanceFactor() > 1){
             // Right side is longer, so rotate left.
 
             // If right subtree is larger on the left, right subtree must be rotated right before this node rotates left.
             if (this.right.getBalanceFactor() < 0){
-                this.right.rotateRight();
-            }
-
-            // If current node is Root of tree, rotation will replace root with child; right child is now root.
-            if (this.parent == null){
-                root = this.right;
+                this.right = this.right.rotateRight();
             }
 
             // Replace current node with left child, moving current down and right.
-            this.rotateLeft();
+            return this.rotateLeft();
         }
-        return root;
+        return this;
     }
 
 
@@ -282,16 +243,21 @@ class AVLNode <Key extends Comparable<Key>, Value> {
      *                           / \
      *                          2   7
      */
-    private void rotateLeft(){
+    private AVLNode<Key, Value> rotateLeft(){
+        // Pivot is my right.
         AVLNode<Key, Value> pivot = this.right;
-        supplantChildNodeWithParent(pivot);
 
+        // My new right is pivot left.
         this.right = pivot.left;
-        if (right != null){
-            right.setParent(this);
-        }
-        pivot.setLeft(this); // causes height recalculation.
-        recalculateHeightAndSize();  /// @todo This lets height be recalculated on the other leg of the pivot; This is duplicated work for higher nodes.
+
+        // Pivot left is now me.
+        pivot.left = this;
+
+        // Recalculate heights.
+        this.recalculateHeightAndSize();  // Recalculate child first, to get correct counts.
+        pivot.recalculateHeightAndSize(); // Now we recalculate replacement.
+
+        return pivot;
     }
 
     /**
@@ -307,94 +273,63 @@ class AVLNode <Key extends Comparable<Key>, Value> {
      *                                       /  \
      *                                     12    20
      */
-    private void rotateRight(){
+    private AVLNode<Key, Value> rotateRight(){
+        // Pivot is my left.
         AVLNode<Key, Value> pivot = this.left;
-        supplantChildNodeWithParent(pivot);
 
+        // My new left is pivot right.
         this.left = pivot.right;
-        if (left != null){
-            left.setParent(this);
-        }
-        pivot.setRight(this); // causes height recalculation. on one leg of the pivot only.
-        recalculateHeightAndSize();  /// @todo This lets height be recalculated on the other leg of the pivot; This is duplicated work for higher nodes.
-    }
 
-    /**
-     * Given a current node, and a pivot node to rotate with, pivot supplants the current node with its parent.
-     *
-     * If the parent is null (current node has no parent) pivot now has no parent.
-     *
-     * @param pivotAVLNode     Pivot node to take the place of current node with its parent.
-     */
-    private void supplantChildNodeWithParent(AVLNode<Key, Value> pivotAVLNode){
-        if (this.parent == null){
-            if (pivotAVLNode != null){
-                pivotAVLNode.setParent(null);
-            }
-        } else {
-            if (this.parent.right == this){
-                this.parent.setRight(pivotAVLNode);
-            } else {
-                assert(this.parent.left == this);
-                this.parent.setLeft(pivotAVLNode);
-            }
-        }
-    }
+        // Pivvot right is now me.
+        pivot.right = this;
 
-    /**
-     * Given a key to delete, remove the corresponding node from the tree.
-     * @param key       Key to delete.
-     * @return          Root node.
-     */
-    AVLNode<Key, Value> delete(Key key){
-        validateIsRoot();
-        return delete(key, this);
+        // Recalculate heights.
+        this.recalculateHeightAndSize();  // Recalculate child first, to get correct counts.
+        pivot.recalculateHeightAndSize(); // Now we recalculate replacement.
+
+        return pivot;
     }
 
     /**
      * Recursive deletion.
      * Given a key to delete, remove the corresponding node from the tree.
      * @param key       Key to delete.
-     * @param root      Current root node.
      * @return          Root node.
      */
-    private AVLNode<Key, Value> delete(Key key, AVLNode<Key, Value> root){
+    AVLNode<Key, Value> delete(Key key){
+        AVLNode<Key, Value> root = this;  // Return nothing if I delete myself and there is no replacement.
         if (key.compareTo(this.key) < 0) {
             if (this.hasLeft()) {
-                root = this.left.delete(key, root);
-                root = rotateLeftIfUnbalanced(root);
+                this.setLeftAndRecalculate(this.left.delete(key));
+                root = rotateLeftIfUnbalanced();
             }
         } else if (key.compareTo(this.key) > 0){
             if (this.hasRight()){
-                root = this.right.delete(key, root);
-                root = rotateRightIfUnbalanced(root);
+                this.setRightAndRecalculate(this.right.delete(key));
+                root = rotateRightIfUnbalanced();
             }
         } else {
-            // Found key!  Now to delete.
-            AVLNode<Key, Value> replacement;
+            // Found key!  Now to delete. (delete = return left child, right child, or null;
             if (hasLeft() && hasRight()){
-                // Two children!  Find a replacement from the longer subtree.
-                replacement = this.findReplacementChild();
+                // Two children!  Find a replacement for this node from the longer subtree, which itself will have 1 or no children.
+                root = this.findReplacementChild();
+
+                // Delete replacement itself, which removes its connections to its child (if any)
+                this.delete(root.key);
+
                 // Delete replacement's connections.
-                root = root.delete(replacement.key);
-                replacement.setParent(null);
-                replacement.setLeft(this.left);
-                replacement.setRight(this.right);
+                root.left = this.left;
+                root.right = this.right;
+                root.recalculateHeightAndSize();
             } else {
                 if (hasLeft()){
-                    replacement = this.left;
+                    root = this.left;
                 } else if (hasRight()){
-                    replacement = this.right;
+                    root = this.right;
                 } else {
-                    replacement = null;
+                    root = null;
                 }
             }
-            // Handle cases where the node being deleted was Root of tree.
-            if (this.parent == null){
-                root = replacement;
-            }
-            // Replacement node, which takes the place of the node to be deleted, must be inserted into parent.
-            supplantChildNodeWithParent(replacement);
         }
         return root;
     }
@@ -426,16 +361,6 @@ class AVLNode <Key extends Comparable<Key>, Value> {
             }
         }
         return replacement;
-    }
-
-    /**
-     * Throw exception if this node is not the root node.  This is useful because certain recursive operations MUST be
-     * called on root, to correctly maintain valid tree structure.
-     */
-    private void validateIsRoot(){
-        if (this.parent != null) {
-            throw new IllegalStateException("Illegal method call on non-root Node.");
-        }
     }
 
 //    @Override

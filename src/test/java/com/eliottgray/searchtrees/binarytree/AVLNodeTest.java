@@ -44,7 +44,6 @@ public class AVLNodeTest {
         root = new AVLNode<>(value, null);
         assertFalse(root.hasLeft());
         assertFalse(root.hasRight());
-        assertFalse(root.hasParent());
         assertEquals(value, root.getKey());
         assertEquals(1, root.getSize());
         UnitTestUtilities.validateAVLNode(root);
@@ -68,7 +67,6 @@ public class AVLNodeTest {
         root = root.insert(one);
         assertEquals(three, root);
         assertEquals(one, root.getLeft());
-        assertEquals(three, one.getParent());
         assertEquals(2, root.getSize());
         UnitTestUtilities.validateAVLNode(root);
 
@@ -77,8 +75,6 @@ public class AVLNodeTest {
         assertEquals(three, root);
         assertEquals(one, root.getLeft());
         assertEquals(four, root.getRight());
-        assertEquals(three, one.getParent());
-        assertEquals(three, four.getParent());
         assertEquals(3, root.getSize());
         UnitTestUtilities.validateAVLNode(root);
 
@@ -88,9 +84,6 @@ public class AVLNodeTest {
         assertEquals(one, root.getLeft());
         assertEquals(four, root.getRight());
         assertEquals(five, four.getRight());
-        assertEquals(three, one.getParent());
-        assertEquals(three, four.getParent());
-        assertEquals(four, five.getParent());
         assertEquals(4, root.getSize());
         UnitTestUtilities.validateAVLNode(root);
 
@@ -116,9 +109,6 @@ public class AVLNodeTest {
         assertTrue(five.hasLeft());
         assertFalse(five.hasRight());
         assertEquals(five.getLeft(), duplicateOne);
-        assertFalse(five.hasParent());
-        assertTrue(duplicateOne.hasParent());
-        assertEquals(duplicateOne.getParent(), five);
         assertFalse(duplicateOne.hasLeft());
         assertFalse(duplicateOne.hasRight());
         assertEquals(2, root.getSize());
@@ -132,28 +122,10 @@ public class AVLNodeTest {
         assertTrue(duplicateFive.hasLeft());
         assertFalse(duplicateFive.hasRight());
         assertEquals(duplicateFive.getLeft(), duplicateOne);
-        assertFalse(duplicateFive.hasParent());
-        assertTrue(duplicateOne.hasParent());
-        assertEquals(duplicateOne.getParent(), duplicateFive);
         assertFalse(duplicateOne.hasLeft());
         assertFalse(duplicateOne.hasRight());
         assertEquals(2, root.getSize());
         UnitTestUtilities.validateAVLNode(root);
-    }
-
-    /**
-     * Test behavior when insert() method is called on a non-root node.
-     */
-    @Test(expected=IllegalStateException.class)
-    public void testInvalidInsert_nonRootNode(){
-        // Establish initial graph.
-        root = new AVLNode<>(5, null);    // Root.
-        AVLNode<Integer, String> one = new AVLNode<>(1, null);     // Not root.
-        root.insert(one);
-
-        // Insert new node at non-root node.
-        AVLNode<Integer, String> ten = new AVLNode<>(10, null);
-        one.insert(ten);  // This should cause exception.
     }
 
     /**
@@ -490,16 +462,6 @@ public class AVLNodeTest {
     }
 
     /**
-     * Test behavior when a delete is attempted at any node other than the root.
-     */
-    @Test(expected=IllegalStateException.class)
-    public void testDelete_notAtRoot(){
-        root = five;
-        root = root.insert(four);
-        four.delete(four.getKey());   // Should cause exception, due to being called on non-root.
-    }
-
-    /**
      * Test ability to search tree for specific Key.
      */
     @Test
@@ -519,16 +481,6 @@ public class AVLNodeTest {
 
         // Test if unavailable node is reported as unavailable.
         assertNull(root.retrieve(zero.getKey()));
-    }
-
-    /**
-     * Test behavior when Contains is called on a non-root node.
-     */
-    @Test(expected=IllegalStateException.class)
-    public void testContains_notAtRoot(){
-        root = five;
-        root = root.insert(four);
-        four.retrieve(four.getKey());  // Should cause exception, due to being called on non-root.
     }
 
     /**
