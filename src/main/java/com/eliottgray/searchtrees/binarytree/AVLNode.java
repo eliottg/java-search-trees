@@ -48,42 +48,42 @@ class AVLNode <Key extends Comparable<Key>> {
 
     /**
      * Perform recursive insertion.
-     * @param newAVLNode    Node to insert.
+     * @param key           Key to insert.
      * @return              Root node of tree.
      */
-    AVLNode<Key> insert(AVLNode<Key> newAVLNode, Comparator<Key> comparator){
+    AVLNode<Key> insert(Key key, Comparator<Key> comparator){
         // This position in the tree is currently occupied by current node.
         AVLNode<Key> root = this;
 
         // If key is to left of current:
-        if (comparator.compare(newAVLNode.key, this.key) < 0){
+        if (comparator.compare(key, this.key) < 0){
             if (this.hasLeft()){
                 // Insert down left subtree, contains new left subtree, and attach here.
-                this.setLeftAndRecalculate(this.left.insert(newAVLNode, comparator));
+                this.setLeftAndRecalculate(this.left.insert(key, comparator));
                 // Rotate if necessary, replacing this node as the head of this tree.
                 root = this.rotateRightIfUnbalanced();
             } else {
                 // I have no left, so I simply set it here.
-                this.setLeftAndRecalculate(newAVLNode);
+                this.setLeftAndRecalculate(new AVLNode<>(key));
             }
 
         // If key is to right of current:
-        } else if (comparator.compare(newAVLNode.key, this.key) > 0){
+        } else if (comparator.compare(key, this.key) > 0){
             // Insert down right subtree, contains new subtree head, and attach here.
             if (this.hasRight()){
-                this.setRightAndRecalculate(this.right.insert(newAVLNode, comparator));
+                this.setRightAndRecalculate(this.right.insert(key, comparator));
                 // Rotate if necessary, replacing this node as the head of this tree.
                 root = this.rotateLeftIfUnbalanced();
             } else {
                 // I have no right, so I simply set it here.
-                this.setRightAndRecalculate(newAVLNode);
+                this.setRightAndRecalculate(new AVLNode<>(key));
             }
         } else {
             // Duplicate key found; replace with parent.
-            newAVLNode.left = this.left;
-            newAVLNode.right = this.right;
-            newAVLNode.recalculateHeightAndSize();
-            root = newAVLNode;
+            root = new AVLNode<>(key);
+            root.left = this.left;
+            root.right = this.right;
+            root.recalculateHeightAndSize();
         }
 
         // Return whatever occupies this position of the tree, which may still be me, or not.

@@ -28,7 +28,7 @@ public class AVLTree_ITCase {
             boolean alreadyAdded = previousEntries.contains(randomNum);
             if (!alreadyAdded){
                 // Add to tree, duplicate cache to validate against.
-                avlTree.insert(randomNum);
+                avlTree = avlTree.insert(randomNum);
                 previousEntries.add(randomNum);
             }
 
@@ -62,7 +62,7 @@ public class AVLTree_ITCase {
             assertTrue(avlTree.contains(key));
 
             // Delete key from tree AND cache of previous entries.
-            avlTree.delete(key);
+            avlTree = avlTree.delete(key);
             remainingKeys -= 1;
 
             // Validate that value is gone from tree after deletion.

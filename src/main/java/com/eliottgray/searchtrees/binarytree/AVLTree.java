@@ -33,16 +33,28 @@ public class AVLTree<Key extends Comparable<Key>>{
         this.comparator = comparator;
     }
 
-    public void delete(Key key){
-        root = root.delete(key, comparator);
+    /**
+     * Construct a new tree.
+     * @param root          Existing root node.
+     * @param comparator    Comparator corresponding to current root node.
+     */
+    private AVLTree(AVLNode<Key> root, Comparator<Key> comparator){
+        this.root = root;
+        this.comparator = comparator;
     }
 
-    public void insert(Key key){
-        AVLNode<Key> newAVLNode = new AVLNode<>(key);
+    public AVLTree<Key> delete(Key key){
+        AVLNode<Key> newRoot = root.delete(key, comparator);
+        return new AVLTree<>(newRoot, comparator);
+    }
+
+    public AVLTree<Key> insert(Key key){
         if (isEmpty()){
-            root = newAVLNode;
+            AVLNode<Key> newRoot = new AVLNode<>(key);
+            return new AVLTree<>(newRoot, comparator);
         } else {
-            root = root.insert(newAVLNode, comparator);
+            AVLNode<Key> newRoot = root.insert(key, comparator);
+            return new AVLTree<>(newRoot, comparator);
         }
     }
 
