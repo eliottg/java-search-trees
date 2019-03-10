@@ -1,6 +1,7 @@
 package com.eliottgray.searchtrees.binarytree;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -11,25 +12,37 @@ import java.util.List;
  * 2) Space Complexity.  Given that each new data point creates a separate object, more memory that is necessary will not be allocated.
  * 3) Easy ordering.  Traversal of all elements in-order results in an ordered list; not something typically done with Hash Tables.
  * */
-public class AVLTree<Key extends Comparable<Key>, Value> {
+public class AVLTree<Key extends Comparable<Key>>{
 
-    private AVLNode<Key, Value> root;
+    private AVLNode<Key> root;
+    private Comparator<Key> comparator;
 
     /**
      * Empty tree, for adding items later.
      */
-    public AVLTree(){}
-
-    public void delete(Key key){
-        root = root.delete(key);
+    public AVLTree(){
+        this.comparator = new Comparator<Key>() {
+            @Override
+            public int compare(Key key1, Key key2) {
+                return key1.compareTo(key2);
+            }
+        };
     }
 
-    public void insert(Key key, Value value){
-        AVLNode<Key, Value> newAVLNode = new AVLNode<>(key, value);
+    public AVLTree(Comparator<Key> comparator){
+        this.comparator = comparator;
+    }
+
+    public void delete(Key key){
+        root = root.delete(key, comparator);
+    }
+
+    public void insert(Key key){
+        AVLNode<Key> newAVLNode = new AVLNode<>(key);
         if (isEmpty()){
             root = newAVLNode;
         } else {
-            root = root.insert(newAVLNode);
+            root = root.insert(newAVLNode, comparator);
         }
     }
 
@@ -37,7 +50,7 @@ public class AVLTree<Key extends Comparable<Key>, Value> {
         return root == null;
     }
 
-    AVLNode<Key, Value> getRoot(){
+    AVLNode<Key> getRoot(){
         return root;
     }
 
@@ -46,11 +59,11 @@ public class AVLTree<Key extends Comparable<Key>, Value> {
      * @param key     int value to search for.
      * @return          presence of value in tree.
      */
-    public Value get(Key key){
+    public boolean contains(Key key){
         if (root == null){
-            return null;
+            return false;
         } else {
-            return root.retrieve(key);
+            return root.contains(key, comparator);
         }
     }
 
@@ -62,7 +75,7 @@ public class AVLTree<Key extends Comparable<Key>, Value> {
         }
     }
 
-    public List<Value> toAscendingList(){
+    public List<Key> toAscendingList(){
         if (root == null){
             return new ArrayList<>();
         } else {
@@ -70,7 +83,7 @@ public class AVLTree<Key extends Comparable<Key>, Value> {
         }
     }
 
-    public List<Value> toDescendingList(){
+    public List<Key> toDescendingList(){
         if (root == null){
             return new ArrayList<>();
         } else {
@@ -78,11 +91,11 @@ public class AVLTree<Key extends Comparable<Key>, Value> {
         }
     }
 
-    public List<Value> getRange(Key start, Key end){
+    public List<Key> getRange(Key start, Key end){
         if (root == null){
             return new ArrayList<>();
         } else {
-            return root.getRange(start, end);
+            return root.getRange(start, end, comparator);
         }
     }
 }

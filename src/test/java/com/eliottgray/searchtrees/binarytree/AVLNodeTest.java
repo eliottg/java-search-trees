@@ -3,22 +3,20 @@ package com.eliottgray.searchtrees.binarytree;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
 public class AVLNodeTest {
-    private AVLNode<Integer, String> root;
-    private AVLNode<Integer, String> zero;
-    private AVLNode<Integer, String> one;
-    private AVLNode<Integer, String> two;
-    private AVLNode<Integer, String> three;
-    private AVLNode<Integer, String> four;
-    private AVLNode<Integer, String> five;
-    private AVLNode<Integer, String> six;
+    private AVLNode<Integer> root;
+    private AVLNode<Integer> zero;
+    private AVLNode<Integer> one;
+    private AVLNode<Integer> two;
+    private AVLNode<Integer> three;
+    private AVLNode<Integer> four;
+    private AVLNode<Integer> five;
+    private AVLNode<Integer> six;
+    private Comparator<Integer> comparator;
 
     /**
      * Set up test fixtures.
@@ -26,13 +24,20 @@ public class AVLNodeTest {
     @Before
     public void setUp(){
         // Create test nodes for insertion, deletion, etc.
-        zero = new AVLNode<>(0, "Zero");
-        one = new AVLNode<>(1, "One");
-        two = new AVLNode<>(2, "Two");
-        three = new AVLNode<>(3, "Three");
-        four = new AVLNode<>(4, "Four");
-        five = new AVLNode<>(5, "Five");
-        six = new AVLNode<>(6, "Six");
+        zero = new AVLNode<>(0);
+        one = new AVLNode<>(1);
+        two = new AVLNode<>(2);
+        three = new AVLNode<>(3);
+        four = new AVLNode<>(4);
+        five = new AVLNode<>(5);
+        six = new AVLNode<>(6);
+
+        comparator = new Comparator<Integer>() {
+            @Override
+            public int compare(Integer one, Integer two) {
+                return one.compareTo(two);
+            }
+        };
     }
 
     /**
@@ -41,7 +46,7 @@ public class AVLNodeTest {
     @Test
     public void testSingleNode(){
         Integer value = 400;
-        root = new AVLNode<>(value, null);
+        root = new AVLNode<>(value);
         assertFalse(root.hasLeft());
         assertFalse(root.hasRight());
         assertEquals(value, root.getKey());
@@ -64,14 +69,14 @@ public class AVLNodeTest {
         root = three;
 
         // Add left to root and test relationships.
-        root = root.insert(one);
+        root = root.insert(one, comparator);
         assertEquals(three, root);
         assertEquals(one, root.getLeft());
         assertEquals(2, root.getSize());
         UnitTestUtilities.validateAVLNode(root);
 
         // Add right to root and test properties.
-        root = root.insert(four);
+        root = root.insert(four, comparator);
         assertEquals(three, root);
         assertEquals(one, root.getLeft());
         assertEquals(four, root.getRight());
@@ -80,7 +85,7 @@ public class AVLNodeTest {
 
 
         // Add right child to right child of root.
-        root = root.insert(five);
+        root = root.insert(five, comparator);
         assertEquals(one, root.getLeft());
         assertEquals(four, root.getRight());
         assertEquals(five, four.getRight());
@@ -97,12 +102,12 @@ public class AVLNodeTest {
 
         // Establish initial graph.
         root = five;
-        root = root.insert(one);
+        root = root.insert(one, comparator);
         assertEquals(2, root.getSize());
 
         // Add duplicate nodes.
-        AVLNode<Integer, String> duplicateOne = new AVLNode<>(1, null);
-        root = root.insert(duplicateOne);
+        AVLNode<Integer> duplicateOne = new AVLNode<>(1);
+        root = root.insert(duplicateOne, comparator);
 
         // Test graph for duplicates.
         assertEquals(five, root);
@@ -114,8 +119,8 @@ public class AVLNodeTest {
         assertEquals(2, root.getSize());
         UnitTestUtilities.validateAVLNode(root);
 
-        AVLNode<Integer, String> duplicateFive = new AVLNode<>(5, null);
-        root = root.insert(duplicateFive);
+        AVLNode<Integer> duplicateFive = new AVLNode<>(5);
+        root = root.insert(duplicateFive, comparator);
 
         // Test graph for duplicates.
         assertEquals(duplicateFive, root);
@@ -147,8 +152,8 @@ public class AVLNodeTest {
         root = one;
 
         // Unbalance tree with insertions.
-        root = root.insert(two);
-        root = root.insert(three);
+        root = root.insert(two, comparator);
+        root = root.insert(three, comparator);
 
         // Verify first rotation
         assertEquals(two, root);
@@ -158,8 +163,8 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Unbalance tree with insertions.
-        root = root.insert(five);
-        root = root.insert(six);
+        root = root.insert(five, comparator);
+        root = root.insert(six, comparator);
 
         // Verify second rotation
         assertEquals(two, root);
@@ -171,7 +176,7 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Unbalance tree with insertions.
-        root = root.insert(four);
+        root = root.insert(four, comparator);
 
         // Verify complex rotation.
         assertEquals(three, root);
@@ -204,8 +209,8 @@ public class AVLNodeTest {
         root = six;
 
         // Unbalance tree with insertions.
-        root = root.insert(five);
-        root = root.insert(four);
+        root = root.insert(five, comparator);
+        root = root.insert(four, comparator);
 
         // Verify first rotation
         assertEquals(five, root);
@@ -215,8 +220,8 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Unbalance tree with insertions.
-        root = root.insert(two);
-        root = root.insert(one);
+        root = root.insert(two, comparator);
+        root = root.insert(one, comparator);
 
         // Verify second rotation
         assertEquals(five, root);
@@ -228,7 +233,7 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Unbalance tree with insertions.
-        root = root.insert(three);
+        root = root.insert(three, comparator);
 
         // Verify complex rotation.
         assertEquals(four, root);
@@ -257,15 +262,15 @@ public class AVLNodeTest {
     @Test
     public void testDelete_oneOrTwoChildren(){
         root = four;
-        root = root.insert(two);
-        root = root.insert(five);
-        root = root.insert(three);
-        root = root.insert(six);
+        root = root.insert(two, comparator);
+        root = root.insert(five, comparator);
+        root = root.insert(three, comparator);
+        root = root.insert(six, comparator);
         assertEquals(5, root.getSize());
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of a node with no children.
-        root = root.delete(6);
+        root = root.delete(6, comparator);
         assertNull(five.getRight());
         assertEquals(1, five.getHeight());
         assertEquals(four, root);
@@ -273,7 +278,7 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of a node with one child.
-        root = root.delete(2);
+        root = root.delete(2, comparator);
         assertEquals(four, root);
         assertEquals(three, root.getLeft());
         assertEquals(five, root.getRight());
@@ -282,13 +287,13 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of a node with no children.
-        root = root.delete(5);
+        root = root.delete(5, comparator);
         assertEquals(four, root);
         assertNull(root.getRight());
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of Root with one child.
-        root = root.delete(4);
+        root = root.delete(4, comparator);
         assertEquals(three, root);
         assertNull(root.getLeft());
         assertNull(root.getRight());
@@ -296,7 +301,7 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of Root with no child.
-        root = root.delete(3);
+        root = root.delete(3, comparator);
         assertNull(root);
     }
 
@@ -313,16 +318,16 @@ public class AVLNodeTest {
     @Test
     public void testDelete_rightRotation(){
         root = three;
-        root = root.insert(four);
-        root = root.insert(two);
-        root = root.insert(one);
+        root = root.insert(four, comparator);
+        root = root.insert(two, comparator);
+        root = root.insert(one, comparator);
 
         assertEquals(three, root);
         assertEquals(3, root.getHeight());
         UnitTestUtilities.validateAVLNode(root);
 
         // Deletion should cause rotation.
-        root = root.delete(four.getKey());
+        root = root.delete(four.getKey(), comparator);
         assertEquals(two, root);
         assertEquals(one, root.getLeft());
         assertEquals(three, root.getRight());
@@ -344,16 +349,16 @@ public class AVLNodeTest {
     @Test
     public void testDelete_leftRotation(){
         root = three;
-        root = root.insert(four);
-        root = root.insert(two);
-        root = root.insert(five);
+        root = root.insert(four, comparator);
+        root = root.insert(two, comparator);
+        root = root.insert(five, comparator);
 
         assertEquals(three, root);
         assertEquals(3, root.getHeight());
         UnitTestUtilities.validateAVLNode(root);
 
         // Deletion should cause rotation.
-        root = root.delete(two.getKey());
+        root = root.delete(two.getKey(), comparator);
         assertEquals(four, root);
         assertEquals(three, root.getLeft());
         assertEquals(five, root.getRight());
@@ -378,12 +383,12 @@ public class AVLNodeTest {
     @Test
     public void testDelete_rootWithTwoChildren(){
         root = four;
-        root = root.insert(one);
-        root = root.insert(six);
-        root = root.insert(three);
-        root = root.insert(zero);
-        root = root.insert(five);
-        root = root.insert(two);
+        root = root.insert(one, comparator);
+        root = root.insert(six, comparator);
+        root = root.insert(three, comparator);
+        root = root.insert(zero, comparator);
+        root = root.insert(five, comparator);
+        root = root.insert(two, comparator);
 
 
         assertEquals(four, root);
@@ -392,7 +397,7 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of root when LEFT subtree is longer.
-        root = root.delete(4);
+        root = root.delete(4, comparator);
         assertEquals(three, root);
         assertEquals(one, three.getLeft());
         assertEquals(six, three.getRight());
@@ -400,7 +405,7 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of root when Right subtree is longer OR subtrees are same size.
-        root = root.delete(3);
+        root = root.delete(3, comparator);
         assertEquals(five, root);
         assertEquals(one, root.getLeft());
         assertEquals(six, root.getRight());
@@ -408,7 +413,7 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of non-root.
-        root = root.delete(one.getKey());
+        root = root.delete(one.getKey(), comparator);
         assertEquals(five, root);
         assertEquals(two, root.getLeft());
         assertEquals(six, root.getRight());
@@ -425,7 +430,7 @@ public class AVLNodeTest {
     @Test
     public void testDelete_whenNothingToDelete(){
         root = four;
-        root = root.insert(one);
+        root = root.insert(one, comparator);
 
         // Verify state of tree.
         assertEquals(root, four);
@@ -434,7 +439,7 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Delete value that isn't in the tree, larger than largest node.
-        root = root.delete(99);
+        root = root.delete(99, comparator);
 
         // Verify same results as before the deletion.
         assertEquals(root, four);
@@ -443,7 +448,7 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Delete value that isn't in the tree, smaller than smallest node.
-        root = root.delete(-199);
+        root = root.delete(-199, comparator);
 
         // Verify same results as before the deletion.
         assertEquals(root, four);
@@ -452,7 +457,7 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(root);
 
         // Delete value that isn't in the tree, between the available node values.
-        root = root.delete(3);
+        root = root.delete(3, comparator);
 
         // Verify same results as before the deletion.
         assertEquals(root, four);
@@ -467,20 +472,20 @@ public class AVLNodeTest {
     @Test
     public void testContains(){
         root = five;
-        root = root.insert(four);
-        root = root.insert(six);
+        root = root.insert(four, comparator);
+        root = root.insert(six, comparator);
 
         // Test if root is found.
-        assertEquals(five.getValue(), root.retrieve(five.getKey()));
+        assertTrue(root.contains(five.getKey(), comparator));
 
         // Test if left leaf is found.
-        assertEquals(four.getValue(), root.retrieve(four.getKey()));
+        assertTrue(root.contains(four.getKey(), comparator));
 
         // Test if right leaf is found.
-        assertEquals(six.getValue(), root.retrieve(six.getKey()));
+        assertTrue(root.contains(six.getKey(), comparator));
 
         // Test if unavailable node is reported as unavailable.
-        assertNull(root.retrieve(zero.getKey()));
+        assertFalse(root.contains(zero.getKey(), comparator));
     }
 
     /**
@@ -489,20 +494,20 @@ public class AVLNodeTest {
     @Test
     public void testInOrderTraversal_outOrderTraversal(){
         root = five;
-        root = root.insert(six);
-        root = root.insert(zero);
-        root = root.insert(one);
-        root = root.insert(two);
-        root = root.insert(three);
+        root = root.insert(six, comparator);
+        root = root.insert(zero, comparator);
+        root = root.insert(one, comparator);
+        root = root.insert(two, comparator);
+        root = root.insert(three, comparator);
 
         // Test in order.
-        List<String> expectedList = Arrays.asList(zero.getValue(), one.getValue(), two.getValue(), three.getValue(), five.getValue(), six.getValue());
-        List<String> actualInOrderList = root.inOrderTraversal();
+        List<Integer> expectedList = Arrays.asList(zero.getKey(), one.getKey(), two.getKey(), three.getKey(), five.getKey(), six.getKey());
+        List<Integer> actualInOrderList = root.inOrderTraversal();
         assertEquals(expectedList, actualInOrderList);
 
         // Test out order.
         Collections.reverse(expectedList);
-        List<String> actualOutOrderList = root.outOrderTraversal();
+        List<Integer> actualOutOrderList = root.outOrderTraversal();
         assertEquals(expectedList, actualOutOrderList);
 
         UnitTestUtilities.validateAVLNode(root);
@@ -515,13 +520,13 @@ public class AVLNodeTest {
     public void testGetRangeList_presentInTree(){
         root = one;
 
-        root = root.insert(two);
-        root = root.insert(three);
-        root = root.insert(four);
-        root = root.insert(five);
+        root = root.insert(two, comparator);
+        root = root.insert(three, comparator);
+        root = root.insert(four, comparator);
+        root = root.insert(five, comparator);
 
-        List<String> expectedValues = new ArrayList<String>(){{add(two.getValue()); add(three.getValue()); add(four.getValue());}};
-        List<String> actualValues = root.getRange(two.getKey(), four.getKey());
+        List<Integer> expectedValues = new ArrayList<Integer>(){{add(two.getKey()); add(three.getKey()); add(four.getKey());}};
+        List<Integer> actualValues = root.getRange(two.getKey(), four.getKey(), comparator);
         assertEquals(expectedValues, actualValues);
     }
 
@@ -532,8 +537,8 @@ public class AVLNodeTest {
     public void testGetRangeList_notPresentInTree(){
         root = one;
 
-        List<String> expectedValues = new ArrayList<>();
-        List<String> actualValues = root.getRange(two.getKey(), four.getKey());
+        List<Integer> expectedValues = new ArrayList<>();
+        List<Integer> actualValues = root.getRange(two.getKey(), four.getKey(), comparator);
         assertEquals(expectedValues, actualValues);
     }
 }

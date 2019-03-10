@@ -1,30 +1,28 @@
 package com.eliottgray.searchtrees.binarytree;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-class AVLNode <Key extends Comparable<Key>, Value> {
+class AVLNode <Key extends Comparable<Key>> {
 
     private final Key key;
-    private final Value value;
     private int height;
     private int size;
-    private AVLNode<Key, Value> left;
-    private AVLNode<Key, Value> right;
+    private AVLNode<Key> left;
+    private AVLNode<Key> right;
 
-    AVLNode (Key key, Value value){
+    AVLNode (Key key){
         this.key = key;
-        this.value = value;
         this.height = 1;
         this.size = 1;
     }
 
     Key getKey(){ return key; }
-    Value getValue(){ return value; }
     int getHeight(){ return this.height; }
     int getSize(){ return this.size; }
-    AVLNode<Key, Value> getLeft(){ return this.left; }
-    AVLNode<Key, Value> getRight(){ return this.right; }
+    AVLNode<Key> getLeft(){ return this.left; }
+    AVLNode<Key> getRight(){ return this.right; }
 
     boolean hasLeft(){ return left != null; }
     boolean hasRight(){ return right != null; }
@@ -53,30 +51,29 @@ class AVLNode <Key extends Comparable<Key>, Value> {
      * @param newAVLNode    Node to insert.
      * @return              Root node of tree.
      */
-    AVLNode<Key, Value> insert(AVLNode<Key, Value> newAVLNode){
-        // This position in the tree is currently occupied by me.
-        AVLNode<Key, Value> root = this;   /// @todo is it less/more efficient to just return in the various blocks?
+    AVLNode<Key> insert(AVLNode<Key> newAVLNode, Comparator<Key> comparator){
+        // This position in the tree is currently occupied by current node.
+        AVLNode<Key> root = this;
 
         // If key is to left of current:
-        if (newAVLNode.key.compareTo(this.key) < 0){
-
+        if (comparator.compare(newAVLNode.key, this.key) < 0){
             if (this.hasLeft()){
-                // Insert down left subtree, retrieve new left subtree, and attach here.
-                this.setLeftAndRecalculate(this.left.insert(newAVLNode));
+                // Insert down left subtree, contains new left subtree, and attach here.
+                this.setLeftAndRecalculate(this.left.insert(newAVLNode, comparator));
                 // Rotate if necessary, replacing this node as the head of this tree.
-                root = rotateRightIfUnbalanced();
+                root = this.rotateRightIfUnbalanced();
             } else {
                 // I have no left, so I simply set it here.
                 this.setLeftAndRecalculate(newAVLNode);
             }
 
         // If key is to right of current:
-        } else if (newAVLNode.key.compareTo(this.key) > 0){
-            // Insert down right subtree, retrieve new subtree head, and attach here.
+        } else if (comparator.compare(newAVLNode.key, this.key) > 0){
+            // Insert down right subtree, contains new subtree head, and attach here.
             if (this.hasRight()){
-                this.setRightAndRecalculate(this.right.insert(newAVLNode));
+                this.setRightAndRecalculate(this.right.insert(newAVLNode, comparator));
                 // Rotate if necessary, replacing this node as the head of this tree.
-                root = rotateLeftIfUnbalanced();
+                root = this.rotateLeftIfUnbalanced();
             } else {
                 // I have no right, so I simply set it here.
                 this.setRightAndRecalculate(newAVLNode);
@@ -98,83 +95,81 @@ class AVLNode <Key extends Comparable<Key>, Value> {
      * @param key   Key to find.
      * @return      Value for key; else null.
      */
-    Value retrieve(Key key){
-        AVLNode<Key, Value> current = this;
-        Value result = null;
-        boolean complete = false;
-        while(!complete){
-            if (current.key.compareTo(key) == 0){
-                result = current.value;
-                complete = true;
+    boolean contains(Key key, Comparator<Key> comparator){
+        AVLNode<Key> current = this;
+        Boolean contains = null;
+        while(contains == null){
+            if (comparator.compare(current.key, key) == 0){
+                contains = true;
             } else if (current.hasLeft() && (key.compareTo(current.key)) < 0){
                 current = current.left;
             } else if (current.hasRight() && (key.compareTo(current.key)) > 0){
                 current = current.right;
             } else {
-                complete = true;
+                contains = false;
             }
         }
-        return result;
+        return contains;
     }
 
-    List<Value> getRange(Key start, Key end){
-        List<Value> result = new ArrayList<>();
-        return this.getRange(start, end, result);
+    List<Key> getRange(Key start, Key end, Comparator<Key> comparator){
+        List<Key> result = new ArrayList<>();
+        return this.getRange(start, end, result, comparator);
     }
 
-    private List<Value> getRange(Key start, Key end, List<Value> result){
-        boolean isLessThan = start.compareTo(this.key) <= 0;
-        boolean isGreaterThan = end.compareTo(this.key) >= 0;
+    private List<Key> getRange(Key start, Key end, List<Key> result, Comparator<Key> comparator){
+        boolean isLessThan = comparator.compare(start, this.key) <= 0;
+        boolean isGreaterThan = comparator.compare(end, this.key) >= 0;
         if (isLessThan && this.hasLeft()){
-            result = left.getRange(start, end, result);
+            result = left.getRange(start, end, result, comparator);
         }
         if (isLessThan && isGreaterThan){
-            result.add(this.value);
+            result.add(this.key);
         }
         if (isGreaterThan && this.hasRight()){
-            result = right.getRange(start, end, result);
+            result = right.getRange(start, end, result, comparator);
         }
         return result;
     }
 
-    List<Value> inOrderTraversal(){
-        List<Value> result = new ArrayList<>(this.size);
+    List<Key> inOrderTraversal(){
+        List<Key> result = new ArrayList<>(this.size);
         return this.inOrderTraversal(result);
     }
 
-    private List<Value> inOrderTraversal(List<Value> result){
+    private List<Key> inOrderTraversal(List<Key> result){
         if (this.hasLeft()){
             result = left.inOrderTraversal(result);
         }
-        result.add(this.value);
+        result.add(this.key);
         if (this.hasRight()){
             result = right.inOrderTraversal(result);
         }
         return result;
     }
 
-    List<Value> outOrderTraversal(){
-        List<Value> result = new ArrayList<>(this.size);
+    List<Key> outOrderTraversal(){
+        List<Key> result = new ArrayList<>(this.size);
         return this.outOrderTraversal(result);
     }
 
-    private List<Value> outOrderTraversal(List<Value> result){
+    private List<Key> outOrderTraversal(List<Key> result){
         if (this.hasRight()){
             result = right.outOrderTraversal(result);
         }
-        result.add(this.value);
+        result.add(this.key);
         if (this.hasLeft()){
             result = left.outOrderTraversal(result);
         }
         return result;
     }
 
-    private void setLeftAndRecalculate(AVLNode<Key, Value> left){
+    private void setLeftAndRecalculate(AVLNode<Key> left){
         this.left = left;
         recalculateHeightAndSize();
     }
 
-    private void setRightAndRecalculate(AVLNode<Key, Value> right){
+    private void setRightAndRecalculate(AVLNode<Key> right){
         this.right = right;
         recalculateHeightAndSize();
     }
@@ -198,10 +193,12 @@ class AVLNode <Key extends Comparable<Key>, Value> {
 
     }
 
-    private AVLNode<Key, Value> rotateRightIfUnbalanced(){
+    private AVLNode<Key> rotateRightIfUnbalanced(){
+        // This position in the tree is currently occupied by current node.
+        AVLNode<Key> root = this;
 
         if (this.getBalanceFactor() < -1){
-            // Left side is longer, so rotate right.
+            // Tree is unbalanced, so rotate right.
 
             // If left subtree is larger on the right, left subtree must be rotated left before this node rotates right.
             if (this.left.getBalanceFactor() > 0){
@@ -209,14 +206,17 @@ class AVLNode <Key extends Comparable<Key>, Value> {
             }
 
             // Replace current node with left child, moving current down and right.
-            return this.rotateRight();
+            root = this.rotateRight();
         }
-        return this;
+        return root;
     }
 
-    private AVLNode<Key, Value> rotateLeftIfUnbalanced(){
+    private AVLNode<Key> rotateLeftIfUnbalanced(){
+        // This position in the tree is currently occupied by me.
+        AVLNode<Key> root = this;
+
         if (this.getBalanceFactor() > 1){
-            // Right side is longer, so rotate left.
+            // Tree is unbalanced, so rotate left.
 
             // If right subtree is larger on the left, right subtree must be rotated right before this node rotates left.
             if (this.right.getBalanceFactor() < 0){
@@ -224,9 +224,9 @@ class AVLNode <Key extends Comparable<Key>, Value> {
             }
 
             // Replace current node with left child, moving current down and right.
-            return this.rotateLeft();
+            root = this.rotateLeft();
         }
-        return this;
+        return root;
     }
 
 
@@ -243,19 +243,15 @@ class AVLNode <Key extends Comparable<Key>, Value> {
      *                           / \
      *                          2   7
      */
-    private AVLNode<Key, Value> rotateLeft(){
-        // Pivot is my right.
-        AVLNode<Key, Value> pivot = this.right;
-
-        // My new right is pivot left.
+    private AVLNode<Key> rotateLeft(){
+        // Rotate self with pivot.
+        AVLNode<Key> pivot = this.right;
         this.right = pivot.left;
-
-        // Pivot left is now me.
         pivot.left = this;
 
         // Recalculate heights.
-        this.recalculateHeightAndSize();  // Recalculate child first, to get correct counts.
-        pivot.recalculateHeightAndSize(); // Now we recalculate replacement.
+        this.recalculateHeightAndSize();  // Recalculate child first, to contains correct counts for pivot..
+        pivot.recalculateHeightAndSize();
 
         return pivot;
     }
@@ -273,19 +269,15 @@ class AVLNode <Key extends Comparable<Key>, Value> {
      *                                       /  \
      *                                     12    20
      */
-    private AVLNode<Key, Value> rotateRight(){
-        // Pivot is my left.
-        AVLNode<Key, Value> pivot = this.left;
-
-        // My new left is pivot right.
+    private AVLNode<Key> rotateRight(){
+        // Rotate self with pivot.
+        AVLNode<Key> pivot = this.left;
         this.left = pivot.right;
-
-        // Pivvot right is now me.
         pivot.right = this;
 
         // Recalculate heights.
-        this.recalculateHeightAndSize();  // Recalculate child first, to get correct counts.
-        pivot.recalculateHeightAndSize(); // Now we recalculate replacement.
+        this.recalculateHeightAndSize();  // Recalculate child first, to contains correct counts for pivot..
+        pivot.recalculateHeightAndSize();
 
         return pivot;
     }
@@ -296,16 +288,16 @@ class AVLNode <Key extends Comparable<Key>, Value> {
      * @param key       Key to delete.
      * @return          Root node.
      */
-    AVLNode<Key, Value> delete(Key key){
-        AVLNode<Key, Value> root = this;  // Return nothing if I delete myself and there is no replacement.
-        if (key.compareTo(this.key) < 0) {
+    AVLNode<Key> delete(Key key, Comparator<Key> comparator){
+        AVLNode<Key> root = this;
+        if (comparator.compare(key, this.key) < 0) {
             if (this.hasLeft()) {
-                this.setLeftAndRecalculate(this.left.delete(key));
+                this.setLeftAndRecalculate(this.left.delete(key, comparator));
                 root = rotateLeftIfUnbalanced();
             }
-        } else if (key.compareTo(this.key) > 0){
+        } else if (comparator.compare(key, this.key) > 0){
             if (this.hasRight()){
-                this.setRightAndRecalculate(this.right.delete(key));
+                this.setRightAndRecalculate(this.right.delete(key, comparator));
                 root = rotateRightIfUnbalanced();
             }
         } else {
@@ -315,7 +307,7 @@ class AVLNode <Key extends Comparable<Key>, Value> {
                 root = this.findReplacementChild();
 
                 // Delete replacement itself, which removes its connections to its child (if any)
-                this.delete(root.key);
+                this.delete(root.key, comparator);
 
                 // Delete replacement's connections.
                 root.left = this.left;
@@ -344,8 +336,8 @@ class AVLNode <Key extends Comparable<Key>, Value> {
      *
      * @return      Node to replace the current node in a deletion.
      */
-    private AVLNode<Key, Value> findReplacementChild(){
-        AVLNode<Key, Value> replacement;
+    private AVLNode<Key> findReplacementChild(){
+        AVLNode<Key> replacement;
         if (getBalanceFactor() > -1){
             // Right subtree is longer or tree is equal.
             replacement = this.right;

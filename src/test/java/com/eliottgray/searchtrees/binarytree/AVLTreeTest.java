@@ -13,13 +13,13 @@ public class AVLTreeTest {
 
     @Test
     public void testConstructor_emptyTree(){
-        AVLTree<Integer, String> avlTree = new AVLTree<>();
+        AVLTree<Integer> avlTree = new AVLTree<>();
         assertTrue(avlTree.isEmpty());
-        assertNull(avlTree.get(3));
+        assertFalse(avlTree.contains(3));
 
-        avlTree.insert(3, "Three");
+        avlTree.insert(3);
         assertFalse(avlTree.isEmpty());
-        assertEquals("Three", avlTree.get(3));
+        assertTrue(avlTree.contains(3));
 
         UnitTestUtilities.validateAVLTree(avlTree);
     }
@@ -34,15 +34,15 @@ public class AVLTreeTest {
      */
     @Test
     public void testConstructor_orderedArray_leftRotation(){
-        AVLTree<Integer, String> avlTree = new AVLTree<>();
-        avlTree.insert(1, "One");
-        avlTree.insert(2, "Two");
-        avlTree.insert(3, "Three");
+        AVLTree<Integer> avlTree = new AVLTree<>();
+        avlTree.insert(1);
+        avlTree.insert(2);
+        avlTree.insert(3);
         assertFalse(avlTree.isEmpty());
-        assertEquals("One", avlTree.get(1));
-        assertEquals("Two", avlTree.get(2));
-        assertEquals("Three", avlTree.get(3));
-        assertNull(avlTree.get(4));
+        assertTrue(avlTree.contains(1));
+        assertTrue(avlTree.contains(2));
+        assertTrue(avlTree.contains(3));
+        assertFalse(avlTree.contains(4));
 
         // Verify that tree rotates left to 2 as root.
         Integer expected = 2;
@@ -61,15 +61,15 @@ public class AVLTreeTest {
      */
     @Test
     public void testConstructor_orderedArray_rightRotation(){
-        AVLTree<Integer, String> avlTree = new AVLTree<>();
-        avlTree.insert(3, "Three");
-        avlTree.insert(2, "Two");
-        avlTree.insert(1, "One");
+        AVLTree<Integer> avlTree = new AVLTree<>();
+        avlTree.insert(3);
+        avlTree.insert(2);
+        avlTree.insert(1);
         assertFalse(avlTree.isEmpty());
-        assertEquals("One", avlTree.get(1));
-        assertEquals("Two", avlTree.get(2));
-        assertEquals("Three", avlTree.get(3));
-        assertNull(avlTree.get(4));
+        assertTrue(avlTree.contains(1));
+        assertTrue(avlTree.contains(2));
+        assertTrue(avlTree.contains(3));
+        assertFalse(avlTree.contains(4));
 
         // Verify that tree rotates right to 2 as root.
         Integer expected = 2;
@@ -90,15 +90,15 @@ public class AVLTreeTest {
      */
     @Test
     public void testDelete(){
-        AVLTree<Integer, String> avlTree = new AVLTree<>();
-        avlTree.insert(2, "Two");
-        avlTree.insert(1, "One");
-        avlTree.insert(3, "Three");
-        avlTree.insert(4, "Four");
-        assertEquals("Four", avlTree.get(4));
+        AVLTree<Integer> avlTree = new AVLTree<>();
+        avlTree.insert(2);
+        avlTree.insert(1);
+        avlTree.insert(3);
+        avlTree.insert(4);
+        assertTrue(avlTree.contains(4));
         avlTree.delete(4);
 
-        assertNull(avlTree.get(4));
+        assertFalse(avlTree.contains(4));
 
         UnitTestUtilities.validateAVLTree(avlTree);
     }
@@ -108,17 +108,17 @@ public class AVLTreeTest {
      */
     @Test
     public void testGetSize(){
-        AVLTree<Integer, Integer> avlTree = new AVLTree<>();
+        AVLTree<Integer> avlTree = new AVLTree<>();
         assertEquals(0, avlTree.size());
 
         // Insert new values and test size.
-        avlTree.insert(3, null);
+        avlTree.insert(3);
         assertEquals(1, avlTree.size());
-        avlTree.insert(4, null);
+        avlTree.insert(4);
         assertEquals(2, avlTree.size());
 
         // Inserting duplicate value does not increase size.
-        avlTree.insert(3, null);
+        avlTree.insert(3);
         assertEquals(2, avlTree.size());
 
         // Deleting value not in tree does not decrease size.
@@ -139,14 +139,14 @@ public class AVLTreeTest {
      */
     @Test
     public void testToSortedArray(){
-        AVLTree<Integer, Integer> avlTree = new AVLTree<>();
+        AVLTree<Integer> avlTree = new AVLTree<>();
 
         List<Integer> emptyList = avlTree.toAscendingList();
         assertTrue(emptyList.isEmpty());
 
         List<Integer> inputValues = new ArrayList<Integer>(){{add(50); add(2); add(10); add(4); add(1);}};
         for (Integer integer : inputValues) {
-            avlTree.insert(integer, integer);
+            avlTree.insert(integer);
         }
 
         Collections.sort(inputValues);
@@ -161,14 +161,14 @@ public class AVLTreeTest {
      */
     @Test
     public void testToReversedArray(){
-        AVLTree<Integer, Integer> avlTree = new AVLTree<>();
+        AVLTree<Integer> avlTree = new AVLTree<>();
 
         List<Integer> emptyList = avlTree.toDescendingList();
         assertTrue(emptyList.isEmpty());
 
         List<Integer> inputValues = new ArrayList<Integer>(){{add(50); add(2); add(10); add(4); add(1);}};
         for (Integer integer : inputValues) {
-            avlTree.insert(integer, integer);
+            avlTree.insert(integer);
         }
 
         Collections.sort(inputValues);
@@ -184,11 +184,11 @@ public class AVLTreeTest {
      */
     @Test
     public void testGetRange(){
-        AVLTree<Integer, Integer> avlTree = new AVLTree<>();
+        AVLTree<Integer> avlTree = new AVLTree<>();
 
         List<Integer> inputValues = new ArrayList<Integer>(){{add(1); add(2); add(3); add(4); add(5);}};
         for (Integer integer : inputValues) {
-            avlTree.insert(integer, integer);
+            avlTree.insert(integer);
         }
 
         List<Integer> expectedRange = new ArrayList<Integer>(){{add(2); add(3); add(4);}};
@@ -196,5 +196,75 @@ public class AVLTreeTest {
         Integer end = 4;
         List<Integer> actualRange = avlTree.getRange(start, end);
         assertEquals(expectedRange, actualRange);
+    }
+
+    /**
+     * Test a variety of operations with a different comparable object, and a different comparator.
+     */
+    @Test
+    public void testCustomComparable_withDefaultComparator(){
+        AVLTree<CustomComparable> defaultComparatorTree = new AVLTree<>();
+
+        String blue = "BLUE";
+        String red = "RED";
+        Integer one = 1;
+        Integer two = 2;
+        CustomComparable blueOne = new CustomComparable(blue, one);
+        CustomComparable blueTwo = new CustomComparable(blue, two);
+        CustomComparable redOne = new CustomComparable(red, one);
+        CustomComparable redTwo = new CustomComparable(red, two);
+
+        defaultComparatorTree.insert(redTwo);
+        defaultComparatorTree.insert(redOne);
+
+        assertTrue(defaultComparatorTree.contains(redOne));
+        assertTrue(defaultComparatorTree.contains(redTwo));
+        assertFalse(defaultComparatorTree.contains(blueOne));
+        assertFalse(defaultComparatorTree.contains(blueTwo));
+        assertEquals(2, defaultComparatorTree.size());
+
+        defaultComparatorTree.insert(blueTwo);
+        defaultComparatorTree.insert(blueOne);
+
+        assertTrue(defaultComparatorTree.contains(redOne));
+        assertTrue(defaultComparatorTree.contains(redTwo));
+        assertTrue(defaultComparatorTree.contains(blueOne));
+        assertTrue(defaultComparatorTree.contains(blueTwo));
+        assertEquals(4, defaultComparatorTree.size());
+
+        defaultComparatorTree.delete(redTwo);
+
+        assertTrue(defaultComparatorTree.contains(redOne));
+        assertFalse(defaultComparatorTree.contains(redTwo));
+        assertTrue(defaultComparatorTree.contains(blueOne));
+        assertTrue(defaultComparatorTree.contains(blueTwo));
+        assertEquals(3, defaultComparatorTree.size());
+
+
+
+    }
+
+
+    private class CustomComparable implements Comparable<CustomComparable>{
+
+        private String color;
+        private Integer number;
+
+        private CustomComparable(String color, Integer number){
+            this.color = color;
+            this.number = number;
+        }
+
+        @Override
+        public int compareTo(CustomComparable o) {
+            int colorResult = this.color.compareTo(o.color);
+            if (colorResult < 0){
+                return -1;
+            } else if (colorResult > 0){
+                return 1;
+            } else {
+                return this.number.compareTo(o.number);
+            }
+        }
     }
 }
