@@ -14,8 +14,32 @@ class AVLNode <Key extends Comparable<Key>> {
 
     AVLNode (Key key){
         this.key = key;
+        this.left = null;
+        this.right = null;
         this.height = 1;
         this.size = 1;
+    }
+
+    private AVLNode(Key key, AVLNode<Key> left, AVLNode<Key> right){
+        this.key = key;
+        this.left = left;
+        this.right = right;
+
+        int leftHeight = 0;
+        int rightHeight = 0;
+        int leftSize = 0;
+        int rightSize = 0;
+        if (hasLeft()){
+            leftHeight = left.height;
+            leftSize = left.size;
+        }
+        if (hasRight()){
+            rightHeight = right.height;
+            rightSize = right.size;
+        }
+        this.size = 1 + leftSize + rightSize;
+        this.height = (rightHeight > leftHeight) ? (rightHeight + 1) : (leftHeight + 1);
+
     }
 
     Key getKey(){ return key; }
@@ -53,37 +77,40 @@ class AVLNode <Key extends Comparable<Key>> {
      */
     AVLNode<Key> insert(Key key, Comparator<Key> comparator){
         // This position in the tree is currently occupied by current node.
-        AVLNode<Key> root = this;
+        AVLNode<Key> root;
 
         // If key is to left of current:
         if (comparator.compare(key, this.key) < 0){
             if (this.hasLeft()){
                 // Insert down left subtree, contains new left subtree, and attach here.
-                this.setLeftAndRecalculate(this.left.insert(key, comparator));
+                AVLNode<Key> newLeft = this.left.insert(key, comparator);
+                root = new AVLNode<>(this.key, newLeft, this.right);
+
                 // Rotate if necessary, replacing this node as the head of this tree.
-                root = this.rotateRightIfUnbalanced();
+                root = root.rotateRightIfUnbalanced();
             } else {
                 // I have no left, so I simply set it here.
-                this.setLeftAndRecalculate(new AVLNode<>(key));
+                AVLNode<Key> newLeft = new AVLNode<>(key);
+                root= new AVLNode<>(this.key, newLeft, this.right);
             }
 
         // If key is to right of current:
         } else if (comparator.compare(key, this.key) > 0){
             // Insert down right subtree, contains new subtree head, and attach here.
             if (this.hasRight()){
-                this.setRightAndRecalculate(this.right.insert(key, comparator));
+                AVLNode<Key> newRight = this.right.insert(key, comparator);
+                root = new AVLNode<>(this.key, this.left, newRight);
+
                 // Rotate if necessary, replacing this node as the head of this tree.
-                root = this.rotateLeftIfUnbalanced();
+                root = root.rotateLeftIfUnbalanced();
             } else {
                 // I have no right, so I simply set it here.
-                this.setRightAndRecalculate(new AVLNode<>(key));
+                AVLNode<Key> newRight = new AVLNode<>(key);
+                root = new AVLNode<>(this.key, this.left, newRight);
             }
         } else {
-            // Duplicate key found; replace with parent.
-            root = new AVLNode<>(key);
-            root.left = this.left;
-            root.right = this.right;
-            root.recalculateHeightAndSize();
+            // Duplicate key found; replace this.
+            root = new AVLNode<>(key, this.left, this.right);
         }
 
         // Return whatever occupies this position of the tree, which may still be me, or not.
@@ -146,16 +173,6 @@ class AVLNode <Key extends Comparable<Key>> {
             result = right.inOrderTraversal(result);
         }
         return result;
-    }
-
-    private void setLeftAndRecalculate(AVLNode<Key> left){
-        this.left = left;
-        recalculateHeightAndSize();
-    }
-
-    private void setRightAndRecalculate(AVLNode<Key> right){
-        this.right = right;
-        recalculateHeightAndSize();
     }
 
     private void recalculateHeightAndSize(){
@@ -276,33 +293,36 @@ class AVLNode <Key extends Comparable<Key>> {
         AVLNode<Key> root;
         if (comparator.compare(key, this.key) < 0) {
             if (this.hasLeft()) {
-                this.setLeftAndRecalculate(this.left.delete(key, comparator));
-                root = rotateLeftIfUnbalanced();
+                AVLNode<Key> newLeft = this.left.delete(key, comparator);
+                root = new AVLNode<>(this.key, newLeft, this.right);
+
+                root = root.rotateLeftIfUnbalanced();
             } else {
-                // Key is not in this tree.
+                // Key is not in this tree; no need for change.
                 root = this;
             }
         } else if (comparator.compare(key, this.key) > 0){
             if (this.hasRight()){
-                this.setRightAndRecalculate(this.right.delete(key, comparator));
-                root = rotateRightIfUnbalanced();
+                AVLNode<Key> newRight = this.right.delete(key, comparator);
+                root = new AVLNode<>(this.key, this.left, newRight);
+
+                root = root.rotateRightIfUnbalanced();
             } else {
-                // Key is not in this tree.
+                // Key is not in this tree; no need for change.
                 root = this;
             }
         } else {
-            // Found key!  Now to delete. (delete = return left child, right child, or null;
+            // Found key!  Now to delete. (delete = return left child, right child, find a replacement from further down, or null;
             if (hasLeft() && hasRight()){
                 // Two children!  Find a replacement for this node from the longer subtree, which itself will have 1 or no children.
-                root = this.findReplacementChild();
+                Key replacementKey = this.findReplacementChild();
 
-                // Delete replacement itself, which removes its connections to its child (if any)
-                this.delete(root.key, comparator);
+                // Delete replacement child from this node's subtree, preparing it to take over for this node.
+                root = this.delete(replacementKey, comparator);
 
-                // Delete replacement's connections.
-                root.left = this.left;
-                root.right = this.right;
-                root.recalculateHeightAndSize();
+                // Replace this with copy of replacement child.
+                root = new AVLNode<>(replacementKey, root.left, root.right);
+
             } else {
                 if (hasLeft()){
                     root = this.left;
@@ -326,7 +346,7 @@ class AVLNode <Key extends Comparable<Key>> {
      *
      * @return      Node to replace the current node in a deletion.
      */
-    private AVLNode<Key> findReplacementChild(){
+    private Key findReplacementChild(){
         AVLNode<Key> replacement;
         if (getBalanceFactor() > -1){
             // Right subtree is longer or tree is equal.
@@ -342,7 +362,7 @@ class AVLNode <Key extends Comparable<Key>> {
                 replacement = replacement.getRight();
             }
         }
-        return replacement;
+        return replacement.key;
     }
 
 //    @Override

@@ -7,7 +7,6 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 public class AVLNodeTest {
-    private AVLNode<Integer> root;
     private Integer zero = 0;
     private Integer one = 1;
     private Integer two = 2;
@@ -27,7 +26,7 @@ public class AVLNodeTest {
      */
     @Test
     public void testSingleNode(){
-        root = new AVLNode<>(zero);
+        AVLNode<Integer> root = new AVLNode<>(zero);
         assertFalse(root.hasLeft());
         assertFalse(root.hasRight());
         assertNull(root.getLeft());
@@ -42,69 +41,70 @@ public class AVLNodeTest {
     /**
      * Manually construct a small graph of nodes, and test properties.
      *
+     * Ensure that upon creation of a new tree, that old tree retains its identities and properties.
+     *
      *          3
      *         /
      *       1
      */
     @Test
-    public void testInsertions_withoutUnbalancingTree(){
+    public void testInsertions_testImmutability(){
         // Start graph with initial node.
-        root = new AVLNode<>(three);
-
-        // Add left to root and test relationships.
-        root = root.insert(one, comparator);
-        assertEquals(three, root.getKey());
-        assertTrue(root.hasLeft());
-        assertFalse(root.hasRight());
-        assertEquals(one, root.getLeft().getKey());
-        assertFalse(root.getLeft().hasLeft() && root.getLeft().hasRight());
-        assertEquals(2, root.getSize());
-        assertEquals(2, root.getHeight());
-        assertTrue(root.contains(root.getLeft().getKey(), comparator));
-        assertTrue(root.contains(root.getKey(), comparator));
+        AVLNode<Integer> root = new AVLNode<>(three);
         UnitTestUtilities.validateAVLNode(root);
+
+        // Create new tree with additional node.
+        AVLNode<Integer> newRoot = root.insert(one, comparator);
+        UnitTestUtilities.validateAVLNode(newRoot);
+
+        // Verify old tree is unchanged.
+        assertEquals(three, root.getKey());
+        assertFalse(root.hasLeft());
+        assertFalse(root.hasRight());
+        assertEquals(1, root.getSize());
+        assertEquals(1, root.getHeight());
+        assertFalse(root.contains(one, comparator));
+        assertTrue(root.contains(three, comparator));
+
+        // Verify new tree contains new information.
+        assertEquals(three, newRoot.getKey());
+        assertTrue(newRoot.hasLeft());
+        assertFalse(newRoot.hasRight());
+        assertEquals(one, newRoot.getLeft().getKey());
+        assertFalse(newRoot.getLeft().hasLeft() && newRoot.getLeft().hasRight());
+        assertEquals(2, newRoot.getSize());
+        assertEquals(2, newRoot.getHeight());
+        assertTrue(newRoot.contains(newRoot.getLeft().getKey(), comparator));
+        assertTrue(newRoot.contains(newRoot.getKey(), comparator));
     }
 
-//    /**
-//     * Test that adding a duplicate node results in replacement of that node with the new one.
-//     */
-//    @Test
-//    public void testDuplicateKey(){
-//
-//        // Establish initial graph.
-//        root = new AVLNode<>(five);
-//        root = root.insert(one, comparator);
-//
-//        // Add duplicate leaf node.
-//        root = root.insert(one, comparator);
-//
-//        // Test graph for duplicates.
-//        assertEquals(five, root.getKey());
-//        assertTrue(root.hasLeft());
-//        assertFalse(root.hasRight());
-//        assertEquals(root.getLeft().getKey(), one);
-//        assertFalse(duplicateOne.hasLeft() && duplicateOne.hasRight());
-//        assertEquals(2, root.getSize());
-//        assertEquals(2, root.getHeight());
-//        assertTrue(root.contains(one.getKey(), comparator));
-//        assertTrue(root.contains(root.getKey(), comparator));
-//        UnitTestUtilities.validateAVLNode(root);
-//
-//        // Add duplicate root node.
-//        root = root.insert(five, comparator);
-//
-//        // Test graph for duplicates.
-//       assertEquals(duplicateFive, root);
-//       assertTrue(duplicateFive.hasLeft());
-//       assertFalse(duplicateFive.hasRight());
-//       assertEquals(duplicateFive.getLeft(), duplicateOne);
-//       assertFalse(duplicateOne.hasLeft() && duplicateOne.hasRight());
-//       assertEquals(2, root.getSize());
-//       assertEquals(2, root.getHeight());
-//       assertTrue(root.contains(one.getKey(), comparator));
-//       assertTrue(root.contains(five.getKey(), comparator));
-//       UnitTestUtilities.validateAVLNode(root);
-//    }
+    /**
+     * Test that adding a duplicate node results in replacement of that node with the new one.
+     */
+    @Test
+    public void testInsertions_withDuplicateKeys(){
+
+        // Establish initial graph.
+        AVLNode<Integer> root = new AVLNode<>(five);
+        root = root.insert(one, comparator);
+
+        // Add duplicate root node.
+        AVLNode<Integer> rootTwo = root.insert(five, comparator);
+
+        // Test that root nodes have a different identity, but they share the same child node.
+        assertEquals(root.getKey(), rootTwo.getKey());
+        assertNotEquals(root, rootTwo);
+        assertEquals(root.getLeft(), rootTwo.getLeft());
+
+        // Add duplicate child node.
+        AVLNode<Integer> rootThree = rootTwo.insert(one, comparator);
+
+        // Test that both root and child nodes of newest tree have new identities; replacing child requires replacing parent.
+        assertEquals(rootTwo.getKey(), rootThree.getKey());
+        assertNotEquals(rootTwo, rootThree);
+        assertEquals(rootTwo.getLeft().getKey(), rootThree.getLeft().getKey());
+        assertNotEquals(rootTwo.getLeft(), rootThree.getLeft());
+    }
 
     /**
      * Add multiple nodes to the far right branch, until the tree rotates 3 times.
@@ -122,7 +122,7 @@ public class AVLNodeTest {
      */
     @Test
     public void testAddValues_repeatedRotations_left(){
-        root = new AVLNode<>(one);
+        AVLNode<Integer> root = new AVLNode<>(one);
 
         // Unbalance tree with insertions.
         root = root.insert(two, comparator);
@@ -182,7 +182,7 @@ public class AVLNodeTest {
      */
     @Test
     public void testAddValues_repeatedRotations_right(){
-        root = new AVLNode<>(six);
+        AVLNode<Integer> root = new AVLNode<>(six);
 
         // Unbalance tree with insertions.
         root = root.insert(five, comparator);
@@ -241,7 +241,7 @@ public class AVLNodeTest {
     @Test
     public void testDelete_zeroOrOneChild(){
         // Construct initial tree.
-        root = new AVLNode<>(four);
+        AVLNode<Integer> root = new AVLNode<>(four);
         root = root.insert(two, comparator);
         root = root.insert(five, comparator);
         root = root.insert(three, comparator);
@@ -302,7 +302,7 @@ public class AVLNodeTest {
      */
     @Test
     public void testDelete_rightRotation(){
-        root = new AVLNode<>(three);
+        AVLNode<Integer> root = new AVLNode<>(three);
         root = root.insert(four, comparator);
         root = root.insert(two, comparator);
         root = root.insert(one, comparator);
@@ -332,7 +332,7 @@ public class AVLNodeTest {
      */
     @Test
     public void testDelete_leftRotation(){
-        root = new AVLNode<>(three);
+        AVLNode<Integer> root = new AVLNode<>(three);
         root = root.insert(four, comparator);
         root = root.insert(two, comparator);
         root = root.insert(five, comparator);
@@ -364,7 +364,7 @@ public class AVLNodeTest {
      */
     @Test
     public void testDelete_nodeWithTwoChildren(){
-        root = new AVLNode<>(four);
+        AVLNode<Integer> root = new AVLNode<>(four);
         root = root.insert(one, comparator);
         root = root.insert(six, comparator);
         root = root.insert(three, comparator);
@@ -415,7 +415,7 @@ public class AVLNodeTest {
      */
     @Test
     public void testDelete_whenNothingToDelete(){
-        root = new AVLNode<>(four);
+        AVLNode<Integer> root = new AVLNode<>(four);
         root = root.insert(one, comparator);
 
         // Delete value that isn't in the tree, larger than largest node.
@@ -450,11 +450,29 @@ public class AVLNodeTest {
     }
 
     /**
+     * Test that deletion of nodes properly results in replacement of all direct parent nodes.
+     */
+    @Test
+    public void testDelete_maintainsImmutability() {
+        AVLNode<Integer> root = new AVLNode<>(four);
+        root = root.insert(one, comparator);
+        root = root.insert(six, comparator);
+
+        // Delete left child of root, leaving root and right child.
+        AVLNode postDelete = root.delete(one, comparator);
+
+        // Ensure that root now has a new identity, but right child remains the same.
+        assertEquals(root.getKey(), postDelete.getKey());
+        assertNotEquals(root, postDelete);
+        assertEquals(root.getRight(), postDelete.getRight());
+    }
+
+    /**
      * Test ability to search tree for specific Key.
      */
     @Test
     public void testContains(){
-        root = new AVLNode<>(five);
+        AVLNode<Integer> root = new AVLNode<>(five);
         root = root.insert(four, comparator);
         root = root.insert(six, comparator);
 
@@ -476,7 +494,7 @@ public class AVLNodeTest {
      */
     @Test
     public void testInOrderTraversal(){
-        root = new AVLNode<>(five);
+        AVLNode<Integer> root = new AVLNode<>(five);
         root = root.insert(six, comparator);
         root = root.insert(zero, comparator);
         root = root.insert(one, comparator);
@@ -496,7 +514,7 @@ public class AVLNodeTest {
      */
     @Test
     public void testGetRangeList_presentInTree(){
-        root = new AVLNode<>(one);
+        AVLNode<Integer> root = new AVLNode<>(one);
 
         root = root.insert(two, comparator);
         root = root.insert(three, comparator);
@@ -513,7 +531,7 @@ public class AVLNodeTest {
      */
     @Test
     public void testGetRangeList_notPresentInTree(){
-        root = new AVLNode<>(one);
+        AVLNode<Integer> root = new AVLNode<>(one);
 
         List<Integer> expectedValues = new ArrayList<>();
         List<Integer> actualValues = root.getRange(two, four, comparator);
