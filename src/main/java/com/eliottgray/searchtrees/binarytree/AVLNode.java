@@ -6,12 +6,16 @@ import java.util.List;
 
 class AVLNode <Key extends Comparable<Key>> {
 
-    private final Key key;
-    private int height;
-    private int size;
-    private AVLNode<Key> left;
-    private AVLNode<Key> right;
+    final Key key;
+    final int height;
+    final int size;
+    final AVLNode<Key> left;
+    final AVLNode<Key> right;
 
+    /**
+     * Construct new leaf node, with no children.
+     * @param key   Comparable Key for node.
+     */
     AVLNode (Key key){
         this.key = key;
         this.left = null;
@@ -20,6 +24,12 @@ class AVLNode <Key extends Comparable<Key>> {
         this.size = 1;
     }
 
+    /**
+     * Construct replacement root node, with existing children.
+     * @param key       Comparable Key for node.
+     * @param left      Existing left child.
+     * @param right     Existing right child.
+     */
     private AVLNode(Key key, AVLNode<Key> left, AVLNode<Key> right){
         this.key = key;
         this.left = left;
@@ -42,12 +52,6 @@ class AVLNode <Key extends Comparable<Key>> {
 
     }
 
-    Key getKey(){ return key; }
-    int getHeight(){ return this.height; }
-    int getSize(){ return this.size; }
-    AVLNode<Key> getLeft(){ return this.left; }
-    AVLNode<Key> getRight(){ return this.right; }
-
     boolean hasLeft(){ return left != null; }
     boolean hasRight(){ return right != null; }
 
@@ -58,17 +62,7 @@ class AVLNode <Key extends Comparable<Key>> {
      * Else, balance factor is zero.
      * @return      integer describing the balance factor.
      */
-    private int getBalanceFactor(){ return getRightHeight() - getLeftHeight(); }
-
-    /**
-     * @return  Height of left subtree.
-     */
-    private int getLeftHeight(){ return hasLeft() ? left.height : 0; }
-
-    /**
-     * @return  Height of right subtree.
-     */
-    private int getRightHeight(){ return hasRight() ? right.height : 0; }
+    private int getBalanceFactor(){ return (hasRight() ? right.height : 0) - (hasLeft() ? left.height : 0); }
 
     /**
      * Perform recursive insertion.
@@ -175,39 +169,20 @@ class AVLNode <Key extends Comparable<Key>> {
         return result;
     }
 
-    private void recalculateHeightAndSize(){
-        int leftHeight = 0;
-        int rightHeight = 0;
-        int leftSize = 0;
-        int rightSize = 0;
-        if (hasLeft()){
-            leftHeight = left.height;
-            leftSize = left.size;
-        }
-        if (hasRight()){
-            rightHeight = right.height;
-            rightSize = right.size;
-        }
-        this.size = 1 + leftSize + rightSize;
-        this.height = rightHeight > leftHeight ? rightHeight : leftHeight;
-        this.height += 1;
-
-    }
-
     private AVLNode<Key> rotateRightIfUnbalanced(){
         // This position in the tree is currently occupied by current node.
         AVLNode<Key> root = this;
 
-        if (this.getBalanceFactor() < -1){
+        if (root.getBalanceFactor() < -1){
             // Tree is unbalanced, so rotate right.
 
             // If left subtree is larger on the right, left subtree must be rotated left before this node rotates right.
-            if (this.left.getBalanceFactor() > 0){
-                this.left = this.left.rotateLeft();
+            if (root.left.getBalanceFactor() > 0){
+                AVLNode<Key> newLeft = root.left.rotateLeft();
+                root = new AVLNode<>(root.key, newLeft, root.right);
             }
 
-            // Replace current node with left child, moving current down and right.
-            root = this.rotateRight();
+            root = root.rotateRight();
         }
         return root;
     }
@@ -216,16 +191,16 @@ class AVLNode <Key extends Comparable<Key>> {
         // This position in the tree is currently occupied by me.
         AVLNode<Key> root = this;
 
-        if (this.getBalanceFactor() > 1){
+        if (root.getBalanceFactor() > 1){
             // Tree is unbalanced, so rotate left.
 
             // If right subtree is larger on the left, right subtree must be rotated right before this node rotates left.
-            if (this.right.getBalanceFactor() < 0){
-                this.right = this.right.rotateRight();
+            if (root.right.getBalanceFactor() < 0){
+                AVLNode<Key> newRight = root.right.rotateRight();
+                root = new AVLNode<>(root.key, root.left, newRight);
             }
 
-            // Replace current node with left child, moving current down and right.
-            root = this.rotateLeft();
+            root = root.rotateLeft();
         }
         return root;
     }
@@ -245,16 +220,14 @@ class AVLNode <Key extends Comparable<Key>> {
      *                          2   7
      */
     private AVLNode<Key> rotateLeft(){
-        // Rotate self with pivot.
+        // Pivot is to my right.
         AVLNode<Key> pivot = this.right;
-        this.right = pivot.left;
-        pivot.left = this;
 
-        // Recalculate heights.
-        this.recalculateHeightAndSize();  // Recalculate child first, to contains correct counts for pivot..
-        pivot.recalculateHeightAndSize();
+        // Move self down and left.  My right is now pivot left.
+        AVLNode<Key> newThis = new AVLNode<>(this.key, this.left, pivot.left);
 
-        return pivot;
+        // Move pivot up and return.  I am now the new pivot's left.
+        return new AVLNode<>(pivot.key, newThis, pivot.right);
     }
 
     /**
@@ -271,16 +244,14 @@ class AVLNode <Key extends Comparable<Key>> {
      *                                     12    20
      */
     private AVLNode<Key> rotateRight(){
-        // Rotate self with pivot.
+        // Pivot is to my left.
         AVLNode<Key> pivot = this.left;
-        this.left = pivot.right;
-        pivot.right = this;
 
-        // Recalculate heights.
-        this.recalculateHeightAndSize();  // Recalculate child first, to contains correct counts for pivot..
-        pivot.recalculateHeightAndSize();
+        // Move self down and right.  My left is now pivot right.
+        AVLNode<Key> newThis = new AVLNode<>(this.key, pivot.right, this.right);
 
-        return pivot;
+        // Move pivot up and return.  I am now the new pivot's right.
+        return new AVLNode<>(pivot.key, pivot.left, newThis);
     }
 
     /**
@@ -352,14 +323,14 @@ class AVLNode <Key extends Comparable<Key>> {
             // Right subtree is longer or tree is equal.
             replacement = this.right;
             while (replacement.hasLeft()){
-                replacement = replacement.getLeft();
+                replacement = replacement.left;
             }
         } else {
             // Left subtree is longer.
             assert(getBalanceFactor() == -1);
             replacement = this.left;
             while (replacement.hasRight()){
-                replacement = replacement.getRight();
+                replacement = replacement.right;
             }
         }
         return replacement.key;

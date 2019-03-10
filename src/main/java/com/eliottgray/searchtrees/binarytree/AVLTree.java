@@ -83,7 +83,7 @@ public class AVLTree<Key extends Comparable<Key>>{
         if (root == null) {
             return 0;
         } else {
-            return root.getSize();
+            return root.size;
         }
     }
 

@@ -29,12 +29,12 @@ public class AVLNodeTest {
         AVLNode<Integer> root = new AVLNode<>(zero);
         assertFalse(root.hasLeft());
         assertFalse(root.hasRight());
-        assertNull(root.getLeft());
-        assertNull(root.getRight());
-        assertEquals(root.getKey(), new Integer(0));
-        assertEquals(1, root.getSize());
-        assertEquals(1, root.getHeight());
-        assertTrue(root.contains(root.getKey(), comparator));
+        assertNull(root.left);
+        assertNull(root.right);
+        assertEquals(root.key, new Integer(0));
+        assertEquals(1, root.size);
+        assertEquals(1, root.height);
+        assertTrue(root.contains(root.key, comparator));
         UnitTestUtilities.validateAVLNode(root);
     }
 
@@ -58,24 +58,24 @@ public class AVLNodeTest {
         UnitTestUtilities.validateAVLNode(newRoot);
 
         // Verify old tree is unchanged.
-        assertEquals(three, root.getKey());
+        assertEquals(three, root.key);
         assertFalse(root.hasLeft());
         assertFalse(root.hasRight());
-        assertEquals(1, root.getSize());
-        assertEquals(1, root.getHeight());
+        assertEquals(1, root.size);
+        assertEquals(1, root.height);
         assertFalse(root.contains(one, comparator));
         assertTrue(root.contains(three, comparator));
 
         // Verify new tree contains new information.
-        assertEquals(three, newRoot.getKey());
+        assertEquals(three, newRoot.key);
         assertTrue(newRoot.hasLeft());
         assertFalse(newRoot.hasRight());
-        assertEquals(one, newRoot.getLeft().getKey());
-        assertFalse(newRoot.getLeft().hasLeft() && newRoot.getLeft().hasRight());
-        assertEquals(2, newRoot.getSize());
-        assertEquals(2, newRoot.getHeight());
-        assertTrue(newRoot.contains(newRoot.getLeft().getKey(), comparator));
-        assertTrue(newRoot.contains(newRoot.getKey(), comparator));
+        assertEquals(one, newRoot.left.key);
+        assertFalse(newRoot.left.hasLeft() && newRoot.left.hasRight());
+        assertEquals(2, newRoot.size);
+        assertEquals(2, newRoot.height);
+        assertTrue(newRoot.contains(newRoot.left.key, comparator));
+        assertTrue(newRoot.contains(newRoot.key, comparator));
     }
 
     /**
@@ -92,18 +92,18 @@ public class AVLNodeTest {
         AVLNode<Integer> rootTwo = root.insert(five, comparator);
 
         // Test that root nodes have a different identity, but they share the same child node.
-        assertEquals(root.getKey(), rootTwo.getKey());
+        assertEquals(root.key, rootTwo.key);
         assertNotEquals(root, rootTwo);
-        assertEquals(root.getLeft(), rootTwo.getLeft());
+        assertEquals(root.left, rootTwo.left);
 
         // Add duplicate child node.
         AVLNode<Integer> rootThree = rootTwo.insert(one, comparator);
 
         // Test that both root and child nodes of newest tree have new identities; replacing child requires replacing parent.
-        assertEquals(rootTwo.getKey(), rootThree.getKey());
+        assertEquals(rootTwo.key, rootThree.key);
         assertNotEquals(rootTwo, rootThree);
-        assertEquals(rootTwo.getLeft().getKey(), rootThree.getLeft().getKey());
-        assertNotEquals(rootTwo.getLeft(), rootThree.getLeft());
+        assertEquals(rootTwo.left.key, rootThree.left.key);
+        assertNotEquals(rootTwo.left, rootThree.left);
     }
 
     /**
@@ -129,11 +129,11 @@ public class AVLNodeTest {
         root = root.insert(three, comparator);
 
         // Verify first rotation
-        assertEquals(two, root.getKey());
-        assertEquals(one, root.getLeft().getKey());
-        assertEquals(three, root.getRight().getKey());
-        assertEquals(3, root.getSize());
-        assertEquals(2, root.getHeight());
+        assertEquals(two, root.key);
+        assertEquals(one, root.left.key);
+        assertEquals(three, root.right.key);
+        assertEquals(3, root.size);
+        assertEquals(2, root.height);
         UnitTestUtilities.validateAVLNode(root);
 
         // Unbalance tree with insertions.
@@ -141,27 +141,27 @@ public class AVLNodeTest {
         root = root.insert(six, comparator);
 
         // Verify second rotation
-        assertEquals(two, root.getKey());
-        assertEquals(one, root.getLeft().getKey());
-        assertEquals(five, root.getRight().getKey());
-        assertEquals(three, root.getRight().getLeft().getKey());
-        assertEquals(six, root.getRight().getRight().getKey());
-        assertEquals(5, root.getSize());
-        assertEquals(3, root.getHeight());
+        assertEquals(two, root.key);
+        assertEquals(one, root.left.key);
+        assertEquals(five, root.right.key);
+        assertEquals(three, root.right.left.key);
+        assertEquals(six, root.right.right.key);
+        assertEquals(5, root.size);
+        assertEquals(3, root.height);
         UnitTestUtilities.validateAVLNode(root);
 
         // Unbalance tree with insertions.
         root = root.insert(four, comparator);
 
         // Verify complex rotation.
-        assertEquals(three, root.getKey());
-        assertEquals(two, root.getLeft().getKey());
-        assertEquals(one, root.getLeft().getLeft().getKey());
-        assertEquals(five, root.getRight().getKey());
-        assertEquals(four, root.getRight().getLeft().getKey());
-        assertEquals(six, root.getRight().getRight().getKey());
-        assertEquals(6, root.getSize());
-        assertEquals(3, root.getHeight());
+        assertEquals(three, root.key);
+        assertEquals(two, root.left.key);
+        assertEquals(one, root.left.left.key);
+        assertEquals(five, root.right.key);
+        assertEquals(four, root.right.left.key);
+        assertEquals(six, root.right.right.key);
+        assertEquals(6, root.size);
+        assertEquals(3, root.height);
         UnitTestUtilities.validateAVLNode(root);
 
     }
@@ -189,11 +189,11 @@ public class AVLNodeTest {
         root = root.insert(four, comparator);
 
         // Verify first rotation
-        assertEquals(five, root.getKey());
-        assertEquals(six, root.getRight().getKey());
-        assertEquals(four, root.getLeft().getKey());
-        assertEquals(3, root.getSize());
-        assertEquals(2, root.getHeight());
+        assertEquals(five, root.key);
+        assertEquals(six, root.right.key);
+        assertEquals(four, root.left.key);
+        assertEquals(3, root.size);
+        assertEquals(2, root.height);
         UnitTestUtilities.validateAVLNode(root);
 
         // Unbalance tree with insertions.
@@ -201,27 +201,27 @@ public class AVLNodeTest {
         root = root.insert(one, comparator);
 
         // Verify second rotation
-        assertEquals(five, root.getKey());
-        assertEquals(two, root.getLeft().getKey());
-        assertEquals(six, root.getRight().getKey());
-        assertEquals(one, root.getLeft().getLeft().getKey());
-        assertEquals(four, root.getLeft().getRight().getKey());
-        assertEquals(5, root.getSize());
-        assertEquals(3, root.getHeight());
+        assertEquals(five, root.key);
+        assertEquals(two, root.left.key);
+        assertEquals(six, root.right.key);
+        assertEquals(one, root.left.left.key);
+        assertEquals(four, root.left.right.key);
+        assertEquals(5, root.size);
+        assertEquals(3, root.height);
         UnitTestUtilities.validateAVLNode(root);
 
         // Unbalance tree with insertions.
         root = root.insert(three, comparator);
 
         // Verify complex rotation.
-        assertEquals(four, root.getKey());
-        assertEquals(two, root.getLeft().getKey());
-        assertEquals(five, root.getRight().getKey());
-        assertEquals(six, root.getRight().getRight().getKey());
-        assertEquals(one, root.getLeft().getLeft().getKey());
-        assertEquals(three, root.getLeft().getRight().getKey());
-        assertEquals(6, root.getSize());
-        assertEquals(3, root.getHeight());
+        assertEquals(four, root.key);
+        assertEquals(two, root.left.key);
+        assertEquals(five, root.right.key);
+        assertEquals(six, root.right.right.key);
+        assertEquals(one, root.left.left.key);
+        assertEquals(three, root.left.right.key);
+        assertEquals(6, root.size);
+        assertEquals(3, root.height);
         UnitTestUtilities.validateAVLNode(root);
 
     }
@@ -250,39 +250,39 @@ public class AVLNodeTest {
 
         // Test deletion of a node with no children.
         root = root.delete(six, comparator);
-        assertEquals(four, root.getKey());
-        assertEquals(five, root.getRight().getKey());
-        assertFalse(root.getRight().hasRight());
-        assertEquals(1, root.getRight().getSize());
-        assertEquals(1, root.getRight().getHeight());
-        assertEquals(3, root.getHeight());
-        assertEquals(4, root.getSize());
+        assertEquals(four, root.key);
+        assertEquals(five, root.right.key);
+        assertFalse(root.right.hasRight());
+        assertEquals(1, root.right.size);
+        assertEquals(1, root.right.height);
+        assertEquals(3, root.height);
+        assertEquals(4, root.size);
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of a node with one child.
         root = root.delete(two, comparator);
-        assertEquals(four, root.getKey());
-        assertEquals(three, root.getLeft().getKey());
-        assertEquals(five, root.getRight().getKey());
-        assertEquals(2, root.getHeight());
-        assertEquals(3, root.getSize());
-        assertEquals(1, root.getLeft().getHeight());
+        assertEquals(four, root.key);
+        assertEquals(three, root.left.key);
+        assertEquals(five, root.right.key);
+        assertEquals(2, root.height);
+        assertEquals(3, root.size);
+        assertEquals(1, root.left.height);
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of a node with no children.
         root = root.delete(five, comparator);
-        assertEquals(four, root.getKey());
-        assertNull(root.getRight());
-        assertEquals(2, root.getHeight());
-        assertEquals(2, root.getSize());
+        assertEquals(four, root.key);
+        assertNull(root.right);
+        assertEquals(2, root.height);
+        assertEquals(2, root.size);
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of Root with one child.
         root = root.delete(four, comparator);
-        assertEquals(three, root.getKey());
+        assertEquals(three, root.key);
         assertFalse(root.hasLeft() && root.hasRight());
-        assertEquals(1, root.getSize());
-        assertEquals(1, root.getHeight());
+        assertEquals(1, root.size);
+        assertEquals(1, root.height);
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of Root with no child.
@@ -307,15 +307,15 @@ public class AVLNodeTest {
         root = root.insert(two, comparator);
         root = root.insert(one, comparator);
 
-        assertEquals(three, root.getKey());
+        assertEquals(three, root.key);
 
         // Deletion should cause rotation.
         root = root.delete(four, comparator);
-        assertEquals(two, root.getKey());
-        assertEquals(one, root.getLeft().getKey());
-        assertEquals(three, root.getRight().getKey());
-        assertEquals(2, root.getHeight());
-        assertEquals(3, root.getSize());
+        assertEquals(two, root.key);
+        assertEquals(one, root.left.key);
+        assertEquals(three, root.right.key);
+        assertEquals(2, root.height);
+        assertEquals(3, root.size);
         UnitTestUtilities.validateAVLNode(root);
 
     }
@@ -337,15 +337,15 @@ public class AVLNodeTest {
         root = root.insert(two, comparator);
         root = root.insert(five, comparator);
 
-        assertEquals(three, root.getKey());
+        assertEquals(three, root.key);
 
         // Deletion should cause rotation.
         root = root.delete(two, comparator);
-        assertEquals(four, root.getKey());
-        assertEquals(three, root.getLeft().getKey());
-        assertEquals(five, root.getRight().getKey());
-        assertEquals(2, root.getHeight());
-        assertEquals(3, root.getSize());
+        assertEquals(four, root.key);
+        assertEquals(three, root.left.key);
+        assertEquals(five, root.right.key);
+        assertEquals(2, root.height);
+        assertEquals(3, root.size);
         UnitTestUtilities.validateAVLNode(root);
 
     }
@@ -372,41 +372,41 @@ public class AVLNodeTest {
         root = root.insert(five, comparator);
         root = root.insert(two, comparator);
 
-        assertEquals(four, root.getKey());
-        assertEquals(4, root.getHeight());
+        assertEquals(four, root.key);
+        assertEquals(4, root.height);
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of root when LEFT subtree is longer.
         root = root.delete(4, comparator);
-        assertEquals(three, root.getKey());
-        assertEquals(one, root.getLeft().getKey());
-        assertEquals(six, root.getRight().getKey());
-        assertEquals(five, root.getRight().getLeft().getKey());
-        assertEquals(zero, root.getLeft().getLeft().getKey());
-        assertEquals(two, root.getLeft().getRight().getKey());
-        assertEquals(3, root.getHeight());
-        assertEquals(6, root.getSize());
+        assertEquals(three, root.key);
+        assertEquals(one, root.left.key);
+        assertEquals(six, root.right.key);
+        assertEquals(five, root.right.left.key);
+        assertEquals(zero, root.left.left.key);
+        assertEquals(two, root.left.right.key);
+        assertEquals(3, root.height);
+        assertEquals(6, root.size);
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of root when Right subtree is longer OR subtrees are same size.
         root = root.delete(3, comparator);
-        assertEquals(five, root.getKey());
-        assertEquals(one, root.getLeft().getKey());
-        assertEquals(six, root.getRight().getKey());
-        assertEquals(zero, root.getLeft().getLeft().getKey());
-        assertEquals(two, root.getLeft().getRight().getKey());
-        assertEquals(3, root.getHeight());
-        assertEquals(5, root.getSize());
+        assertEquals(five, root.key);
+        assertEquals(one, root.left.key);
+        assertEquals(six, root.right.key);
+        assertEquals(zero, root.left.left.key);
+        assertEquals(two, root.left.right.key);
+        assertEquals(3, root.height);
+        assertEquals(5, root.size);
         UnitTestUtilities.validateAVLNode(root);
 
         // Test deletion of non-root with two children.
         root = root.delete(one, comparator);
-        assertEquals(five, root.getKey());
-        assertEquals(two, root.getLeft().getKey());
-        assertEquals(six, root.getRight().getKey());
-        assertEquals(zero, root.getLeft().getLeft().getKey());
-        assertEquals(3, root.getHeight());
-        assertEquals(4, root.getSize());
+        assertEquals(five, root.key);
+        assertEquals(two, root.left.key);
+        assertEquals(six, root.right.key);
+        assertEquals(zero, root.left.left.key);
+        assertEquals(3, root.height);
+        assertEquals(4, root.size);
         UnitTestUtilities.validateAVLNode(root);
     }
 
@@ -422,30 +422,30 @@ public class AVLNodeTest {
         root = root.delete(99, comparator);
 
         // Verify tree is unchanged.
-        assertEquals(root.getKey(), four);
-        assertEquals(one, root.getLeft().getKey());
-        assertEquals(2, root.getHeight());
-        assertEquals(2, root.getSize());
+        assertEquals(root.key, four);
+        assertEquals(one, root.left.key);
+        assertEquals(2, root.height);
+        assertEquals(2, root.size);
         UnitTestUtilities.validateAVLNode(root);
 
         // Delete value that isn't in the tree, smaller than smallest node.
         root = root.delete(-199, comparator);
 
         // Verify tree is unchanged.
-        assertEquals(root.getKey(), four);
-        assertEquals(one, root.getLeft().getKey());
-        assertEquals(2, root.getHeight());
-        assertEquals(2, root.getSize());
+        assertEquals(root.key, four);
+        assertEquals(one, root.left.key);
+        assertEquals(2, root.height);
+        assertEquals(2, root.size);
         UnitTestUtilities.validateAVLNode(root);
 
         // Delete value that isn't in the tree, between the available node values.
         root = root.delete(3, comparator);
         // Verify tree is unchanged.
         // Verify same results as before the deletion.
-        assertEquals(root.getKey(), four);
-        assertEquals(one, root.getLeft().getKey());
-        assertEquals(2, root.getHeight());
-        assertEquals(2, root.getSize());
+        assertEquals(root.key, four);
+        assertEquals(one, root.left.key);
+        assertEquals(2, root.height);
+        assertEquals(2, root.size);
         UnitTestUtilities.validateAVLNode(root);
     }
 
@@ -462,9 +462,9 @@ public class AVLNodeTest {
         AVLNode postDelete = root.delete(one, comparator);
 
         // Ensure that root now has a new identity, but right child remains the same.
-        assertEquals(root.getKey(), postDelete.getKey());
+        assertEquals(root.key, postDelete.key);
         assertNotEquals(root, postDelete);
-        assertEquals(root.getRight(), postDelete.getRight());
+        assertEquals(root.right, postDelete.right);
     }
 
     /**
