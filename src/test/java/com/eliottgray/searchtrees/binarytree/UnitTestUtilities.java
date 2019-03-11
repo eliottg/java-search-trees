@@ -6,7 +6,7 @@ class UnitTestUtilities {
         if (avlTree.isEmpty()){
             return true;
         } else {
-            AVLNode<Key> root = avlTree.getRoot();
+            AVLNode<Key> root = avlTree.root;
             return validateAVLNode(root);
         }
     }
