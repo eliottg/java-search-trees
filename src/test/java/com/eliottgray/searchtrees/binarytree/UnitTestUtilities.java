@@ -11,7 +11,6 @@ class UnitTestUtilities {
         }
     }
 
-
     static <Key extends Comparable<Key>> boolean validateAVLNode(AVLNode<Key> node){
 
         if (node == null){
@@ -42,6 +41,42 @@ class UnitTestUtilities {
         int expectedHeight = maxSubtreeHeight + 1;
         if (expectedHeight != node.height){
             throw new IllegalStateException(String.format("Invalid height for key %s, height %d, left height %d, right height %d", node.key.toString(), node.height, leftHeight, rightHeight));
+        }
+
+        // Validate relative order.
+        if (node.hasLeft() && node.left.key.compareTo(node.key) >= 0){
+            throw new IllegalStateException(String.format("Invalid left key for key %s, left key %s", node.key.toString(), node.left.key.toString()));
+
+        }
+        if (node.hasRight() && node.right.key.compareTo(node.key) <= 0){
+            throw new IllegalStateException(String.format("Invalid right key for key %s, right key %s", node.key.toString(), node.right.key.toString()));
+        }
+        return true;
+    }
+
+    static <Key extends Comparable<Key>> boolean validateBSTree(BSTree<Key> bsTree){
+        if (bsTree.isEmpty()){
+            return true;
+        } else {
+            BSTNode<Key> root = bsTree.root;
+            return validateBSTNode(root);
+        }
+    }
+
+    static <Key extends Comparable<Key>> boolean validateBSTNode(BSTNode<Key> node){
+
+        if (node == null){
+            return true;
+        }
+
+        // Validate left subtree.
+        if (node.hasLeft()){
+            validateBSTNode(node.left);
+        }
+
+        // Validate right subtree.
+        if (node.hasRight()){
+            validateBSTNode(node.right);
         }
 
         // Validate relative order.

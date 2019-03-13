@@ -9,56 +9,55 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class AVLTreeTest {
-
+public class BSTreeTest {
 
     /**
-     * Test construction of an AVL Tree, adding a key, and testing for presence.
+     * Test construction of an Binary Search Tree, adding a key, and testing for presence.
      */
     @Test
     public void testConstor_insert_contains(){
         // Initial tree is empty.
-        AVLTree<Integer> avlTree = new AVLTree<>();
-        assertTrue(avlTree.isEmpty());
-        assertFalse(avlTree.contains(3));
+        BSTree<Integer> bsTree = new BSTree<>();
+        assertTrue(bsTree.isEmpty());
+        assertFalse(bsTree.contains(3));
 
         // Construct new tree with added value.
-        AVLTree<Integer> avlTreeTwo = avlTree.insert(3);
+        BSTree<Integer> bsTreeTwo = bsTree.insert(3);
 
         // Old tree is still empty.
-        assertTrue(avlTree.isEmpty());
-        assertFalse(avlTree.contains(3));
+        assertTrue(bsTree.isEmpty());
+        assertFalse(bsTree.contains(3));
 
         // New tree correctly has value.
-        assertFalse(avlTreeTwo.isEmpty());
-        assertTrue(avlTreeTwo.contains(3));
+        assertFalse(bsTreeTwo.isEmpty());
+        assertTrue(bsTreeTwo.contains(3));
 
-        UnitTestUtilities.validateAVLTree(avlTreeTwo);
+        UnitTestUtilities.validateBSTree(bsTreeTwo);
     }
 
     /**
      * Delete node from the tree.
      *
      *                  Delete
-     *           [2]             3
-     *           / \            / \
-     *          1   3     ->   1   4
-     *               \
-     *                4
+     *            2              2
+     *           / \              \
+     *         [1]  3     ->       3
+     *               \              \
+     *                4              4
      */
     @Test
     public void testDelete(){
-        AVLTree<Integer> avlTree = new AVLTree<>();
-        avlTree = avlTree.insert(2);
-        avlTree = avlTree.insert(1);
-        avlTree = avlTree.insert(3);
-        avlTree = avlTree.insert(4);
-        assertTrue(avlTree.contains(4));
-        avlTree = avlTree.delete(4);
+        BSTree<Integer> bsTree = new BSTree<>();
+        bsTree = bsTree.insert(2);
+        bsTree = bsTree.insert(1);
+        bsTree = bsTree.insert(3);
+        bsTree = bsTree.insert(4);
+        assertTrue(bsTree.contains(1));
+        bsTree = bsTree.delete(1);
 
-        assertFalse(avlTree.contains(4));
+        assertFalse(bsTree.contains(1));
 
-        UnitTestUtilities.validateAVLTree(avlTree);
+        UnitTestUtilities.validateBSTree(bsTree);
     }
 
     /**
@@ -66,30 +65,30 @@ public class AVLTreeTest {
      */
     @Test
     public void testGetSize(){
-        AVLTree<Integer> avlTree = new AVLTree<>();
-        assertEquals(0, avlTree.size());
+        BSTree<Integer> bsTree = new BSTree<>();
+        assertEquals(0, bsTree.size());
 
         // Insert new values and test size.
-        avlTree = avlTree.insert(3);
-        assertEquals(1, avlTree.size());
-        avlTree = avlTree.insert(4);
-        assertEquals(2, avlTree.size());
+        bsTree = bsTree.insert(3);
+        assertEquals(1, bsTree.size());
+        bsTree = bsTree.insert(4);
+        assertEquals(2, bsTree.size());
 
         // Inserting duplicate value does not increase size.
-        avlTree = avlTree.insert(3);
-        assertEquals(2, avlTree.size());
+        bsTree = bsTree.insert(3);
+        assertEquals(2, bsTree.size());
 
         // Deleting value not in tree does not decrease size.
-        avlTree = avlTree.delete(999);
-        assertEquals(2, avlTree.size());
+        bsTree = bsTree.delete(999);
+        assertEquals(2, bsTree.size());
 
         // Deleting values decreases size back down to zero.
-        avlTree = avlTree.delete(4);
-        assertEquals(1, avlTree.size());
-        avlTree = avlTree.delete(3);
-        assertEquals(0, avlTree.size());
+        bsTree = bsTree.delete(4);
+        assertEquals(1, bsTree.size());
+        bsTree = bsTree.delete(3);
+        assertEquals(0, bsTree.size());
 
-        UnitTestUtilities.validateAVLTree(avlTree);
+        UnitTestUtilities.validateBSTree(bsTree);
     }
 
     /**
@@ -97,21 +96,21 @@ public class AVLTreeTest {
      */
     @Test
     public void testToSortedArray(){
-        AVLTree<Integer> avlTree = new AVLTree<>();
+        BSTree<Integer> bsTree = new BSTree<>();
 
-        List<Integer> emptyList = avlTree.toAscendingList();
+        List<Integer> emptyList = bsTree.toAscendingList();
         assertTrue(emptyList.isEmpty());
 
         List<Integer> inputValues = new ArrayList<Integer>(){{add(50); add(2); add(10); add(4); add(1);}};
         for (Integer integer : inputValues) {
-            avlTree = avlTree.insert(integer);
+            bsTree = bsTree.insert(integer);
         }
 
         Collections.sort(inputValues);
-        List<Integer> sortedList = avlTree.toAscendingList();
+        List<Integer> sortedList = bsTree.toAscendingList();
         assertEquals(inputValues, sortedList);
 
-        UnitTestUtilities.validateAVLTree(avlTree);
+        UnitTestUtilities.validateBSTree(bsTree);
     }
 
     /**
@@ -119,23 +118,23 @@ public class AVLTreeTest {
      */
     @Test
     public void testGetRange(){
-        AVLTree<Integer> avlTree = new AVLTree<>();
+        BSTree<Integer> bsTree = new BSTree<>();
 
-        // Test that an empty AVLTree returns no values.
-        List<Integer> shouldBeEmpty = avlTree.getRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        // Test that an empty BSTree returns no values.
+        List<Integer> shouldBeEmpty = bsTree.getRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
         assertTrue(shouldBeEmpty.isEmpty());
 
         // Insert values.
         List<Integer> inputValues = new ArrayList<Integer>(){{add(1); add(2); add(3); add(4); add(5);}};
         for (Integer integer : inputValues) {
-            avlTree = avlTree.insert(integer);
+            bsTree = bsTree.insert(integer);
         }
 
         // Test correct retrieval of a specific range.
         List<Integer> expectedRange = new ArrayList<Integer>(){{add(2); add(3); add(4);}};
         Integer start = 2;
         Integer end = 4;
-        List<Integer> actualRange = avlTree.getRange(start, end);
+        List<Integer> actualRange = bsTree.getRange(start, end);
         assertEquals(expectedRange, actualRange);
     }
 
@@ -157,17 +156,17 @@ public class AVLTreeTest {
             }
         };
 
-        AVLTree<Integer> avlTree = new AVLTree<>(customComparator);
+        BSTree<Integer> bsTree = new BSTree<>(customComparator);
 
         // Insert values.
         List<Integer> inputValues = new ArrayList<Integer>(){{add(-900); add(-800); add(1); add(2); add(3);}};
         for (Integer integer : inputValues) {
-            avlTree = avlTree.insert(integer);
+            bsTree = bsTree.insert(integer);
         }
 
         // Due to custom comparator sorting based on Absolute Value, larger negative values should come after smaller positive values.
         List<Integer> expectedOrder = new ArrayList<Integer>(){{add(1); add(2); add(3); add(-800); add(-900);}};
-        List<Integer> actualOrder = avlTree.toAscendingList();
+        List<Integer> actualOrder = bsTree.toAscendingList();
 
         assertEquals(expectedOrder, actualOrder);
     }
