@@ -72,9 +72,9 @@ class AVLNode <Key extends Comparable<Key>> {
     AVLNode<Key> insert(Key key, Comparator<Key> comparator){
         // This position in the tree is currently occupied by current node.
         AVLNode<Key> root;
-
+        int comparison = comparator.compare(key, this.key);
         // If key is to left of current:
-        if (comparator.compare(key, this.key) < 0){
+        if (comparison < 0){
             if (this.hasLeft()){
                 // Insert down left subtree, contains new left subtree, and attach here.
                 AVLNode<Key> newLeft = this.left.insert(key, comparator);
@@ -89,7 +89,7 @@ class AVLNode <Key extends Comparable<Key>> {
             }
 
         // If key is to right of current:
-        } else if (comparator.compare(key, this.key) > 0){
+        } else if (comparison > 0){
             // Insert down right subtree, contains new subtree head, and attach here.
             if (this.hasRight()){
                 AVLNode<Key> newRight = this.right.insert(key, comparator);
@@ -120,11 +120,12 @@ class AVLNode <Key extends Comparable<Key>> {
         AVLNode<Key> current = this;
         Boolean contains = null;
         while(contains == null){
-            if (comparator.compare(current.key, key) == 0){
+            int comparison = comparator.compare(key, current.key);
+            if (comparison == 0){
                 contains = true;
-            } else if (current.hasLeft() && (key.compareTo(current.key)) < 0){
+            } else if (current.hasLeft() && comparison < 0){
                 current = current.left;
-            } else if (current.hasRight() && (key.compareTo(current.key)) > 0){
+            } else if (current.hasRight() && comparison > 0){
                 current = current.right;
             } else {
                 contains = false;
@@ -262,7 +263,8 @@ class AVLNode <Key extends Comparable<Key>> {
      */
     AVLNode<Key> delete(Key key, Comparator<Key> comparator){
         AVLNode<Key> root;
-        if (comparator.compare(key, this.key) < 0) {
+        int comparison = comparator.compare(key, this.key);
+        if (comparison < 0) {
             if (this.hasLeft()) {
                 AVLNode<Key> newLeft = this.left.delete(key, comparator);
                 root = new AVLNode<>(this.key, newLeft, this.right);
@@ -272,7 +274,7 @@ class AVLNode <Key extends Comparable<Key>> {
                 // Key is not in this tree; no need for change.
                 root = this;
             }
-        } else if (comparator.compare(key, this.key) > 0){
+        } else if (comparison > 0){
             if (this.hasRight()){
                 AVLNode<Key> newRight = this.right.delete(key, comparator);
                 root = new AVLNode<>(this.key, this.left, newRight);
