@@ -1,10 +1,8 @@
 package com.eliottgray.searchtrees.binarytree;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
-class AVLNode <Key extends Comparable<Key>> {
+class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
 
     final Key key;
     final int height;
@@ -52,17 +50,11 @@ class AVLNode <Key extends Comparable<Key>> {
 
     }
 
-    boolean hasLeft(){ return left != null; }
-    boolean hasRight(){ return right != null; }
-
-    /**
-     * Describes the relative height of the left and right subtrees.
-     * If right tree is greater, balance factor is positive.
-     * If left tree is greater, balance factor is negative.
-     * Else, balance factor is zero.
-     * @return      integer describing the balance factor.
-     */
-    private int getBalanceFactor(){ return (hasRight() ? right.height : 0) - (hasLeft() ? left.height : 0); }
+    Node<Key> getLeft(){ return left; }
+    Node<Key> getRight(){ return right; }
+    int getHeight(){ return height; }
+    int getSize(){ return size; }
+    Key getKey(){ return key; }
 
     /**
      * Perform recursive insertion.
@@ -109,65 +101,6 @@ class AVLNode <Key extends Comparable<Key>> {
 
         // Return whatever occupies this position of the tree, which may still be me, or not.
         return root;
-    }
-
-    /**
-     * Retrieve the value for a given key if present within the tree; return null otherwise.
-     * @param key   Key to find.
-     * @return      Value for key; else null.
-     */
-    boolean contains(Key key, Comparator<Key> comparator){
-        AVLNode<Key> current = this;
-        Boolean contains = null;
-        while(contains == null){
-            int comparison = comparator.compare(key, current.key);
-            if (comparison == 0){
-                contains = true;
-            } else if (current.hasLeft() && comparison < 0){
-                current = current.left;
-            } else if (current.hasRight() && comparison > 0){
-                current = current.right;
-            } else {
-                contains = false;
-            }
-        }
-        return contains;
-    }
-
-    List<Key> getRange(Key start, Key end, Comparator<Key> comparator){
-        List<Key> result = new ArrayList<>();
-        return this.getRange(start, end, result, comparator);
-    }
-
-    private List<Key> getRange(Key start, Key end, List<Key> result, Comparator<Key> comparator){
-        boolean isLessThan = comparator.compare(start, this.key) <= 0;
-        boolean isGreaterThan = comparator.compare(end, this.key) >= 0;
-        if (isLessThan && this.hasLeft()){
-            result = left.getRange(start, end, result, comparator);
-        }
-        if (isLessThan && isGreaterThan){
-            result.add(this.key);
-        }
-        if (isGreaterThan && this.hasRight()){
-            result = right.getRange(start, end, result, comparator);
-        }
-        return result;
-    }
-
-    List<Key> inOrderTraversal(){
-        List<Key> result = new ArrayList<>(this.size);
-        return this.inOrderTraversal(result);
-    }
-
-    private List<Key> inOrderTraversal(List<Key> result){
-        if (this.hasLeft()){
-            result = left.inOrderTraversal(result);
-        }
-        result.add(this.key);
-        if (this.hasRight()){
-            result = right.inOrderTraversal(result);
-        }
-        return result;
     }
 
     private AVLNode<Key> rotateRightIfUnbalanced(){

@@ -1,8 +1,6 @@
 package com.eliottgray.searchtrees.binarytree;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Why use Binary Search Trees over, say, HashTables?
@@ -12,7 +10,7 @@ import java.util.List;
  * 2) Space Complexity.  Given that each new data point creates a separate object, more memory that is necessary will not be allocated.
  * 3) Easy ordering.  Traversal of all elements in-order results in an ordered list; not something typically done with Hash Tables.
  * */
-public class AVLTree<Key extends Comparable<Key>>{
+public class AVLTree<Key extends Comparable<Key>> extends Tree<Key>{
 
     final AVLNode<Key> root;
     private final Comparator<Key> comparator;
@@ -44,6 +42,9 @@ public class AVLTree<Key extends Comparable<Key>>{
         this.comparator = comparator;
     }
 
+    Node<Key> getRoot(){ return root; }
+    Comparator<Key> getComparator(){ return comparator; }
+
     public AVLTree<Key> delete(Key key){
         if (root == null){
             return this;
@@ -60,47 +61,6 @@ public class AVLTree<Key extends Comparable<Key>>{
         } else {
             AVLNode<Key> newRoot = root.insert(key, comparator);
             return new AVLTree<>(newRoot, comparator);
-        }
-    }
-
-    public boolean isEmpty(){
-        return root == null;
-    }
-
-    /**
-     * Retrieve the value for a given key within the tree.  Return null if not available.
-     * @param key     int value to search for.
-     * @return          presence of value in tree.
-     */
-    public boolean contains(Key key){
-        if (root == null){
-            return false;
-        } else {
-            return root.contains(key, comparator);
-        }
-    }
-
-    public int size(){
-        if (root == null) {
-            return 0;
-        } else {
-            return root.size;
-        }
-    }
-
-    public List<Key> toAscendingList(){
-        if (root == null){
-            return new ArrayList<>();
-        } else {
-            return root.inOrderTraversal();
-        }
-    }
-
-    public List<Key> getRange(Key start, Key end){
-        if (root == null){
-            return new ArrayList<>();
-        } else {
-            return root.getRange(start, end, comparator);
         }
     }
 }
