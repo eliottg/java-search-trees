@@ -6,10 +6,24 @@ import java.util.List;
 
 public abstract class Tree <Key extends Comparable<Key>> {
 
+    final Comparator<Key> comparator;
+
+    /**
+     * Empty tree. Comparison of Keys to be performed with default compareTo method.
+     */
+    public Tree(){
+        this.comparator = Comparable::compareTo;
+    }
+
+    /**
+     * Empty tree, with comparator override.
+     * @param comparator    Comparison function with which to override default compareTo of Key.
+     */
+    public Tree(Comparator<Key> comparator){
+        this.comparator = comparator;
+    }
 
     abstract Node<Key> getRoot();
-    abstract Comparator<Key> getComparator();
-
 
     public boolean isEmpty(){
         return getRoot() == null;
@@ -23,7 +37,6 @@ public abstract class Tree <Key extends Comparable<Key>> {
         }
     }
 
-
     /**
      * Retrieve the value for a given key within the tree.  Return null if not available.
      * @param key     int value to search for.
@@ -33,7 +46,7 @@ public abstract class Tree <Key extends Comparable<Key>> {
         if (isEmpty()){
             return false;
         } else {
-            return getRoot().contains(key, getComparator());
+            return getRoot().contains(key, comparator);
         }
     }
 
@@ -49,9 +62,11 @@ public abstract class Tree <Key extends Comparable<Key>> {
         if (isEmpty()){
             return new ArrayList<>();
         } else {
-            return getRoot().getRange(start, end, getComparator());
+            return getRoot().getRange(start, end, comparator);
         }
     }
+
+
 
 
 }

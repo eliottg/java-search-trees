@@ -13,14 +13,13 @@ import java.util.Comparator;
 public class BSTree<Key extends Comparable<Key>> extends Tree<Key> {
 
     final BSTNode<Key> root;
-    private final Comparator<Key> comparator;
 
     /**
      * Empty tree. Comparison of Keys to be performed with default compareTo method.
      */
     public BSTree(){
-        this.root = null;
-        this.comparator = Comparable::compareTo;
+        super();
+        root = null;
     }
 
     /**
@@ -28,8 +27,8 @@ public class BSTree<Key extends Comparable<Key>> extends Tree<Key> {
      * @param comparator    Comparison function with which to override default compareTo of Key.
      */
     public BSTree(Comparator<Key> comparator){
-        this.root = null;
-        this.comparator = comparator;
+        super(comparator);
+        root = null;
     }
 
     /**
@@ -38,12 +37,11 @@ public class BSTree<Key extends Comparable<Key>> extends Tree<Key> {
      * @param comparator    Comparator corresponding to current root node.
      */
     private BSTree(BSTNode<Key> root, Comparator<Key> comparator){
+        super(comparator);
         this.root = root;
-        this.comparator = comparator;
     }
 
     Node<Key> getRoot(){ return root; }
-    Comparator<Key> getComparator(){ return comparator; }
 
     public BSTree<Key> delete(Key key){
         if (root == null){

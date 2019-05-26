@@ -13,14 +13,13 @@ import java.util.Comparator;
 public class AVLTree<Key extends Comparable<Key>> extends Tree<Key>{
 
     final AVLNode<Key> root;
-    private final Comparator<Key> comparator;
 
     /**
      * Empty tree. Comparison of Keys to be performed with default compareTo method.
      */
     public AVLTree(){
+        super();
         this.root = null;
-        this.comparator = Comparable::compareTo;
     }
 
     /**
@@ -28,8 +27,8 @@ public class AVLTree<Key extends Comparable<Key>> extends Tree<Key>{
      * @param comparator    Comparison function with which to override default compareTo of Key.
      */
     public AVLTree(Comparator<Key> comparator){
+        super(comparator);
         this.root = null;
-        this.comparator = comparator;
     }
 
     /**
@@ -38,12 +37,11 @@ public class AVLTree<Key extends Comparable<Key>> extends Tree<Key>{
      * @param comparator    Comparator corresponding to current root node.
      */
     private AVLTree(AVLNode<Key> root, Comparator<Key> comparator){
+        super(comparator);
         this.root = root;
-        this.comparator = comparator;
     }
 
     Node<Key> getRoot(){ return root; }
-    Comparator<Key> getComparator(){ return comparator; }
 
     public AVLTree<Key> delete(Key key){
         if (root == null){

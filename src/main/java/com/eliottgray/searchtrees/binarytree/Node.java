@@ -83,4 +83,44 @@ abstract class Node <Key extends Comparable<Key>> {
         return result;
     }
 
+    /**
+     * Given that this node has two children, find the optimal child to replace the current node
+     * in a delete; optimal child is either the largest child in the left subtree,
+     * or the smallest child in the right subtree.
+     *
+     * Which is chosen, right or left, depends on which subtree is higher; picking the higher subtree
+     * eliminates the need to rotate the tree after deletion.
+     *
+     * @return      Node to replace the current node in a deletion.
+     */
+    Key findDeletionReplacement(){
+        if (getBalanceFactor() > -1){
+            return findLeftMostChildOfRightSubtree();
+        } else {
+            return findRightMostChildOfLeftSubtree();
+        }
+    }
+
+    /**
+     * @return      Key belonging to the immediate in-order successor.
+     */
+    private Key findLeftMostChildOfRightSubtree(){
+        Node<Key> child = this.getRight();
+        while (child.hasLeft()){
+            child = child.getLeft();
+        }
+        return child.getKey();
+    }
+
+    /**
+     * @return      Key belonging to the immediate in-order predecessor.
+     */
+    private Key findRightMostChildOfLeftSubtree(){
+        Node<Key> child = this.getLeft();
+        while (child.hasRight()){
+            child = child.getRight();
+        }
+        return child.getKey();
+    }
+
 }

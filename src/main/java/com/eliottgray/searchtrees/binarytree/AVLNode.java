@@ -221,7 +221,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
             // Found key!  Now to delete. (delete = return left child, right child, find a replacement from further down, or null;
             if (hasLeft() && hasRight()){
                 // Two children!  Find a replacement for this node from the longer subtree, which itself will have 1 or no children.
-                Key replacementKey = this.findReplacementChild();
+                Key replacementKey = this.findDeletionReplacement();
 
                 // Delete replacement child from this node's subtree, preparing it to take over for this node.
                 root = this.delete(replacementKey, comparator);
@@ -240,35 +240,6 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
             }
         }
         return root;
-    }
-
-    /**
-     * Given that this node has two children, find the optimal child to replace the current node
-     * in a delete; optimal child is either the largest child in the left subtree,
-     * or the smallest child in the right subtree.
-     *
-     * Which is chosen, right or left, depends on which subtree is higher; picking the higher subtree
-     * eliminates the need to rotate the tree after deletion.
-     *
-     * @return      Node to replace the current node in a deletion.
-     */
-    private Key findReplacementChild(){
-        AVLNode<Key> replacement;
-        if (getBalanceFactor() > -1){
-            // Right subtree is longer or tree is equal.
-            replacement = this.right;
-            while (replacement.hasLeft()){
-                replacement = replacement.left;
-            }
-        } else {
-            // Left subtree is longer.
-            assert(getBalanceFactor() == -1);
-            replacement = this.left;
-            while (replacement.hasRight()){
-                replacement = replacement.right;
-            }
-        }
-        return replacement.key;
     }
 
 //    @Override
