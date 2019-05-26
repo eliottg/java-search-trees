@@ -13,7 +13,7 @@ public class BSTree_ITCase {
      * Construct a tree with random keys and values, and periodically validate that the state of the tree is valid.
      */
     @Test
-    public void testRandomTree_Integers(){
+    public void testRandomTree_Integers() throws InvalidSearchTreeException{
 
         BSTree<Integer> bsTree = new BSTree<>();
 
@@ -35,13 +35,13 @@ public class BSTree_ITCase {
             // Validate incrementally.
             boolean meetsValidationCriteria = previousEntries.size() % checkThreshold == 0;
             if (meetsValidationCriteria){
-                assertTrue(UnitTestUtilities.validateBSTree(bsTree));
+                bsTree.validate();
                 assertEquals(previousEntries.size(), bsTree.size());
             }
         }
 
         // Validate completed tree.
-        assertTrue(UnitTestUtilities.validateBSTree(bsTree));
+        bsTree.validate();
         assertEquals(previousEntries.size(), bsTree.size());
 
         // Validate in-order.
@@ -51,7 +51,7 @@ public class BSTree_ITCase {
         assertEquals(expectedValues, actualInOrderValues);
 
         // Validate tree after
-        assertTrue(UnitTestUtilities.validateBSTree(bsTree));
+        bsTree.validate();
         assertEquals(previousEntries.size(), bsTree.size());
 
         // Delete keys one at a time until tree is empty; validating incrementally.
@@ -71,7 +71,7 @@ public class BSTree_ITCase {
             // Validate incrementally.
             boolean meetsValidationCriteria = remainingKeys % checkThreshold == 0;
             if (meetsValidationCriteria){
-                assertTrue(UnitTestUtilities.validateBSTree(bsTree));
+                bsTree.validate();
                 assertEquals(remainingKeys, bsTree.size());
             }
         }

@@ -66,7 +66,9 @@ public abstract class Tree <Key extends Comparable<Key>> {
         }
     }
 
-
-
-
+    void validate () throws InvalidSearchTreeException{
+        if (!isEmpty()) {
+            getRoot().validate();
+        }
+    }
 }

@@ -15,7 +15,7 @@ public class BSTreeTest {
      * Test construction of an Binary Search Tree, adding a key, and testing for presence.
      */
     @Test
-    public void testConstor_insert_contains(){
+    public void testConstor_insert_contains() throws InvalidSearchTreeException{
         // Initial tree is empty.
         BSTree<Integer> bsTree = new BSTree<>();
         assertTrue(bsTree.isEmpty());
@@ -32,7 +32,7 @@ public class BSTreeTest {
         assertFalse(bsTreeTwo.isEmpty());
         assertTrue(bsTreeTwo.contains(3));
 
-        UnitTestUtilities.validateBSTree(bsTreeTwo);
+        bsTreeTwo.validate();
     }
 
     /**
@@ -46,7 +46,7 @@ public class BSTreeTest {
      *                4              4
      */
     @Test
-    public void testDelete(){
+    public void testDelete() throws InvalidSearchTreeException{
         BSTree<Integer> bsTree = new BSTree<>();
         bsTree = bsTree.insert(2);
         bsTree = bsTree.insert(1);
@@ -57,14 +57,14 @@ public class BSTreeTest {
 
         assertFalse(bsTree.contains(1));
 
-        UnitTestUtilities.validateBSTree(bsTree);
+        bsTree.validate();
     }
 
     /**
      * Test size changes as nodes increase and decrease.
      */
     @Test
-    public void testGetSize(){
+    public void testGetSize() throws InvalidSearchTreeException{
         BSTree<Integer> bsTree = new BSTree<>();
         assertEquals(0, bsTree.size());
 
@@ -88,14 +88,14 @@ public class BSTreeTest {
         bsTree = bsTree.delete(3);
         assertEquals(0, bsTree.size());
 
-        UnitTestUtilities.validateBSTree(bsTree);
+        bsTree.validate();
     }
 
     /**
      * Test representation of tree as ascending, ordered list.
      */
     @Test
-    public void testToSortedArray(){
+    public void testToSortedArray() throws InvalidSearchTreeException{
         BSTree<Integer> bsTree = new BSTree<>();
 
         List<Integer> emptyList = bsTree.toAscendingList();
@@ -110,7 +110,7 @@ public class BSTreeTest {
         List<Integer> sortedList = bsTree.toAscendingList();
         assertEquals(inputValues, sortedList);
 
-        UnitTestUtilities.validateBSTree(bsTree);
+        bsTree.validate();
     }
 
     /**

@@ -242,6 +242,27 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
         return root;
     }
 
+    @Override
+    void validate() throws InvalidSearchTreeException{
+        super.validate();
+
+        // Validate size.
+        int leftSize = hasLeft() ? getLeft().getSize() : 0;
+        int rightSize = hasRight() ? getRight().getSize() : 0;
+        if ((leftSize + rightSize + 1) != getSize()){
+            throw new InvalidSearchTreeException(String.format("Invalid size for key %s, size %d, left size %d, right size %d", getKey().toString(), getSize(), leftSize, rightSize));
+        }
+
+        // Validate height.
+        int leftHeight = hasLeft() ? getLeft().getHeight() : 0;
+        int rightHeight = hasRight() ? getRight().getHeight() : 0;
+        int maxSubtreeHeight = leftHeight >= rightHeight ? leftHeight : rightHeight;
+        int expectedHeight = maxSubtreeHeight + 1;
+        if (expectedHeight != height){
+            throw new InvalidSearchTreeException(String.format("Invalid height for key %s, height %d, left height %d, right height %d", getKey().toString(), getHeight(), leftHeight, rightHeight));
+        }
+    }
+
 //    @Override
 //    public String toString() {
 //        /// @todo add Value when available.

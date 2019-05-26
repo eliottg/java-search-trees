@@ -123,4 +123,23 @@ abstract class Node <Key extends Comparable<Key>> {
         return child.getKey();
     }
 
+    void validate() throws InvalidSearchTreeException{
+        // Validate left subtree.
+        if (hasLeft()){
+            Node<Key> left = getLeft();
+            if (left.getKey().compareTo(getKey()) >= 0){
+                throw new InvalidSearchTreeException(String.format("Invalid left key for key %s, left key %s", getKey().toString(), left.getKey().toString()));
+            }
+            left.validate();
+        }
+
+        // Validate right subtree.
+        if (hasRight()){
+            Node<Key> right = getRight();
+            if (right.getKey().compareTo(getKey()) <= 0) {
+                throw new InvalidSearchTreeException(String.format("Invalid right key for key %s, right key %s", getKey().toString(), getRight().getKey().toString()));
+            }
+            right.validate();
+        }
+    }
 }

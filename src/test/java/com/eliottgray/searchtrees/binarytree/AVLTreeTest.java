@@ -16,7 +16,7 @@ public class AVLTreeTest {
      * Test construction of an AVL Tree, adding a key, and testing for presence.
      */
     @Test
-    public void testConstor_insert_contains(){
+    public void testConstor_insert_contains() throws InvalidSearchTreeException{
         // Initial tree is empty.
         AVLTree<Integer> avlTree = new AVLTree<>();
         assertTrue(avlTree.isEmpty());
@@ -33,7 +33,7 @@ public class AVLTreeTest {
         assertFalse(avlTreeTwo.isEmpty());
         assertTrue(avlTreeTwo.contains(3));
 
-        UnitTestUtilities.validateAVLTree(avlTreeTwo);
+        avlTreeTwo.validate();
     }
 
     /**
@@ -47,7 +47,7 @@ public class AVLTreeTest {
      *                4
      */
     @Test
-    public void testDelete(){
+    public void testDelete() throws InvalidSearchTreeException{
         AVLTree<Integer> avlTree = new AVLTree<>();
         avlTree = avlTree.insert(2);
         avlTree = avlTree.insert(1);
@@ -58,14 +58,14 @@ public class AVLTreeTest {
 
         assertFalse(avlTree.contains(4));
 
-        UnitTestUtilities.validateAVLTree(avlTree);
+        avlTree.validate();
     }
 
     /**
      * Test size changes as nodes increase and decrease.
      */
     @Test
-    public void testGetSize(){
+    public void testGetSize() throws InvalidSearchTreeException{
         AVLTree<Integer> avlTree = new AVLTree<>();
         assertEquals(0, avlTree.size());
 
@@ -89,14 +89,14 @@ public class AVLTreeTest {
         avlTree = avlTree.delete(3);
         assertEquals(0, avlTree.size());
 
-        UnitTestUtilities.validateAVLTree(avlTree);
+        avlTree.validate();
     }
 
     /**
      * Test representation of tree as ascending, ordered list.
      */
     @Test
-    public void testToSortedArray(){
+    public void testToSortedArray() throws InvalidSearchTreeException{
         AVLTree<Integer> avlTree = new AVLTree<>();
 
         List<Integer> emptyList = avlTree.toAscendingList();
@@ -111,7 +111,7 @@ public class AVLTreeTest {
         List<Integer> sortedList = avlTree.toAscendingList();
         assertEquals(inputValues, sortedList);
 
-        UnitTestUtilities.validateAVLTree(avlTree);
+        avlTree.validate();
     }
 
     /**

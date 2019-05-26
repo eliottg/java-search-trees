@@ -28,7 +28,7 @@ public class BSTNodeTest {
      * Construct a single node, and test properties.
      */
     @Test
-    public void testSingleNode(){
+    public void testSingleNode() throws InvalidSearchTreeException{
         BSTNode<Integer> root = new BSTNode<>(zero);
         assertFalse(root.hasLeft());
         assertFalse(root.hasRight());
@@ -38,7 +38,7 @@ public class BSTNodeTest {
         assertEquals(1, root.size);
         assertEquals(1, root.height);
         assertTrue(root.contains(root.key, comparator));
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
     }
 
     /**
@@ -51,14 +51,14 @@ public class BSTNodeTest {
      *       1
      */
     @Test
-    public void testInsertions_testImmutability(){
+    public void testInsertions_testImmutability() throws InvalidSearchTreeException{
         // Start graph with initial node.
         BSTNode<Integer> root = new BSTNode<>(three);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
 
         // Create new tree with additional node.
         BSTNode<Integer> newRoot = root.insert(one, comparator);
-        UnitTestUtilities.validateBSTNode(newRoot);
+        newRoot.validate();
 
         // Verify old tree is unchanged.
         assertEquals(three, root.key);
@@ -122,14 +122,14 @@ public class BSTNodeTest {
      *        3  [6]         3
      */
     @Test
-    public void testDelete_zeroOrOneChild(){
+    public void testDelete_zeroOrOneChild() throws InvalidSearchTreeException{
         // Construct initial tree.
         BSTNode<Integer> root = new BSTNode<>(four);
         root = root.insert(two, comparator);
         root = root.insert(five, comparator);
         root = root.insert(three, comparator);
         root = root.insert(six, comparator);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
 
         // Test deletion of a node with no children.
         root = root.delete(six, comparator);
@@ -140,7 +140,7 @@ public class BSTNodeTest {
         assertEquals(1, root.right.height);
         assertEquals(3, root.height);
         assertEquals(4, root.size);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
 
         // Test deletion of a node with one child.
         root = root.delete(two, comparator);
@@ -150,7 +150,7 @@ public class BSTNodeTest {
         assertEquals(2, root.height);
         assertEquals(3, root.size);
         assertEquals(1, root.left.height);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
 
         // Test deletion of a node with no children.
         root = root.delete(five, comparator);
@@ -158,7 +158,7 @@ public class BSTNodeTest {
         assertNull(root.right);
         assertEquals(2, root.height);
         assertEquals(2, root.size);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
 
         // Test deletion of Root with one child.
         root = root.delete(four, comparator);
@@ -166,7 +166,7 @@ public class BSTNodeTest {
         assertFalse(root.hasLeft() && root.hasRight());
         assertEquals(1, root.size);
         assertEquals(1, root.height);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
 
         // Test deletion of Root with no child.
         root = root.delete(3, comparator);
@@ -186,7 +186,7 @@ public class BSTNodeTest {
      *     2
      */
     @Test
-    public void testDelete_nodeWithTwoChildren(){
+    public void testDelete_nodeWithTwoChildren() throws InvalidSearchTreeException{
         BSTNode<Integer> root = new BSTNode<>(four);
         root = root.insert(one, comparator);
         root = root.insert(six, comparator);
@@ -197,7 +197,7 @@ public class BSTNodeTest {
 
         assertEquals(four, root.key);
         assertEquals(4, root.height);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
 
         // Test deletion of root when LEFT subtree is longer.
         root = root.delete(4, comparator);
@@ -209,7 +209,7 @@ public class BSTNodeTest {
         assertEquals(two, root.left.right.key);
         assertEquals(3, root.height);
         assertEquals(6, root.size);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
 
         // Test deletion of root when Right subtree is longer OR subtrees are same size.
         root = root.delete(3, comparator);
@@ -220,7 +220,7 @@ public class BSTNodeTest {
         assertEquals(two, root.left.right.key);
         assertEquals(3, root.height);
         assertEquals(5, root.size);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
 
         // Test deletion of non-root with two children.
         root = root.delete(one, comparator);
@@ -230,14 +230,14 @@ public class BSTNodeTest {
         assertEquals(zero, root.left.left.key);
         assertEquals(3, root.height);
         assertEquals(4, root.size);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
     }
 
     /**
      * Attempt to delete keys which are not in the tree.
      */
     @Test
-    public void testDelete_whenNothingToDelete(){
+    public void testDelete_whenNothingToDelete() throws InvalidSearchTreeException{
         BSTNode<Integer> root = new BSTNode<>(four);
         root = root.insert(one, comparator);
 
@@ -249,7 +249,7 @@ public class BSTNodeTest {
         assertEquals(one, root.left.key);
         assertEquals(2, root.height);
         assertEquals(2, root.size);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
 
         // Delete value that isn't in the tree, smaller than smallest node.
         root = root.delete(-199, comparator);
@@ -259,7 +259,7 @@ public class BSTNodeTest {
         assertEquals(one, root.left.key);
         assertEquals(2, root.height);
         assertEquals(2, root.size);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
 
         // Delete value that isn't in the tree, between the available node values.
         root = root.delete(3, comparator);
@@ -269,7 +269,7 @@ public class BSTNodeTest {
         assertEquals(one, root.left.key);
         assertEquals(2, root.height);
         assertEquals(2, root.size);
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
     }
 
     /**
@@ -316,7 +316,7 @@ public class BSTNodeTest {
      * Test traversal to in-order sorted list.
      */
     @Test
-    public void testInOrderTraversal(){
+    public void testInOrderTraversal() throws InvalidSearchTreeException{
         BSTNode<Integer> root = new BSTNode<>(five);
         root = root.insert(six, comparator);
         root = root.insert(zero, comparator);
@@ -329,7 +329,7 @@ public class BSTNodeTest {
         List<Integer> actualInOrderList = root.inOrderTraversal();
         assertEquals(expectedList, actualInOrderList);
 
-        UnitTestUtilities.validateBSTNode(root);
+        root.validate();
     }
 
     /**

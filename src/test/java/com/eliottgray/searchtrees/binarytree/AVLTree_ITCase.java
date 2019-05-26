@@ -13,7 +13,7 @@ public class AVLTree_ITCase {
      * Construct a tree with random keys and values, and periodically validate that the state of the tree is valid.
      */
     @Test
-    public void testRandomTree_Integers(){
+    public void testRandomTree_Integers() throws InvalidSearchTreeException{
 
         AVLTree<Integer> avlTree = new AVLTree<>();
 
@@ -35,13 +35,13 @@ public class AVLTree_ITCase {
             // Validate incrementally.
             boolean meetsValidationCriteria = previousEntries.size() % checkThreshold == 0;
             if (meetsValidationCriteria){
-                assertTrue(UnitTestUtilities.validateAVLTree(avlTree));
+                avlTree.validate();
                 assertEquals(previousEntries.size(), avlTree.size());
             }
         }
 
         // Validate completed tree.
-        assertTrue(UnitTestUtilities.validateAVLTree(avlTree));
+        avlTree.validate();
         assertEquals(previousEntries.size(), avlTree.size());
 
         // Validate in-order.
@@ -51,7 +51,7 @@ public class AVLTree_ITCase {
         assertEquals(expectedValues, actualInOrderValues);
 
         // Validate tree after
-        assertTrue(UnitTestUtilities.validateAVLTree(avlTree));
+        avlTree.validate();
         assertEquals(previousEntries.size(), avlTree.size());
 
         // Delete keys one at a time until tree is empty; validating incrementally.
@@ -71,7 +71,7 @@ public class AVLTree_ITCase {
             // Validate incrementally.
             boolean meetsValidationCriteria = remainingKeys % checkThreshold == 0;
             if (meetsValidationCriteria){
-                assertTrue(UnitTestUtilities.validateAVLTree(avlTree));
+                avlTree.validate();
                 assertEquals(remainingKeys, avlTree.size());
             }
         }
