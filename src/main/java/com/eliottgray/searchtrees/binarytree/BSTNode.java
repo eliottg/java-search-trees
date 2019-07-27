@@ -4,22 +4,12 @@ import java.util.Comparator;
 
 class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
 
-    final Key key;
-    final int height;
-    final int size;
-    final BSTNode<Key> left;
-    final BSTNode<Key> right;
-
     /**
      * Construct new leaf node, with no children.
      * @param key   Comparable Key for node.
      */
     BSTNode(Key key){
-        this.key = key;
-        this.left = null;
-        this.right = null;
-        this.height = 1;
-        this.size = 1;
+        super(key);
     }
 
     /**
@@ -28,33 +18,9 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
      * @param left      Existing left child.
      * @param right     Existing right child.
      */
-    private BSTNode(Key key, BSTNode<Key> left, BSTNode<Key> right){
-        this.key = key;
-        this.left = left;
-        this.right = right;
-
-        int leftHeight = 0;
-        int rightHeight = 0;
-        int leftSize = 0;
-        int rightSize = 0;
-        if (hasLeft()){
-            leftHeight = left.height;
-            leftSize = left.size;
-        }
-        if (hasRight()){
-            rightHeight = right.height;
-            rightSize = right.size;
-        }
-        this.size = 1 + leftSize + rightSize;
-        this.height = (rightHeight > leftHeight) ? (rightHeight + 1) : (leftHeight + 1);
-
+    private BSTNode(Key key, Node<Key> left, Node<Key> right){
+        super(key, left, right);
     }
-
-    Node<Key> getLeft(){ return left; }
-    Node<Key> getRight(){ return right; }
-    int getHeight(){ return height; }
-    int getSize(){ return size; }
-    Key getKey(){ return key; }
 
     /**
      * Perform recursive insertion.
@@ -69,7 +35,7 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
         if (comparator.compare(key, this.key) < 0){
             if (this.hasLeft()){
                 // Insert down left subtree, contains new left subtree, and attach here.
-                BSTNode<Key> newLeft = this.left.insert(key, comparator);
+                Node<Key> newLeft = this.left.insert(key, comparator);
                 root = new BSTNode<>(this.key, newLeft, this.right);
             } else {
                 // I have no left, so I simply set it here.
@@ -81,7 +47,7 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
         } else if (comparator.compare(key, this.key) > 0){
             // Insert down right subtree, contains new subtree head, and attach here.
             if (this.hasRight()){
-                BSTNode<Key> newRight = this.right.insert(key, comparator);
+                Node<Key> newRight = this.right.insert(key, comparator);
                 root = new BSTNode<>(this.key, this.left, newRight);
             } else {
                 // I have no right, so I simply set it here.
@@ -107,7 +73,7 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
         BSTNode<Key> root;
         if (comparator.compare(key, this.key) < 0) {
             if (this.hasLeft()) {
-                BSTNode<Key> newLeft = this.left.delete(key, comparator);
+                Node<Key> newLeft = this.left.delete(key, comparator);
                 root = new BSTNode<>(this.key, newLeft, this.right);
 
             } else {
@@ -116,7 +82,7 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
             }
         } else if (comparator.compare(key, this.key) > 0){
             if (this.hasRight()){
-                BSTNode<Key> newRight = this.right.delete(key, comparator);
+                Node<Key> newRight = this.right.delete(key, comparator);
                 root = new BSTNode<>(this.key, this.left, newRight);
 
             } else {
@@ -137,9 +103,9 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
 
             } else {
                 if (hasLeft()){
-                    root = this.left;
+                    root = (BSTNode<Key>)this.left;   /// @todo Avoid having to cast this, and the following, new roots from left/right.
                 } else if (hasRight()){
-                    root = this.right;
+                    root = (BSTNode<Key>)this.right;
                 } else {
                     root = null;
                 }

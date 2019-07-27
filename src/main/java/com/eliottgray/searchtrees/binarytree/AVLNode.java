@@ -4,22 +4,12 @@ import java.util.Comparator;
 
 class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
 
-    final Key key;
-    final int height;
-    final int size;
-    final AVLNode<Key> left;
-    final AVLNode<Key> right;
-
     /**
      * Construct new leaf node, with no children.
      * @param key   Comparable Key for node.
      */
     AVLNode (Key key){
-        this.key = key;
-        this.left = null;
-        this.right = null;
-        this.height = 1;
-        this.size = 1;
+        super(key);
     }
 
     /**
@@ -28,33 +18,9 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
      * @param left      Existing left child.
      * @param right     Existing right child.
      */
-    private AVLNode(Key key, AVLNode<Key> left, AVLNode<Key> right){
-        this.key = key;
-        this.left = left;
-        this.right = right;
-
-        int leftHeight = 0;
-        int rightHeight = 0;
-        int leftSize = 0;
-        int rightSize = 0;
-        if (hasLeft()){
-            leftHeight = left.height;
-            leftSize = left.size;
-        }
-        if (hasRight()){
-            rightHeight = right.height;
-            rightSize = right.size;
-        }
-        this.size = 1 + leftSize + rightSize;
-        this.height = (rightHeight > leftHeight) ? (rightHeight + 1) : (leftHeight + 1);
-
+    private AVLNode(Key key, Node<Key> left, Node<Key> right){
+        super(key, left, right);
     }
-
-    Node<Key> getLeft(){ return left; }
-    Node<Key> getRight(){ return right; }
-    int getHeight(){ return height; }
-    int getSize(){ return size; }
-    Key getKey(){ return key; }
 
     /**
      * Perform recursive insertion.
@@ -69,7 +35,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
         if (comparison < 0){
             if (this.hasLeft()){
                 // Insert down left subtree, contains new left subtree, and attach here.
-                AVLNode<Key> newLeft = this.left.insert(key, comparator);
+                Node<Key> newLeft = this.left.insert(key, comparator);
                 root = new AVLNode<>(this.key, newLeft, this.right);
 
                 // Rotate if necessary, replacing this node as the head of this tree.
@@ -84,7 +50,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
         } else if (comparison > 0){
             // Insert down right subtree, contains new subtree head, and attach here.
             if (this.hasRight()){
-                AVLNode<Key> newRight = this.right.insert(key, comparator);
+                Node<Key> newRight = this.right.insert(key, comparator);
                 root = new AVLNode<>(this.key, this.left, newRight);
 
                 // Rotate if necessary, replacing this node as the head of this tree.
@@ -112,7 +78,8 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
 
             // If left subtree is larger on the right, left subtree must be rotated left before this node rotates right.
             if (root.left.getBalanceFactor() > 0){
-                AVLNode<Key> newLeft = root.left.rotateLeft();
+                AVLNode<Key> oldLeft = (AVLNode<Key>)root.left;  /// @todo Avoid having to cast this.  Rotatae method can belong in abstract class?
+                AVLNode<Key> newLeft = oldLeft.rotateLeft();
                 root = new AVLNode<>(root.key, newLeft, root.right);
             }
 
@@ -130,7 +97,8 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
 
             // If right subtree is larger on the left, right subtree must be rotated right before this node rotates left.
             if (root.right.getBalanceFactor() < 0){
-                AVLNode<Key> newRight = root.right.rotateRight();
+                AVLNode<Key> oldRight = (AVLNode<Key>)root.right;  /// @todo Avoid having to cast this.  Rotatae method can belong in abstract class?
+                AVLNode<Key> newRight = oldRight.rotateRight();
                 root = new AVLNode<>(root.key, root.left, newRight);
             }
 
@@ -155,7 +123,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
      */
     private AVLNode<Key> rotateLeft(){
         // Pivot is to my right.
-        AVLNode<Key> pivot = this.right;
+        Node<Key> pivot = this.right;
 
         // Move self down and left.  My right is now pivot left.
         AVLNode<Key> newThis = new AVLNode<>(this.key, this.left, pivot.left);
@@ -179,7 +147,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
      */
     private AVLNode<Key> rotateRight(){
         // Pivot is to my left.
-        AVLNode<Key> pivot = this.left;
+        Node<Key> pivot = this.left;
 
         // Move self down and right.  My left is now pivot right.
         AVLNode<Key> newThis = new AVLNode<>(this.key, pivot.right, this.right);
@@ -199,7 +167,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
         int comparison = comparator.compare(key, this.key);
         if (comparison < 0) {
             if (this.hasLeft()) {
-                AVLNode<Key> newLeft = this.left.delete(key, comparator);
+                Node<Key> newLeft = this.left.delete(key, comparator);
                 root = new AVLNode<>(this.key, newLeft, this.right);
 
                 root = root.rotateLeftIfUnbalanced();
@@ -209,7 +177,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
             }
         } else if (comparison > 0){
             if (this.hasRight()){
-                AVLNode<Key> newRight = this.right.delete(key, comparator);
+                Node<Key> newRight = this.right.delete(key, comparator);
                 root = new AVLNode<>(this.key, this.left, newRight);
 
                 root = root.rotateRightIfUnbalanced();
@@ -231,9 +199,9 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
 
             } else {
                 if (hasLeft()){
-                    root = this.left;
+                    root = (AVLNode<Key>)this.left;  /// @todo Avoid having to cast this, and the following, new roots from left/right.
                 } else if (hasRight()){
-                    root = this.right;
+                    root = (AVLNode<Key>)this.right;
                 } else {
                     root = null;
                 }
@@ -256,7 +224,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
         // Validate height.
         int leftHeight = hasLeft() ? getLeft().getHeight() : 0;
         int rightHeight = hasRight() ? getRight().getHeight() : 0;
-        int maxSubtreeHeight = leftHeight >= rightHeight ? leftHeight : rightHeight;
+        int maxSubtreeHeight = Math.max(leftHeight, rightHeight);
         int expectedHeight = maxSubtreeHeight + 1;
         if (expectedHeight != height){
             throw new InvalidSearchTreeException(String.format("Invalid height for key %s, height %d, left height %d, right height %d", getKey().toString(), getHeight(), leftHeight, rightHeight));

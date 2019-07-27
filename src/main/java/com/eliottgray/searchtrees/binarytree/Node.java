@@ -6,11 +6,56 @@ import java.util.List;
 
 abstract class Node <Key extends Comparable<Key>> {
 
-    abstract Node<Key> getLeft();
-    abstract Node<Key> getRight();
-    abstract int getHeight();
-    abstract int getSize();
-    abstract Key getKey();
+    final Key key;
+    final int height;
+    final int size;
+    final Node<Key> left;
+    final Node<Key> right;
+
+    /**
+     * Construct new leaf node, with no children.
+     * @param key   Comparable Key for node.
+     */
+    Node (Key key){
+        this.key = key;
+        this.left = null;
+        this.right = null;
+        this.height = 1;
+        this.size = 1;
+    }
+
+    /**
+     * Construct replacement root node, with existing children.
+     * @param key       Comparable Key for node.
+     * @param left      Existing left child.
+     * @param right     Existing right child.
+     */
+    Node(Key key, Node<Key> left, Node<Key> right){
+        this.key = key;
+        this.left = left;
+        this.right = right;
+
+        int leftHeight = 0;
+        int rightHeight = 0;
+        int leftSize = 0;
+        int rightSize = 0;
+        if (hasLeft()){
+            leftHeight = left.height;
+            leftSize = left.size;
+        }
+        if (hasRight()){
+            rightHeight = right.height;
+            rightSize = right.size;
+        }
+        this.size = 1 + leftSize + rightSize;
+        this.height = (rightHeight > leftHeight) ? (rightHeight + 1) : (leftHeight + 1);
+    }
+    Node<Key> getLeft(){ return left; }
+    Node<Key> getRight(){ return right; }
+    int getHeight(){ return height; }
+    int getSize(){ return size; }
+    Key getKey(){ return key; }
+
     abstract Node<Key> insert(Key key, Comparator<Key> comparator);
     abstract Node<Key> delete(Key key, Comparator<Key> comparator);
     boolean hasLeft(){ return getLeft() != null; }
