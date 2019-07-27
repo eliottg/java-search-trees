@@ -4,9 +4,6 @@ import java.util.Comparator;
 
 class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
 
-    final Key key;
-    final int height;
-    final int size;
     final BSTNode<Key> left;
     final BSTNode<Key> right;
 
@@ -15,11 +12,9 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
      * @param key   Comparable Key for node.
      */
     BSTNode(Key key){
-        this.key = key;
-        this.left = null;
-        this.right = null;
-        this.height = 1;
-        this.size = 1;
+        super(key);
+        left = null;
+        right = null;
     }
 
     /**
@@ -29,32 +24,20 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
      * @param right     Existing right child.
      */
     private BSTNode(Key key, BSTNode<Key> left, BSTNode<Key> right){
-        this.key = key;
+        super(key, left, right);
         this.left = left;
         this.right = right;
-
-        int leftHeight = 0;
-        int rightHeight = 0;
-        int leftSize = 0;
-        int rightSize = 0;
-        if (hasLeft()){
-            leftHeight = left.height;
-            leftSize = left.size;
-        }
-        if (hasRight()){
-            rightHeight = right.height;
-            rightSize = right.size;
-        }
-        this.size = 1 + leftSize + rightSize;
-        this.height = (rightHeight > leftHeight) ? (rightHeight + 1) : (leftHeight + 1);
-
     }
 
-    Node<Key> getLeft(){ return left; }
-    Node<Key> getRight(){ return right; }
-    int getHeight(){ return height; }
-    int getSize(){ return size; }
-    Key getKey(){ return key; }
+    @Override
+    Node<Key> getLeft() {
+        return this.left;
+    }
+
+    @Override
+    Node<Key> getRight() {
+        return this.right;
+    }
 
     /**
      * Perform recursive insertion.

@@ -4,9 +4,6 @@ import java.util.Comparator;
 
 class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
 
-    final Key key;
-    final int height;
-    final int size;
     final AVLNode<Key> left;
     final AVLNode<Key> right;
 
@@ -15,11 +12,9 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
      * @param key   Comparable Key for node.
      */
     AVLNode (Key key){
-        this.key = key;
-        this.left = null;
-        this.right = null;
-        this.height = 1;
-        this.size = 1;
+        super(key);
+        left = null;
+        right = null;
     }
 
     /**
@@ -29,32 +24,20 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
      * @param right     Existing right child.
      */
     private AVLNode(Key key, AVLNode<Key> left, AVLNode<Key> right){
-        this.key = key;
+        super(key, left, right);
         this.left = left;
         this.right = right;
-
-        int leftHeight = 0;
-        int rightHeight = 0;
-        int leftSize = 0;
-        int rightSize = 0;
-        if (hasLeft()){
-            leftHeight = left.height;
-            leftSize = left.size;
-        }
-        if (hasRight()){
-            rightHeight = right.height;
-            rightSize = right.size;
-        }
-        this.size = 1 + leftSize + rightSize;
-        this.height = (rightHeight > leftHeight) ? (rightHeight + 1) : (leftHeight + 1);
-
     }
 
-    Node<Key> getLeft(){ return left; }
-    Node<Key> getRight(){ return right; }
-    int getHeight(){ return height; }
-    int getSize(){ return size; }
-    Key getKey(){ return key; }
+    @Override
+    Node<Key> getLeft() {
+        return this.left;
+    }
+
+    @Override
+    Node<Key> getRight() {
+        return this.right;
+    }
 
     /**
      * Perform recursive insertion.
@@ -112,7 +95,8 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
 
             // If left subtree is larger on the right, left subtree must be rotated left before this node rotates right.
             if (root.left.getBalanceFactor() > 0){
-                AVLNode<Key> newLeft = root.left.rotateLeft();
+                AVLNode<Key> oldLeft = root.left;
+                AVLNode<Key> newLeft = oldLeft.rotateLeft();
                 root = new AVLNode<>(root.key, newLeft, root.right);
             }
 
@@ -130,7 +114,8 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
 
             // If right subtree is larger on the left, right subtree must be rotated right before this node rotates left.
             if (root.right.getBalanceFactor() < 0){
-                AVLNode<Key> newRight = root.right.rotateRight();
+                AVLNode<Key> oldRight = root.right;
+                AVLNode<Key> newRight = oldRight.rotateRight();
                 root = new AVLNode<>(root.key, root.left, newRight);
             }
 
@@ -256,7 +241,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
         // Validate height.
         int leftHeight = hasLeft() ? getLeft().getHeight() : 0;
         int rightHeight = hasRight() ? getRight().getHeight() : 0;
-        int maxSubtreeHeight = leftHeight >= rightHeight ? leftHeight : rightHeight;
+        int maxSubtreeHeight = Math.max(leftHeight, rightHeight);
         int expectedHeight = maxSubtreeHeight + 1;
         if (expectedHeight != height){
             throw new InvalidSearchTreeException(String.format("Invalid height for key %s, height %d, left height %d, right height %d", getKey().toString(), getHeight(), leftHeight, rightHeight));
