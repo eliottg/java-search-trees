@@ -11,6 +11,8 @@ abstract class Node <Key extends Comparable<Key>> {
     abstract int getHeight();
     abstract int getSize();
     abstract Key getKey();
+    abstract Node<Key> insert(Key key, Comparator<Key> comparator);
+    abstract Node<Key> delete(Key key, Comparator<Key> comparator);
     boolean hasLeft(){ return getLeft() != null; }
     boolean hasRight(){ return getRight() != null; }
 
