@@ -47,10 +47,10 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
     BSTNode<Key> insert(Key key, Comparator<Key> comparator){
         // This position in the tree is currently occupied by current node.
         BSTNode<Key> root;
-
+        int comparison = comparator.compare(key, this.key);
         // If key is to left of current:
-        if (comparator.compare(key, this.key) < 0){
-            if (this.hasLeft()){
+        if (comparison < 0){
+            if (this.left != null) {
                 // Insert down left subtree, contains new left subtree, and attach here.
                 BSTNode<Key> newLeft = this.left.insert(key, comparator);
                 root = new BSTNode<>(this.key, newLeft, this.right);
@@ -61,9 +61,9 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
             }
 
         // If key is to right of current:
-        } else if (comparator.compare(key, this.key) > 0){
+        } else if (comparison > 0){
             // Insert down right subtree, contains new subtree head, and attach here.
-            if (this.hasRight()){
+            if (this.right != null){
                 BSTNode<Key> newRight = this.right.insert(key, comparator);
                 root = new BSTNode<>(this.key, this.left, newRight);
             } else {
@@ -88,8 +88,9 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
      */
     BSTNode<Key> delete(Key key, Comparator<Key> comparator){
         BSTNode<Key> root;
-        if (comparator.compare(key, this.key) < 0) {
-            if (this.hasLeft()) {
+        int comparison = comparator.compare(key, this.key);
+        if (comparison < 0) {
+            if (this.left != null) {
                 BSTNode<Key> newLeft = this.left.delete(key, comparator);
                 root = new BSTNode<>(this.key, newLeft, this.right);
 
@@ -97,8 +98,8 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
                 // Key is not in this tree; no need for change.
                 root = this;
             }
-        } else if (comparator.compare(key, this.key) > 0){
-            if (this.hasRight()){
+        } else if (comparison > 0){
+            if (this.right != null){
                 BSTNode<Key> newRight = this.right.delete(key, comparator);
                 root = new BSTNode<>(this.key, this.left, newRight);
 

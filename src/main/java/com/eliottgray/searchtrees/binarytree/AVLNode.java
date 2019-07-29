@@ -50,7 +50,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
         int comparison = comparator.compare(key, this.key);
         // If key is to left of current:
         if (comparison < 0){
-            if (this.hasLeft()){
+            if (this.left != null){
                 // Insert down left subtree, contains new left subtree, and attach here.
                 AVLNode<Key> newLeft = this.left.insert(key, comparator);
                 root = new AVLNode<>(this.key, newLeft, this.right);
@@ -66,7 +66,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
         // If key is to right of current:
         } else if (comparison > 0){
             // Insert down right subtree, contains new subtree head, and attach here.
-            if (this.hasRight()){
+            if (this.right != null){
                 AVLNode<Key> newRight = this.right.insert(key, comparator);
                 root = new AVLNode<>(this.key, this.left, newRight);
 
@@ -94,6 +94,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
             // Tree is unbalanced, so rotate right.
 
             // If left subtree is larger on the right, left subtree must be rotated left before this node rotates right.
+            assert root.left != null;
             if (root.left.getBalanceFactor() > 0){
                 AVLNode<Key> oldLeft = root.left;
                 AVLNode<Key> newLeft = oldLeft.rotateLeft();
@@ -113,6 +114,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
             // Tree is unbalanced, so rotate left.
 
             // If right subtree is larger on the left, right subtree must be rotated right before this node rotates left.
+            assert root.right != null;
             if (root.right.getBalanceFactor() < 0){
                 AVLNode<Key> oldRight = root.right;
                 AVLNode<Key> newRight = oldRight.rotateRight();
@@ -183,7 +185,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
         AVLNode<Key> root;
         int comparison = comparator.compare(key, this.key);
         if (comparison < 0) {
-            if (this.hasLeft()) {
+            if (this.left != null) {
                 AVLNode<Key> newLeft = this.left.delete(key, comparator);
                 root = new AVLNode<>(this.key, newLeft, this.right);
 
@@ -193,7 +195,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
                 root = this;
             }
         } else if (comparison > 0){
-            if (this.hasRight()){
+            if (this.right != null){
                 AVLNode<Key> newRight = this.right.delete(key, comparator);
                 root = new AVLNode<>(this.key, this.left, newRight);
 
