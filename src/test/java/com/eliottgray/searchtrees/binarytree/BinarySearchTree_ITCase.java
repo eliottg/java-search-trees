@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.*;
 
-public class BSTree_ITCase {
+public class BinarySearchTree_ITCase {
 
     /**
      * Construct a tree with random keys and values, and periodically validate that the state of the tree is valid.
@@ -15,7 +15,7 @@ public class BSTree_ITCase {
     @Test
     public void testRandomTree_Integers() throws InvalidSearchTreeException{
 
-        BSTree<Integer> bsTree = new BSTree<>();
+        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
 
         // Test size is N; threshold for validating the tree is about 10%;
         int targetSize = 1000000;

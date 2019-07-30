@@ -2,16 +2,16 @@ package com.eliottgray.searchtrees.binarytree;
 
 import java.util.Comparator;
 
-class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
+class BinarySearchNode<Key extends Comparable<Key>> extends Node<Key>{
 
-    final BSTNode<Key> left;
-    final BSTNode<Key> right;
+    final BinarySearchNode<Key> left;
+    final BinarySearchNode<Key> right;
 
     /**
      * Construct new leaf node, with no children.
      * @param key   Comparable Key for node.
      */
-    BSTNode(Key key){
+    BinarySearchNode(Key key){
         super(key);
         left = null;
         right = null;
@@ -23,7 +23,7 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
      * @param left      Existing left child.
      * @param right     Existing right child.
      */
-    private BSTNode(Key key, BSTNode<Key> left, BSTNode<Key> right){
+    private BinarySearchNode(Key key, BinarySearchNode<Key> left, BinarySearchNode<Key> right){
         super(key, left, right);
         this.left = left;
         this.right = right;
@@ -44,36 +44,36 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
      * @param key           Key to insert.
      * @return              Root node of tree.
      */
-    BSTNode<Key> insert(Key key, Comparator<Key> comparator){
+    BinarySearchNode<Key> insert(Key key, Comparator<Key> comparator){
         // This position in the tree is currently occupied by current node.
-        BSTNode<Key> root;
+        BinarySearchNode<Key> root;
         int comparison = comparator.compare(key, this.key);
         // If key is to left of current:
         if (comparison < 0){
             if (this.left != null) {
                 // Insert down left subtree, contains new left subtree, and attach here.
-                BSTNode<Key> newLeft = this.left.insert(key, comparator);
-                root = new BSTNode<>(this.key, newLeft, this.right);
+                BinarySearchNode<Key> newLeft = this.left.insert(key, comparator);
+                root = new BinarySearchNode<>(this.key, newLeft, this.right);
             } else {
                 // I have no left, so I simply set it here.
-                BSTNode<Key> newLeft = new BSTNode<>(key);
-                root= new BSTNode<>(this.key, newLeft, this.right);
+                BinarySearchNode<Key> newLeft = new BinarySearchNode<>(key);
+                root= new BinarySearchNode<>(this.key, newLeft, this.right);
             }
 
         // If key is to right of current:
         } else if (comparison > 0){
             // Insert down right subtree, contains new subtree head, and attach here.
             if (this.right != null){
-                BSTNode<Key> newRight = this.right.insert(key, comparator);
-                root = new BSTNode<>(this.key, this.left, newRight);
+                BinarySearchNode<Key> newRight = this.right.insert(key, comparator);
+                root = new BinarySearchNode<>(this.key, this.left, newRight);
             } else {
                 // I have no right, so I simply set it here.
-                BSTNode<Key> newRight = new BSTNode<>(key);
-                root = new BSTNode<>(this.key, this.left, newRight);
+                BinarySearchNode<Key> newRight = new BinarySearchNode<>(key);
+                root = new BinarySearchNode<>(this.key, this.left, newRight);
             }
         } else {
             // Duplicate key found; replace this.
-            root = new BSTNode<>(key, this.left, this.right);
+            root = new BinarySearchNode<>(key, this.left, this.right);
         }
 
         // Return whatever occupies this position of the tree, which may still be me, or not.
@@ -86,13 +86,13 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
      * @param key       Key to delete.
      * @return          Root node.
      */
-    BSTNode<Key> delete(Key key, Comparator<Key> comparator){
-        BSTNode<Key> root;
+    BinarySearchNode<Key> delete(Key key, Comparator<Key> comparator){
+        BinarySearchNode<Key> root;
         int comparison = comparator.compare(key, this.key);
         if (comparison < 0) {
             if (this.left != null) {
-                BSTNode<Key> newLeft = this.left.delete(key, comparator);
-                root = new BSTNode<>(this.key, newLeft, this.right);
+                BinarySearchNode<Key> newLeft = this.left.delete(key, comparator);
+                root = new BinarySearchNode<>(this.key, newLeft, this.right);
 
             } else {
                 // Key is not in this tree; no need for change.
@@ -100,8 +100,8 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
             }
         } else if (comparison > 0){
             if (this.right != null){
-                BSTNode<Key> newRight = this.right.delete(key, comparator);
-                root = new BSTNode<>(this.key, this.left, newRight);
+                BinarySearchNode<Key> newRight = this.right.delete(key, comparator);
+                root = new BinarySearchNode<>(this.key, this.left, newRight);
 
             } else {
                 // Key is not in this tree; no need for change.
@@ -117,7 +117,7 @@ class BSTNode<Key extends Comparable<Key>> extends Node<Key>{
                 root = this.delete(replacementKey, comparator);
 
                 // Replace this with copy of replacement child.
-                root = new BSTNode<>(replacementKey, root.left, root.right);
+                root = new BinarySearchNode<>(replacementKey, root.left, root.right);
 
             } else {
                 if (hasLeft()){

@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class BSTreeTest {
+public class BinarySearchTreeTest {
 
     /**
      * Test construction of an Binary Search Tree, adding a key, and testing for presence.
@@ -17,12 +17,12 @@ public class BSTreeTest {
     @Test
     public void testConstor_insert_contains() throws InvalidSearchTreeException{
         // Initial tree is empty.
-        BSTree<Integer> bsTree = new BSTree<>();
+        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
         assertTrue(bsTree.isEmpty());
         assertFalse(bsTree.contains(3));
 
         // Construct new tree with added value.
-        BSTree<Integer> bsTreeTwo = bsTree.insert(3);
+        BinarySearchTree<Integer> bsTreeTwo = bsTree.insert(3);
 
         // Old tree is still empty.
         assertTrue(bsTree.isEmpty());
@@ -47,7 +47,7 @@ public class BSTreeTest {
      */
     @Test
     public void testDelete() throws InvalidSearchTreeException{
-        BSTree<Integer> bsTree = new BSTree<>();
+        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
         bsTree = bsTree.insert(2);
         bsTree = bsTree.insert(1);
         bsTree = bsTree.insert(3);
@@ -65,7 +65,7 @@ public class BSTreeTest {
      */
     @Test
     public void testGetSize() throws InvalidSearchTreeException{
-        BSTree<Integer> bsTree = new BSTree<>();
+        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
         assertEquals(0, bsTree.size());
 
         // Insert new values and test size.
@@ -96,7 +96,7 @@ public class BSTreeTest {
      */
     @Test
     public void testToSortedArray() throws InvalidSearchTreeException{
-        BSTree<Integer> bsTree = new BSTree<>();
+        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
 
         List<Integer> emptyList = bsTree.toAscendingList();
         assertTrue(emptyList.isEmpty());
@@ -118,7 +118,7 @@ public class BSTreeTest {
      */
     @Test
     public void testGetRange(){
-        BSTree<Integer> bsTree = new BSTree<>();
+        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
 
         // Test that an empty BSTree returns no values.
         List<Integer> shouldBeEmpty = bsTree.getRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
@@ -156,7 +156,7 @@ public class BSTreeTest {
             }
         };
 
-        BSTree<Integer> bsTree = new BSTree<>(customComparator);
+        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>(customComparator);
 
         // Insert values.
         List<Integer> inputValues = new ArrayList<Integer>(){{add(-900); add(-800); add(1); add(2); add(3);}};

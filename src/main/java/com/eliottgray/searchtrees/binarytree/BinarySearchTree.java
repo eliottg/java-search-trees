@@ -10,14 +10,14 @@ import java.util.Comparator;
  * 2) Space Complexity.  Given that each new data point creates a separate object, more memory that is necessary will not be allocated.
  * 3) Easy ordering.  Traversal of all elements in-order results in an ordered list; not something typically done with Hash Tables.
  * */
-public class BSTree<Key extends Comparable<Key>> extends Tree<Key> {
+public class BinarySearchTree<Key extends Comparable<Key>> extends Tree<Key> {
 
-    final BSTNode<Key> root;
+    final BinarySearchNode<Key> root;
 
     /**
      * Empty tree. Comparison of Keys to be performed with default compareTo method.
      */
-    public BSTree(){
+    public BinarySearchTree(){
         super();
         root = null;
     }
@@ -26,7 +26,7 @@ public class BSTree<Key extends Comparable<Key>> extends Tree<Key> {
      * Empty tree, with comparator override.
      * @param comparator    Comparison function with which to override default compareTo of Key.
      */
-    public BSTree(Comparator<Key> comparator){
+    public BinarySearchTree(Comparator<Key> comparator){
         super(comparator);
         root = null;
     }
@@ -36,29 +36,29 @@ public class BSTree<Key extends Comparable<Key>> extends Tree<Key> {
      * @param root          Existing root node.
      * @param comparator    Comparator corresponding to current root node.
      */
-    private BSTree(BSTNode<Key> root, Comparator<Key> comparator){
+    private BinarySearchTree(BinarySearchNode<Key> root, Comparator<Key> comparator){
         super(comparator);
         this.root = root;
     }
 
     Node<Key> getRoot(){ return root; }
 
-    public BSTree<Key> delete(Key key){
+    public BinarySearchTree<Key> delete(Key key){
         if (root == null){
             return this;
         } else {
-            BSTNode<Key> newRoot = root.delete(key, comparator);
-            return new BSTree<>(newRoot, comparator);
+            BinarySearchNode<Key> newRoot = root.delete(key, comparator);
+            return new BinarySearchTree<>(newRoot, comparator);
         }
     }
 
-    public BSTree<Key> insert(Key key){
+    public BinarySearchTree<Key> insert(Key key){
         if (root == null){
-            BSTNode<Key> newRoot = new BSTNode<>(key);
-            return new BSTree<>(newRoot, comparator);
+            BinarySearchNode<Key> newRoot = new BinarySearchNode<>(key);
+            return new BinarySearchTree<>(newRoot, comparator);
         } else {
-            BSTNode<Key> newRoot = root.insert(key, comparator);
-            return new BSTree<>(newRoot, comparator);
+            BinarySearchNode<Key> newRoot = root.insert(key, comparator);
+            return new BinarySearchTree<>(newRoot, comparator);
         }
     }
 }

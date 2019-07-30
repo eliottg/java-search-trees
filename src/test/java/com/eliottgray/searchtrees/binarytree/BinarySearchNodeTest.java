@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class BSTNodeTest {
+public class BinarySearchNodeTest {
     private Integer zero = 0;
     private Integer one = 1;
     private Integer two = 2;
@@ -29,7 +29,7 @@ public class BSTNodeTest {
      */
     @Test
     public void testSingleNode() throws InvalidSearchTreeException{
-        BSTNode<Integer> root = new BSTNode<>(zero);
+        BinarySearchNode<Integer> root = new BinarySearchNode<>(zero);
         assertFalse(root.hasLeft());
         assertFalse(root.hasRight());
         assertNull(root.left);
@@ -53,11 +53,11 @@ public class BSTNodeTest {
     @Test
     public void testInsertions_testImmutability() throws InvalidSearchTreeException{
         // Start graph with initial node.
-        BSTNode<Integer> root = new BSTNode<>(three);
+        BinarySearchNode<Integer> root = new BinarySearchNode<>(three);
         root.validate();
 
         // Create new tree with additional node.
-        BSTNode<Integer> newRoot = root.insert(one, comparator);
+        BinarySearchNode<Integer> newRoot = root.insert(one, comparator);
         newRoot.validate();
 
         // Verify old tree is unchanged.
@@ -88,11 +88,11 @@ public class BSTNodeTest {
     public void testInsertions_withDuplicateKeys(){
 
         // Establish initial graph.
-        BSTNode<Integer> root = new BSTNode<>(five);
+        BinarySearchNode<Integer> root = new BinarySearchNode<>(five);
         root = root.insert(one, comparator);
 
         // Add duplicate root node.
-        BSTNode<Integer> rootTwo = root.insert(five, comparator);
+        BinarySearchNode<Integer> rootTwo = root.insert(five, comparator);
 
         // Test that root nodes have a different identity, but they share the same child node.
         assertEquals(root.key, rootTwo.key);
@@ -100,7 +100,7 @@ public class BSTNodeTest {
         assertEquals(root.left, rootTwo.left);
 
         // Add duplicate child node.
-        BSTNode<Integer> rootThree = rootTwo.insert(one, comparator);
+        BinarySearchNode<Integer> rootThree = rootTwo.insert(one, comparator);
 
         // Test that both root and child nodes of newest tree have new identities; replacing child requires replacing parent.
         assertEquals(rootTwo.key, rootThree.key);
@@ -124,7 +124,7 @@ public class BSTNodeTest {
     @Test
     public void testDelete_zeroOrOneChild() throws InvalidSearchTreeException{
         // Construct initial tree.
-        BSTNode<Integer> root = new BSTNode<>(four);
+        BinarySearchNode<Integer> root = new BinarySearchNode<>(four);
         root = root.insert(two, comparator);
         root = root.insert(five, comparator);
         root = root.insert(three, comparator);
@@ -187,7 +187,7 @@ public class BSTNodeTest {
      */
     @Test
     public void testDelete_nodeWithTwoChildren() throws InvalidSearchTreeException{
-        BSTNode<Integer> root = new BSTNode<>(four);
+        BinarySearchNode<Integer> root = new BinarySearchNode<>(four);
         root = root.insert(one, comparator);
         root = root.insert(six, comparator);
         root = root.insert(three, comparator);
@@ -238,7 +238,7 @@ public class BSTNodeTest {
      */
     @Test
     public void testDelete_whenNothingToDelete() throws InvalidSearchTreeException{
-        BSTNode<Integer> root = new BSTNode<>(four);
+        BinarySearchNode<Integer> root = new BinarySearchNode<>(four);
         root = root.insert(one, comparator);
 
         // Delete value that isn't in the tree, larger than largest node.
@@ -277,12 +277,12 @@ public class BSTNodeTest {
      */
     @Test
     public void testDelete_maintainsImmutability() {
-        BSTNode<Integer> root = new BSTNode<>(four);
+        BinarySearchNode<Integer> root = new BinarySearchNode<>(four);
         root = root.insert(one, comparator);
         root = root.insert(six, comparator);
 
         // Delete left child of root, leaving root and right child.
-        BSTNode postDelete = root.delete(one, comparator);
+        BinarySearchNode postDelete = root.delete(one, comparator);
 
         // Ensure that root now has a new identity, but right child remains the same.
         assertEquals(root.key, postDelete.key);
@@ -295,7 +295,7 @@ public class BSTNodeTest {
      */
     @Test
     public void testContains(){
-        BSTNode<Integer> root = new BSTNode<>(five);
+        BinarySearchNode<Integer> root = new BinarySearchNode<>(five);
         root = root.insert(four, comparator);
         root = root.insert(six, comparator);
 
@@ -317,7 +317,7 @@ public class BSTNodeTest {
      */
     @Test
     public void testInOrderTraversal() throws InvalidSearchTreeException{
-        BSTNode<Integer> root = new BSTNode<>(five);
+        BinarySearchNode<Integer> root = new BinarySearchNode<>(five);
         root = root.insert(six, comparator);
         root = root.insert(zero, comparator);
         root = root.insert(one, comparator);
@@ -337,7 +337,7 @@ public class BSTNodeTest {
      */
     @Test
     public void testGetRangeList_presentInTree(){
-        BSTNode<Integer> root = new BSTNode<>(one);
+        BinarySearchNode<Integer> root = new BinarySearchNode<>(one);
 
         root = root.insert(two, comparator);
         root = root.insert(three, comparator);
@@ -354,7 +354,7 @@ public class BSTNodeTest {
      */
     @Test
     public void testGetRangeList_notPresentInTree(){
-        BSTNode<Integer> root = new BSTNode<>(one);
+        BinarySearchNode<Integer> root = new BinarySearchNode<>(one);
 
         List<Integer> expectedValues = new ArrayList<>();
         List<Integer> actualValues = root.getRange(two, four, comparator);
