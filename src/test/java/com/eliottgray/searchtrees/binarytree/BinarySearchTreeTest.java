@@ -147,13 +147,10 @@ public class BinarySearchTreeTest {
     public void testCustomComparator(){
 
         // Create comparator that compares all Integers by their absolute value.
-        Comparator<Integer> customComparator = new Comparator<Integer>() {
-            @Override
-            public int compare(Integer one, Integer two) {
-                Integer absoluteValueOne = Math.abs(one);
-                Integer absoluteValueTwo = Math.abs(two);
-                return absoluteValueOne.compareTo(absoluteValueTwo);
-            }
+        Comparator<Integer> customComparator = (one, two) -> {
+            Integer absoluteValueOne = Math.abs(one);
+            Integer absoluteValueTwo = Math.abs(two);
+            return absoluteValueOne.compareTo(absoluteValueTwo);
         };
 
         BinarySearchTree<Integer> bsTree = new BinarySearchTree<>(customComparator);

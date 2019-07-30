@@ -2,10 +2,7 @@ package com.eliottgray.searchtrees.binarytree;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -17,12 +14,7 @@ public class BinarySearchNodeTest {
     private Integer four = 4;
     private Integer five = 5;
     private Integer six = 6;
-    private Comparator<Integer> comparator = new Comparator<Integer>() {
-        @Override
-        public int compare(Integer one, Integer two) {
-            return one.compareTo(two);
-        }
-    };
+    private Comparator<Integer> comparator = Integer::compareTo;
 
     /**
      * Construct a single node, and test properties.
@@ -34,7 +26,7 @@ public class BinarySearchNodeTest {
         assertFalse(root.hasRight());
         assertNull(root.left);
         assertNull(root.right);
-        assertEquals(root.key, new Integer(0));
+        assertEquals(root.key, Integer.valueOf(0));
         assertEquals(1, root.size);
         assertEquals(1, root.height);
         assertTrue(root.contains(root.key, comparator));
@@ -73,11 +65,11 @@ public class BinarySearchNodeTest {
         assertEquals(three, newRoot.key);
         assertTrue(newRoot.hasLeft());
         assertFalse(newRoot.hasRight());
-        assertEquals(one, newRoot.left.key);
-        assertFalse(newRoot.left.hasLeft() && newRoot.left.hasRight());
+        assertEquals(one, newRoot.getLeft().key);
+        assertFalse(newRoot.getLeft().hasLeft() && newRoot.getLeft().hasRight());
         assertEquals(2, newRoot.size);
         assertEquals(2, newRoot.height);
-        assertTrue(newRoot.contains(newRoot.left.key, comparator));
+        assertTrue(newRoot.contains(newRoot.getLeft().key, comparator));
         assertTrue(newRoot.contains(newRoot.key, comparator));
     }
 
@@ -105,7 +97,7 @@ public class BinarySearchNodeTest {
         // Test that both root and child nodes of newest tree have new identities; replacing child requires replacing parent.
         assertEquals(rootTwo.key, rootThree.key);
         assertNotEquals(rootTwo, rootThree);
-        assertEquals(rootTwo.left.key, rootThree.left.key);
+        assertEquals(rootTwo.getLeft().key, rootThree.getLeft().key);
         assertNotEquals(rootTwo.left, rootThree.left);
     }
 
@@ -134,10 +126,10 @@ public class BinarySearchNodeTest {
         // Test deletion of a node with no children.
         root = root.delete(six, comparator);
         assertEquals(four, root.key);
-        assertEquals(five, root.right.key);
-        assertFalse(root.right.hasRight());
-        assertEquals(1, root.right.size);
-        assertEquals(1, root.right.height);
+        assertEquals(five, root.getRight().key);
+        assertFalse(root.getRight().hasRight());
+        assertEquals(1, root.getRight().size);
+        assertEquals(1, root.getRight().height);
         assertEquals(3, root.height);
         assertEquals(4, root.size);
         root.validate();
@@ -145,11 +137,11 @@ public class BinarySearchNodeTest {
         // Test deletion of a node with one child.
         root = root.delete(two, comparator);
         assertEquals(four, root.key);
-        assertEquals(three, root.left.key);
-        assertEquals(five, root.right.key);
+        assertEquals(three, root.getLeft().key);
+        assertEquals(five, root.getRight().key);
         assertEquals(2, root.height);
         assertEquals(3, root.size);
-        assertEquals(1, root.left.height);
+        assertEquals(1, root.getLeft().height);
         root.validate();
 
         // Test deletion of a node with no children.
@@ -202,11 +194,11 @@ public class BinarySearchNodeTest {
         // Test deletion of root when LEFT subtree is longer.
         root = root.delete(4, comparator);
         assertEquals(three, root.key);
-        assertEquals(one, root.left.key);
-        assertEquals(six, root.right.key);
-        assertEquals(five, root.right.left.key);
-        assertEquals(zero, root.left.left.key);
-        assertEquals(two, root.left.right.key);
+        assertEquals(one, root.getLeft().key);
+        assertEquals(six, root.getRight().key);
+        assertEquals(five, root.getRight().getLeft().key);
+        assertEquals(zero, root.getLeft().getLeft().key);
+        assertEquals(two, root.getLeft().getRight().key);
         assertEquals(3, root.height);
         assertEquals(6, root.size);
         root.validate();
@@ -214,10 +206,10 @@ public class BinarySearchNodeTest {
         // Test deletion of root when Right subtree is longer OR subtrees are same size.
         root = root.delete(3, comparator);
         assertEquals(five, root.key);
-        assertEquals(one, root.left.key);
-        assertEquals(six, root.right.key);
-        assertEquals(zero, root.left.left.key);
-        assertEquals(two, root.left.right.key);
+        assertEquals(one, root.getLeft().key);
+        assertEquals(six, root.getRight().key);
+        assertEquals(zero, root.getLeft().getLeft().key);
+        assertEquals(two, root.getLeft().getRight().key);
         assertEquals(3, root.height);
         assertEquals(5, root.size);
         root.validate();
@@ -225,9 +217,9 @@ public class BinarySearchNodeTest {
         // Test deletion of non-root with two children.
         root = root.delete(one, comparator);
         assertEquals(five, root.key);
-        assertEquals(two, root.left.key);
-        assertEquals(six, root.right.key);
-        assertEquals(zero, root.left.left.key);
+        assertEquals(two, root.getLeft().key);
+        assertEquals(six, root.getRight().key);
+        assertEquals(zero, root.getLeft().getLeft().key);
         assertEquals(3, root.height);
         assertEquals(4, root.size);
         root.validate();
@@ -246,7 +238,7 @@ public class BinarySearchNodeTest {
 
         // Verify tree is unchanged.
         assertEquals(root.key, four);
-        assertEquals(one, root.left.key);
+        assertEquals(one, root.getLeft().key);
         assertEquals(2, root.height);
         assertEquals(2, root.size);
         root.validate();
@@ -256,7 +248,7 @@ public class BinarySearchNodeTest {
 
         // Verify tree is unchanged.
         assertEquals(root.key, four);
-        assertEquals(one, root.left.key);
+        assertEquals(one, root.getLeft().key);
         assertEquals(2, root.height);
         assertEquals(2, root.size);
         root.validate();
@@ -266,7 +258,7 @@ public class BinarySearchNodeTest {
         // Verify tree is unchanged.
         // Verify same results as before the deletion.
         assertEquals(root.key, four);
-        assertEquals(one, root.left.key);
+        assertEquals(one, root.getLeft().key);
         assertEquals(2, root.height);
         assertEquals(2, root.size);
         root.validate();
