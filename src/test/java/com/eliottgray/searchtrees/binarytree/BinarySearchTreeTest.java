@@ -139,6 +139,26 @@ public class BinarySearchTreeTest {
     }
 
     /**
+     * Test retrieval of minimum and maximum values.
+     */
+    @Test
+    public void testGetMin_testGetMax(){
+        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
+
+        // Empty tree returns null values.
+        assertNull(bsTree.getMax());
+        assertNull(bsTree.getMin());
+
+        bsTree = bsTree.insert(0);
+        bsTree = bsTree.insert(1);
+        bsTree = bsTree.insert(2);
+        bsTree = bsTree.insert(3);
+
+        assertEquals(Integer.valueOf(0), bsTree.getMin());
+        assertEquals(Integer.valueOf(3), bsTree.getMax());
+    }
+
+    /**
      * Test overriding default comparator with a custom one.
      *
      * The comparator in this example stores and sorts Integers based on Absolute Value, instead of actual value.

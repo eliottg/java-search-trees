@@ -66,6 +66,30 @@ public abstract class Tree <Key extends Comparable<Key>> {
         }
     }
 
+    public Key getMin(){
+        if (isEmpty()){
+            return null;
+        } else {
+            Node<Key> current = getRoot();
+            while (current.hasLeft()){
+                current = current.getLeft();
+            }
+            return current.getKey();
+        }
+    }
+
+    public Key getMax(){
+        if (isEmpty()){
+            return null;
+        } else {
+            Node<Key> current = getRoot();
+            while (current.hasRight()){
+                current = current.getRight();
+            }
+            return current.getKey();
+        }
+    }
+
     void validate () throws InvalidSearchTreeException{
         if (!isEmpty()) {
             getRoot().validate();
