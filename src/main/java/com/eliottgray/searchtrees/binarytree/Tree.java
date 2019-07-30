@@ -9,26 +9,37 @@ public abstract class Tree <Key extends Comparable<Key>> {
     final Comparator<Key> comparator;
 
     /**
-     * Empty tree. Comparison of Keys to be performed with default compareTo method.
+     * Create an empty tree.
+     * Comparison of Keys will be performed with the default compareTo method of the Key.
      */
     public Tree(){
         this.comparator = Comparable::compareTo;
     }
 
     /**
-     * Empty tree, with comparator override.
-     * @param comparator    Comparison function with which to override default compareTo of Key.
+     * Create an empty tree, with overridden comparator.
+     * The default compareTo method of the Key class will not be used.
+     * @param comparator    Key comparison method.
      */
     public Tree(Comparator<Key> comparator){
         this.comparator = comparator;
     }
 
-    abstract Node<Key> getRoot();
+    /**
+     * @return  Root Node of tree.
+     */
+    protected abstract Node<Key> getRoot();
 
+    /**
+     * @return  Whether the Tree is empty or not.
+     */
     public boolean isEmpty(){
         return getRoot() == null;
     }
 
+    /**
+     * @return  Number of Keys in the tree.
+     */
     public int size(){
         if (isEmpty()) {
             return 0;
@@ -38,9 +49,9 @@ public abstract class Tree <Key extends Comparable<Key>> {
     }
 
     /**
-     * Retrieve the value for a given key within the tree.  Return null if not available.
-     * @param key     int value to search for.
-     * @return          presence of value in tree.
+     * Determine whether or not the given Key is contained within the tree.
+     * @param key   Key to search for.
+     * @return      Presence of Key in tree.
      */
     public boolean contains(Key key){
         if (isEmpty()){
@@ -50,6 +61,9 @@ public abstract class Tree <Key extends Comparable<Key>> {
         }
     }
 
+    /**
+     * @return  List of Keys in ascending order.
+     */
     public List<Key> toAscendingList(){
         if (isEmpty()){
             return new ArrayList<>();
@@ -58,6 +72,12 @@ public abstract class Tree <Key extends Comparable<Key>> {
         }
     }
 
+    /**
+     * Return a List of Keys between the given start and end, inclusive.
+     * @param start     Start Key.
+     * @param end       End Key.
+     * @return          List of Keys within range, inclusive.
+     */
     public List<Key> getRange(Key start, Key end){
         if (isEmpty()){
             return new ArrayList<>();
@@ -66,6 +86,9 @@ public abstract class Tree <Key extends Comparable<Key>> {
         }
     }
 
+    /**
+     * @return  Minimum Key.
+     */
     public Key getMin(){
         if (isEmpty()){
             return null;
@@ -78,6 +101,9 @@ public abstract class Tree <Key extends Comparable<Key>> {
         }
     }
 
+    /**
+     * @return  Maximum Key.
+     */
     public Key getMax(){
         if (isEmpty()){
             return null;

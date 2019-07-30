@@ -41,7 +41,7 @@ public class AVLTree<Key extends Comparable<Key>> extends Tree<Key>{
         this.root = root;
     }
 
-    Node<Key> getRoot(){ return root; }
+    protected Node<Key> getRoot(){ return root; }
 
     public AVLTree<Key> delete(Key key){
         if (root == null){

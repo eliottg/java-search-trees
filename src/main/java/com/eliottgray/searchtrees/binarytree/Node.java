@@ -11,8 +11,8 @@ abstract class Node <Key extends Comparable<Key>> {
     final int size;
 
     /**
-     * Construct new leaf node, with no children.
-     * @param key   Comparable Key for node.
+     * Construct a childless Node.
+     * @param key   Key for Node.
      */
     Node (Key key){
         this.key = key;
@@ -21,10 +21,10 @@ abstract class Node <Key extends Comparable<Key>> {
     }
 
     /**
-     * Construct replacement root node, with existing children.
-     * @param key       Comparable Key for node.
-     * @param left      Existing left child.
-     * @param right     Existing right child.
+     * Construct a Node with at least one child.
+     * @param key       Key for node.
+     * @param left      Left child.
+     * @param right     Right child.
      */
     Node(Key key, Node<Key> left, Node<Key> right){
         this.key = key;
