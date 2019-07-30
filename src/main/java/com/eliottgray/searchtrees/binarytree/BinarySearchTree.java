@@ -12,7 +12,7 @@ import java.util.Comparator;
  * */
 public class BinarySearchTree<Key extends Comparable<Key>> extends Tree<Key> {
 
-    final BinarySearchNode<Key> root;
+    private final BinarySearchNode<Key> root;
 
     /**
      * Empty tree. Comparison of Keys to be performed with default compareTo method.

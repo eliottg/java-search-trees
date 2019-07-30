@@ -12,7 +12,7 @@ import java.util.Comparator;
  * */
 public class AVLTree<Key extends Comparable<Key>> extends Tree<Key>{
 
-    final AVLNode<Key> root;
+    private final AVLNode<Key> root;
 
     /**
      * Empty tree. Comparison of Keys to be performed with default compareTo method.
