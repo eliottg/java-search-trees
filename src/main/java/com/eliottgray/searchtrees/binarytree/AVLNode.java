@@ -44,6 +44,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
      * @param key           Key to insert.
      * @return              Root node of tree.
      */
+    @Override
     AVLNode<Key> insert(Key key, Comparator<Key> comparator){
         // This position in the tree is currently occupied by current node.
         AVLNode<Key> root;
@@ -143,6 +144,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
     private AVLNode<Key> rotateLeft(){
         // Pivot is to my right.
         AVLNode<Key> pivot = this.right;
+        assert pivot != null;
 
         // Move self down and left.  My right is now pivot left.
         AVLNode<Key> newThis = new AVLNode<>(this.key, this.left, pivot.left);
@@ -167,6 +169,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
     private AVLNode<Key> rotateRight(){
         // Pivot is to my left.
         AVLNode<Key> pivot = this.left;
+        assert pivot != null;
 
         // Move self down and right.  My left is now pivot right.
         AVLNode<Key> newThis = new AVLNode<>(this.key, pivot.right, this.right);
@@ -181,6 +184,7 @@ class AVLNode <Key extends Comparable<Key>> extends Node<Key>{
      * @param key       Key to delete.
      * @return          Root node.
      */
+    @Override
     AVLNode<Key> delete(Key key, Comparator<Key> comparator){
         AVLNode<Key> root;
         int comparison = comparator.compare(key, this.key);

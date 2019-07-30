@@ -44,6 +44,7 @@ class BinarySearchNode<Key extends Comparable<Key>> extends Node<Key>{
      * @param key           Key to insert.
      * @return              Root node of tree.
      */
+    @Override
     BinarySearchNode<Key> insert(Key key, Comparator<Key> comparator){
         // This position in the tree is currently occupied by current node.
         BinarySearchNode<Key> root;
@@ -86,6 +87,7 @@ class BinarySearchNode<Key extends Comparable<Key>> extends Node<Key>{
      * @param key       Key to delete.
      * @return          Root node.
      */
+    @Override
     BinarySearchNode<Key> delete(Key key, Comparator<Key> comparator){
         BinarySearchNode<Key> root;
         int comparison = comparator.compare(key, this.key);

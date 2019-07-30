@@ -268,7 +268,7 @@ public class BinarySearchNodeTest {
      * Test that deletion of nodes properly results in replacement of all direct parent nodes.
      */
     @Test
-    public void testDelete_maintainsImmutability() {
+    public void testDelete_maintainsImmutability(){
         BinarySearchNode<Integer> root = new BinarySearchNode<>(four);
         root = root.insert(one, comparator);
         root = root.insert(six, comparator);

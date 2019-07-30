@@ -20,7 +20,7 @@ public class AVLNodeTest {
      * Construct a single node, and test properties.
      */
     @Test
-    public void testSingleNode() throws InvalidSearchTreeException {
+    public void testSingleNode() throws InvalidSearchTreeException{
         AVLNode<Integer> root = new AVLNode<>(zero);
         assertFalse(root.hasLeft());
         assertFalse(root.hasRight());
@@ -43,7 +43,7 @@ public class AVLNodeTest {
      *       1
      */
     @Test
-    public void testInsertions_testImmutability() throws InvalidSearchTreeException {
+    public void testInsertions_testImmutability() throws InvalidSearchTreeException{
         // Start graph with initial node.
         AVLNode<Integer> root = new AVLNode<>(three);
         root.validate();
@@ -116,7 +116,7 @@ public class AVLNodeTest {
      *                                   6                         4          4   6
      */
     @Test
-    public void testAddValues_repeatedRotations_left() throws InvalidSearchTreeException {
+    public void testAddValues_repeatedRotations_left() throws InvalidSearchTreeException{
         AVLNode<Integer> root = new AVLNode<>(one);
 
         // Unbalance tree with insertions.
@@ -176,7 +176,7 @@ public class AVLNodeTest {
      *                        1                                 3      1   3
      */
     @Test
-    public void testAddValues_repeatedRotations_right() throws InvalidSearchTreeException {
+    public void testAddValues_repeatedRotations_right() throws InvalidSearchTreeException{
         AVLNode<Integer> root = new AVLNode<>(six);
 
         // Unbalance tree with insertions.
@@ -234,7 +234,7 @@ public class AVLNodeTest {
      *        3  [6]         3
      */
     @Test
-    public void testDelete_zeroOrOneChild() throws InvalidSearchTreeException {
+    public void testDelete_zeroOrOneChild() throws InvalidSearchTreeException{
         // Construct initial tree.
         AVLNode<Integer> root = new AVLNode<>(four);
         root = root.insert(two, comparator);
@@ -296,7 +296,7 @@ public class AVLNodeTest {
      *    1            1
      */
     @Test
-    public void testDelete_rightRotation() throws InvalidSearchTreeException {
+    public void testDelete_rightRotation() throws InvalidSearchTreeException{
         AVLNode<Integer> root = new AVLNode<>(three);
         root = root.insert(four, comparator);
         root = root.insert(two, comparator);
@@ -326,7 +326,7 @@ public class AVLNodeTest {
      *            5          5
      */
     @Test
-    public void testDelete_leftRotation() throws InvalidSearchTreeException {
+    public void testDelete_leftRotation() throws InvalidSearchTreeException{
         AVLNode<Integer> root = new AVLNode<>(three);
         root = root.insert(four, comparator);
         root = root.insert(two, comparator);
@@ -358,7 +358,7 @@ public class AVLNodeTest {
      *     2
      */
     @Test
-    public void testDelete_nodeWithTwoChildren() throws InvalidSearchTreeException {
+    public void testDelete_nodeWithTwoChildren() throws InvalidSearchTreeException{
         AVLNode<Integer> root = new AVLNode<>(four);
         root = root.insert(one, comparator);
         root = root.insert(six, comparator);
@@ -409,7 +409,7 @@ public class AVLNodeTest {
      * Attempt to delete keys which are not in the tree.
      */
     @Test
-    public void testDelete_whenNothingToDelete() throws InvalidSearchTreeException {
+    public void testDelete_whenNothingToDelete() throws InvalidSearchTreeException{
         AVLNode<Integer> root = new AVLNode<>(four);
         root = root.insert(one, comparator);
 
@@ -448,7 +448,7 @@ public class AVLNodeTest {
      * Test that deletion of nodes properly results in replacement of all direct parent nodes.
      */
     @Test
-    public void testDelete_maintainsImmutability() {
+    public void testDelete_maintainsImmutability(){
         AVLNode<Integer> root = new AVLNode<>(four);
         root = root.insert(one, comparator);
         root = root.insert(six, comparator);
@@ -460,76 +460,5 @@ public class AVLNodeTest {
         assertEquals(root.key, postDelete.key);
         assertNotEquals(root, postDelete);
         assertEquals(root.right, postDelete.right);
-    }
-
-    /**
-     * Test ability to search tree for specific Key.
-     */
-    @Test
-    public void testContains(){
-        AVLNode<Integer> root = new AVLNode<>(five);
-        root = root.insert(four, comparator);
-        root = root.insert(six, comparator);
-
-        // Test if root is found.
-        assertTrue(root.contains(five, comparator));
-
-        // Test if left leaf is found.
-        assertTrue(root.contains(four, comparator));
-
-        // Test if right leaf is found.
-        assertTrue(root.contains(six, comparator));
-
-        // Test if unavailable node is reported as unavailable.
-        assertFalse(root.contains(zero, comparator));
-    }
-
-    /**
-     * Test traversal to in-order sorted list.
-     */
-    @Test
-    public void testInOrderTraversal() throws InvalidSearchTreeException {
-        AVLNode<Integer> root = new AVLNode<>(five);
-        root = root.insert(six, comparator);
-        root = root.insert(zero, comparator);
-        root = root.insert(one, comparator);
-        root = root.insert(two, comparator);
-        root = root.insert(three, comparator);
-
-        // Test in order.
-        List<Integer> expectedList = Arrays.asList(zero, one, two, three, five, six);
-        List<Integer> actualInOrderList = root.inOrderTraversal();
-        assertEquals(expectedList, actualInOrderList);
-
-        root.validate();
-    }
-
-    /**
-     * Test correct retrieval of a subset of Values based on a range of Keys.
-     */
-    @Test
-    public void testGetRangeList_presentInTree(){
-        AVLNode<Integer> root = new AVLNode<>(one);
-
-        root = root.insert(two, comparator);
-        root = root.insert(three, comparator);
-        root = root.insert(four, comparator);
-        root = root.insert(five, comparator);
-
-        List<Integer> expectedValues = new ArrayList<Integer>(){{add(two); add(three); add(four);}};
-        List<Integer> actualValues = root.getRange(two, four, comparator);
-        assertEquals(expectedValues, actualValues);
-    }
-
-    /**
-     * Test correct retrieval of a subset of Values based on a range of Keys.
-     */
-    @Test
-    public void testGetRangeList_notPresentInTree(){
-        AVLNode<Integer> root = new AVLNode<>(one);
-
-        List<Integer> expectedValues = new ArrayList<>();
-        List<Integer> actualValues = root.getRange(two, four, comparator);
-        assertEquals(expectedValues, actualValues);
     }
 }
