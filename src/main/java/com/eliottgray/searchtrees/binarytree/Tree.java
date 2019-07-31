@@ -26,9 +26,27 @@ public abstract class Tree <Key extends Comparable<Key>> {
     }
 
     /**
-     * @return  Root Node of tree.
+     * @return  Root Node of Tree..
      */
     protected abstract Node<Key> getRoot();
+
+    /**
+     * Insert a new Key into the Tree.
+     * A new Tree is returned which contains the change.
+     * If the inserted Key duplicates the same sorted location as an existing Key, the existing Key will be overwritten.
+     * @param key   Key to insert.
+     * @return      Updated Tree.
+     */
+    public abstract Tree<Key> insert(Key key);
+
+    /**
+     * Delete a Key from the Tree.
+     * A new Tree is returned which contains the change.
+     * If the given Key is not contained within the Tree, the returned Tree will be the same object as the original.
+     * @param key   Key to insert.
+     * @return      Updated Tree.
+     */
+    public abstract Tree<Key> delete(Key key);
 
     /**
      * @return  Whether the Tree is empty or not.
@@ -116,7 +134,7 @@ public abstract class Tree <Key extends Comparable<Key>> {
         }
     }
 
-    void validate () throws InvalidSearchTreeException{
+    public void validate () throws InvalidSearchTreeException{
         if (!isEmpty()) {
             getRoot().validate();
         }
