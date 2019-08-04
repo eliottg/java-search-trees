@@ -41,7 +41,7 @@ public class BinarySearchTreeTest {
      *                  Delete
      *            2              2
      *           / \              \
-     *         [1]  3     ->       3
+     *         [1]  3              3
      *               \              \
      *                4              4
      */

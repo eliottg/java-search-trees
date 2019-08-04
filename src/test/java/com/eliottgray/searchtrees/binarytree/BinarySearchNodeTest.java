@@ -17,10 +17,10 @@ public class BinarySearchNodeTest {
     private Comparator<Integer> comparator = Integer::compareTo;
 
     /**
-     * Construct a single node, and test properties.
+     * Test construction: Create a single node, and test properties.
      */
     @Test
-    public void testSingleNode() throws InvalidSearchTreeException{
+    public void constructSingleNode() throws InvalidSearchTreeException{
         BinarySearchNode<Integer> root = new BinarySearchNode<>(zero);
         assertFalse(root.hasLeft());
         assertFalse(root.hasRight());
@@ -34,9 +34,9 @@ public class BinarySearchNodeTest {
     }
 
     /**
-     * Manually construct a small graph of nodes, and test properties.
+     * Test insertion: Construct a small tree of nodes, and test properties.
      *
-     * Ensure that upon creation of a new tree, that old tree retains its identities and properties.
+     * Test immutability: Ensure that upon creation of a new tree, that old tree retains its identities and properties.
      *
      *          3
      *         /
@@ -48,7 +48,7 @@ public class BinarySearchNodeTest {
         BinarySearchNode<Integer> root = new BinarySearchNode<>(three);
         root.validate();
 
-        // Create new tree with additional node.
+        // Insert node into old tree, creating new tree with additional node.
         BinarySearchNode<Integer> newRoot = root.insert(one, comparator);
         newRoot.validate();
 
@@ -109,7 +109,7 @@ public class BinarySearchNodeTest {
      *              Delete        Delete       Delete     Delete    Delete
      *        4              4            4           [4]      [3]
      *       / \            / \          / \          /
-     *      2   5    ->   [2]  5   ->   3  [5]  ->   3     ->       ->   [empty]
+     *      2   5         [2]  5        3  [5]       3                   [empty]
      *       \   \          \
      *        3  [6]         3
      */
@@ -171,7 +171,7 @@ public class BinarySearchNodeTest {
      *              Delete        Delete        Delete
      *        [4]             [3]             5             5
      *       /   \           /   \           / \           / \
-     *     1      6    ->   1     6    ->  [1]  6    ->   2   6
+     *     1      6         1     6        [1]  6         2   6
      *    / \    /         / \    /        / \           /
      *   0  (3) 5         0   2 (5)       0  (2)        0
      *      /

@@ -17,10 +17,10 @@ public class AVLNodeTest {
     private Comparator<Integer> comparator = Integer::compareTo;
 
     /**
-     * Construct a single node, and test properties.
+     * Test construction: Create a single node, and test properties.
      */
     @Test
-    public void testSingleNode() throws InvalidSearchTreeException{
+    public void constructSingleNode() throws InvalidSearchTreeException{
         AVLNode<Integer> root = new AVLNode<>(zero);
         assertFalse(root.hasLeft());
         assertFalse(root.hasRight());
@@ -34,9 +34,9 @@ public class AVLNodeTest {
     }
 
     /**
-     * Manually construct a small graph of nodes, and test properties.
+     * Test insertion: Construct a small tree of nodes, and test properties.
      *
-     * Ensure that upon creation of a new tree, that old tree retains its identities and properties.
+     * Test immutability: Ensure that upon creation of a new tree, that old tree retains its identities and properties.
      *
      *          3
      *         /
@@ -48,7 +48,7 @@ public class AVLNodeTest {
         AVLNode<Integer> root = new AVLNode<>(three);
         root.validate();
 
-        // Create new tree with additional node.
+        // Insert node into old tree, creating new tree with additional node.
         AVLNode<Integer> newRoot = root.insert(one, comparator);
         newRoot.validate();
 
@@ -108,7 +108,7 @@ public class AVLNodeTest {
      *
      *         Left        Insert          Left        Insert         Right        Left
      *    1            2           2               2             2          2             3
-     *     \    ->    / \    ->   / \      ->     / \    ->     / \   ->   / \     ->    / \
+     *     \          / \         / \             / \           / \        / \           / \
      *      2        1   3       1   3           1   5         1   5      1   3         2   5
      *       \                        \             / \           / \          \       /   / \
      *        3                        5           3   6         3   6          5     1   4   6
@@ -168,7 +168,7 @@ public class AVLNodeTest {
      *
      *         Right       Insert          Right        Insert         Left        Right
      *       6         5            5               5             5          5             4
-     *      /   ->    / \    ->    / \      ->     / \    ->     / \   ->   / \     ->    / \
+     *      /         / \          / \             / \           / \        / \           / \
      *     5         4   6        4   6           2   6         2   6      4   6         2   5
      *    /                      /               / \           / \        /             / \   \
      *   4                      2               1   4         1   4      2             1   3   6
@@ -229,7 +229,7 @@ public class AVLNodeTest {
      *              Delete        Delete       Delete     Delete    Delete
      *        4              4            4           [4]      [3]
      *       / \            / \          / \          /
-     *      2   5    ->   [2]  5   ->   3  [5]  ->   3     ->       ->   [empty]
+     *      2   5         [2]  5        3  [5]       3                   [empty]
      *       \   \          \
      *        3  [6]         3
      */
@@ -291,7 +291,7 @@ public class AVLNodeTest {
      *             Delete     Rotate
      *        3            3         2
      *       / \          /         / \
-     *      2  [4]  ->   2    ->   1   3
+     *      2  [4]       2         1   3
      *     /            /
      *    1            1
      */
@@ -321,7 +321,7 @@ public class AVLNodeTest {
      *           Delete      Rotate
      *        3          3            4
      *       / \          \          / \
-     *     [2]  4    ->    4   ->   3   5
+     *     [2]  4          4        3   5
      *           \          \
      *            5          5
      */
@@ -351,7 +351,7 @@ public class AVLNodeTest {
      *              Delete        Delete        Delete
      *        [4]             [3]             5             5
      *       /   \           /   \           / \           / \
-     *     1      6    ->   1     6    ->  [1]  6    ->   2   6
+     *     1      6         1     6        [1]  6         2   6
      *    / \    /         / \    /        / \           /
      *   0  (3) 5         0   2 (5)       0  (2)        0
      *      /
