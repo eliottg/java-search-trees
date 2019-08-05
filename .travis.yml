@@ -1,7 +1,5 @@
 language: java
-#script: gradle build --info
 jdk:
   - openjdk8
-  - oraclejdk11
   - openjdk10
   - openjdk11
