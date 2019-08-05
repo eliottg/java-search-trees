@@ -1,5 +1,5 @@
 language: java
-#script: mvn verify -B
+script: gradle build
 jdk:
   - openjdk8
   - oraclejdk11
