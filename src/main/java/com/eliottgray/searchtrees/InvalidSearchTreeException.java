@@ -1,4 +1,4 @@
-package com.eliottgray.searchtrees.binarytree;
+package com.eliottgray.searchtrees;
 
 public class InvalidSearchTreeException extends Exception {
 

@@ -1,5 +1,7 @@
-package com.eliottgray.searchtrees.binarytree;
+package com.eliottgray.searchtrees;
 
+import com.eliottgray.searchtrees.BinarySearchNode;
+import com.eliottgray.searchtrees.InvalidSearchTreeException;
 import org.junit.Test;
 
 import java.util.*;
@@ -20,7 +22,7 @@ public class BinarySearchNodeTest {
      * Test construction: Create a single node, and test properties.
      */
     @Test
-    public void constructSingleNode() throws InvalidSearchTreeException{
+    public void constructSingleNode() throws InvalidSearchTreeException {
         BinarySearchNode<Integer> root = new BinarySearchNode<>(zero);
         assertFalse(root.hasLeft());
         assertFalse(root.hasRight());

@@ -1,4 +1,4 @@
-package com.eliottgray.searchtrees.binarytree;
+package com.eliottgray.searchtrees;
 
 import java.util.Comparator;
 
@@ -10,25 +10,25 @@ import java.util.Comparator;
  * 2) Space Complexity.  Given that each new data point creates a separate object, more memory that is necessary will not be allocated.
  * 3) Easy ordering.  Traversal of all elements in-order results in an ordered list; not something typically done with Hash Tables.
  * */
-public class BinarySearchTree<Key extends Comparable<Key>> extends Tree<Key> {
+public class AVLTree<Key extends Comparable<Key>> extends Tree<Key>{
 
-    private final BinarySearchNode<Key> root;
+    private final AVLNode<Key> root;
 
     /**
      * Empty tree. Comparison of Keys to be performed with default compareTo method.
      */
-    public BinarySearchTree(){
+    public AVLTree(){
         super();
-        root = null;
+        this.root = null;
     }
 
     /**
      * Empty tree, with comparator override.
      * @param comparator    Comparison function with which to override default compareTo of Key.
      */
-    public BinarySearchTree(Comparator<Key> comparator){
+    public AVLTree(Comparator<Key> comparator){
         super(comparator);
-        root = null;
+        this.root = null;
     }
 
     /**
@@ -36,29 +36,29 @@ public class BinarySearchTree<Key extends Comparable<Key>> extends Tree<Key> {
      * @param root          Existing root node.
      * @param comparator    Comparator corresponding to current root node.
      */
-    private BinarySearchTree(BinarySearchNode<Key> root, Comparator<Key> comparator){
+    private AVLTree(AVLNode<Key> root, Comparator<Key> comparator){
         super(comparator);
         this.root = root;
     }
 
     protected Node<Key> getRoot(){ return root; }
 
-    public BinarySearchTree<Key> delete(Key key){
+    public AVLTree<Key> delete(Key key){
         if (root == null){
             return this;
         } else {
-            BinarySearchNode<Key> newRoot = root.delete(key, comparator);
-            return new BinarySearchTree<>(newRoot, comparator);
+            AVLNode<Key> newRoot = root.delete(key, comparator);
+            return new AVLTree<>(newRoot, comparator);
         }
     }
 
-    public BinarySearchTree<Key> insert(Key key){
+    public AVLTree<Key> insert(Key key){
         if (root == null){
-            BinarySearchNode<Key> newRoot = new BinarySearchNode<>(key);
-            return new BinarySearchTree<>(newRoot, comparator);
+            AVLNode<Key> newRoot = new AVLNode<>(key);
+            return new AVLTree<>(newRoot, comparator);
         } else {
-            BinarySearchNode<Key> newRoot = root.insert(key, comparator);
-            return new BinarySearchTree<>(newRoot, comparator);
+            AVLNode<Key> newRoot = root.insert(key, comparator);
+            return new AVLTree<>(newRoot, comparator);
         }
     }
 }

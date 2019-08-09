@@ -1,5 +1,7 @@
-package com.eliottgray.searchtrees.binarytree;
+package com.eliottgray.searchtrees;
 
+import com.eliottgray.searchtrees.BinarySearchTree;
+import com.eliottgray.searchtrees.InvalidSearchTreeException;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ public class BinarySearchTreeTest {
      * Test construction of an Binary Search Tree, adding a key, and testing for presence.
      */
     @Test
-    public void testConstor_insert_contains() throws InvalidSearchTreeException{
+    public void testConstor_insert_contains() throws InvalidSearchTreeException {
         // Initial tree is empty.
         BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
         assertTrue(bsTree.isEmpty());

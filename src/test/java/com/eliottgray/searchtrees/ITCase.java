@@ -1,9 +1,5 @@
 package com.eliottgray.searchtrees;
 
-import com.eliottgray.searchtrees.binarytree.AVLTree;
-import com.eliottgray.searchtrees.binarytree.BinarySearchTree;
-import com.eliottgray.searchtrees.binarytree.InvalidSearchTreeException;
-import com.eliottgray.searchtrees.binarytree.Tree;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

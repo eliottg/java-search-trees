@@ -1,5 +1,7 @@
-package com.eliottgray.searchtrees.binarytree;
+package com.eliottgray.searchtrees;
 
+import com.eliottgray.searchtrees.AVLTree;
+import com.eliottgray.searchtrees.InvalidSearchTreeException;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ public class AVLTreeTest {
      * Test construction of an AVL Tree, adding a key, and testing for presence.
      */
     @Test
-    public void testConstor_insert_contains() throws InvalidSearchTreeException{
+    public void testConstor_insert_contains() throws InvalidSearchTreeException {
         // Initial tree is empty.
         AVLTree<Integer> avlTree = new AVLTree<>();
         assertTrue(avlTree.isEmpty());
