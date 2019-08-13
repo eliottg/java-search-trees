@@ -1,6 +1,5 @@
 package com.eliottgray.searchtrees;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public abstract class Tree <Key extends Comparable<Key>> {
     /**
      * @return  Root Node of Tree..
      */
-    protected abstract Node<Key> getRoot();
+    abstract Node<Key> getRoot();
 
     /**
      * Insert a new Key into the Tree.
@@ -71,24 +70,12 @@ public abstract class Tree <Key extends Comparable<Key>> {
      * @param key   Key to search for.
      * @return      Presence of Key in tree.
      */
-    public boolean contains(Key key){
-        if (isEmpty()){
-            return false;
-        } else {
-            return getRoot().contains(key, comparator);
-        }
-    }
+    public abstract boolean contains(Key key);
 
     /**
      * @return  List of Keys in ascending order.
      */
-    public List<Key> toAscendingList(){
-        if (isEmpty()){
-            return new ArrayList<>();
-        } else {
-            return getRoot().inOrderTraversal();
-        }
-    }
+    public abstract List<Key> toAscendingList();
 
     /**
      * Return a List of Keys between the given start and end, inclusive.
@@ -96,47 +83,21 @@ public abstract class Tree <Key extends Comparable<Key>> {
      * @param end       End Key.
      * @return          List of Keys within range, inclusive.
      */
-    public List<Key> getRange(Key start, Key end){
-        if (isEmpty()){
-            return new ArrayList<>();
-        } else {
-            return getRoot().getRange(start, end, comparator);
-        }
-    }
+    public abstract List<Key> getRange(Key start, Key end);
 
     /**
      * @return  Minimum Key.
      */
-    public Key getMin(){
-        if (isEmpty()){
-            return null;
-        } else {
-            Node<Key> current = getRoot();
-            while (current.hasLeft()){
-                current = current.getLeft();
-            }
-            return current.getKey();
-        }
-    }
+    public abstract Key getMin();
 
     /**
      * @return  Maximum Key.
      */
-    public Key getMax(){
-        if (isEmpty()){
-            return null;
-        } else {
-            Node<Key> current = getRoot();
-            while (current.hasRight()){
-                current = current.getRight();
-            }
-            return current.getKey();
-        }
-    }
+    public abstract Key getMax();
 
-    public void validate () throws InvalidSearchTreeException{
-        if (!isEmpty()) {
-            getRoot().validate();
-        }
-    }
+    /**
+     * Validate that tree maintains invariants.
+     * @throws InvalidSearchTreeException       Tree violates invariants.
+     */
+    public abstract void validate () throws InvalidSearchTreeException;   /// @todo This should become an assesrtion statement instead.
 }

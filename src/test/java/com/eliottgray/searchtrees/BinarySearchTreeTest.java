@@ -1,7 +1,6 @@
 package com.eliottgray.searchtrees;
 
-import com.eliottgray.searchtrees.BinarySearchTree;
-import com.eliottgray.searchtrees.InvalidSearchTreeException;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -13,53 +12,269 @@ import static org.junit.Assert.*;
 
 public class BinarySearchTreeTest {
 
+    private BinarySearchTree<Integer> testTree = new BinarySearchTree<>();
+    /// @todo Formally test immutability -> new identities of nodes upon deletion and insertion.
+
+    @Before
+    public void setUp(){
+        testTree = new BinarySearchTree<>();
+    }
+
     /**
-     * Test construction of an Binary Search Tree, adding a key, and testing for presence.
+     * Initial tree is empty.
      */
     @Test
-    public void testConstor_insert_contains() throws InvalidSearchTreeException {
+    public void isEmpty(){
         // Initial tree is empty.
-        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
-        assertTrue(bsTree.isEmpty());
-        assertFalse(bsTree.contains(3));
+        assertTrue(testTree.isEmpty());
+    }
+
+    /**
+     * Test adding a key, and testing for presence.
+     */
+    @Test
+    public void insert_contains() throws InvalidSearchTreeException {
+        int valueToTest = 3;
+        int valueNotInTree = 4;
+
+        // Initial tree is empty.
+        assertTrue(testTree.isEmpty());
+        assertFalse(testTree.contains(valueToTest));
+        assertFalse(testTree.contains(valueNotInTree));
 
         // Construct new tree with added value.
-        BinarySearchTree<Integer> bsTreeTwo = bsTree.insert(3);
+        Tree<Integer> testTreeTwo = testTree.insert(valueToTest);
 
         // Old tree is still empty.
-        assertTrue(bsTree.isEmpty());
-        assertFalse(bsTree.contains(3));
+        assertTrue(testTree.isEmpty());
+        assertFalse(testTree.contains(valueToTest));
+        assertFalse(testTree.contains(valueNotInTree));
 
         // New tree correctly has value.
-        assertFalse(bsTreeTwo.isEmpty());
-        assertTrue(bsTreeTwo.contains(3));
+        assertFalse(testTreeTwo.isEmpty());
+        assertTrue(testTreeTwo.contains(valueToTest));
+        assertFalse(testTreeTwo.contains(valueNotInTree));
 
-        bsTreeTwo.validate();
+        testTreeTwo.validate();
+    }
+
+    /**
+     * Test inserting a key when that key was already present.
+     */
+    @Test
+    public void insertDuplicateKey() throws InvalidSearchTreeException {
+        int valueToTest = 993;
+
+        // Add value to tree and test properties.
+        testTree = testTree.insert(valueToTest);
+        assertTrue(testTree.contains(valueToTest));
+
+        // Add value again.
+        testTree = testTree.insert(valueToTest);
+        assertTrue(testTree.contains(valueToTest));
+
+        testTree.validate();
     }
 
     /**
      * Delete node from the tree.
-     *
-     *                  Delete
-     *            2              2
-     *           / \              \
-     *         [1]  3              3
-     *               \              \
-     *                4              4
      */
     @Test
-    public void testDelete() throws InvalidSearchTreeException{
-        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
-        bsTree = bsTree.insert(2);
-        bsTree = bsTree.insert(1);
-        bsTree = bsTree.insert(3);
-        bsTree = bsTree.insert(4);
-        assertTrue(bsTree.contains(1));
-        bsTree = bsTree.delete(1);
+    public void delete_contains() throws InvalidSearchTreeException{
+        testTree = testTree.insert(2);
+        testTree = testTree.insert(1);
+        testTree = testTree.insert(3);
+        testTree = testTree.insert(4);
+        assertTrue(testTree.contains(4));
 
-        assertFalse(bsTree.contains(1));
+        // Test tree contains all expected data.
+        assertTrue(testTree.contains(1));
+        assertTrue(testTree.contains(2));
+        assertTrue(testTree.contains(3));
+        assertTrue(testTree.contains(4));
 
-        bsTree.validate();
+        Tree<Integer> testTreeTwo = testTree.delete(4);
+
+        // Old tree still contains all original data.
+        assertTrue(testTree.contains(1));
+        assertTrue(testTree.contains(2));
+        assertTrue(testTree.contains(3));
+        assertTrue(testTree.contains(4));
+
+        // New tree is missing deleted node.
+        assertTrue(testTreeTwo.contains(1));
+        assertTrue(testTreeTwo.contains(2));
+        assertTrue(testTreeTwo.contains(3));
+        assertFalse(testTreeTwo.contains(4));
+
+        testTree.validate();
+    }
+
+    /**
+     * Test deletion of multiple nodes, with varying number of children.
+     *
+     * Nodes to be deleted in brackets: []
+     *
+     *              Delete        Delete       Delete     Delete    Delete
+     *        4              4            4           [4]      [3]
+     *       / \            / \          / \          /
+     *      2   5         [2]  5        3  [5]       3                   [empty]
+     *       \   \          \
+     *        3  [6]         3
+     */
+    @Test
+    public void testDelete_zeroOrOneChild() throws InvalidSearchTreeException{
+        // Fill initial tree.
+        testTree = testTree.insert(4);
+        testTree = testTree.insert(2);
+        testTree = testTree.insert(5);
+        testTree = testTree.insert(3);
+        testTree = testTree.insert(6);
+        testTree.validate();
+
+        // Test deletion of a node with no children.
+        testTree = testTree.delete(6);
+        assertEquals(4, testTree.getRoot().key.intValue());
+        assertEquals(5, testTree.getRoot().getRight().key.intValue());
+        assertFalse(testTree.getRoot().getRight().hasRight());
+        assertEquals(1, testTree.getRoot().getRight().size);
+        assertEquals(1, testTree.getRoot().getRight().height);
+        assertEquals(3, testTree.getRoot().height);
+        assertEquals(4, testTree.getRoot().size);
+        testTree.validate();
+
+        // Test deletion of a node with one child.
+        testTree = testTree.delete(2);
+        assertEquals(4, testTree.getRoot().key.intValue());
+        assertEquals(3, testTree.getRoot().getLeft().key.intValue());
+        assertEquals(5, testTree.getRoot().getRight().key.intValue());
+        assertEquals(2, testTree.getRoot().height);
+        assertEquals(3, testTree.getRoot().size);
+        assertEquals(1, testTree.getRoot().getLeft().height);
+        testTree.validate();
+
+        // Test deletion of a node with no children.
+        testTree = testTree.delete(5);
+        assertEquals(4, testTree.getRoot().key.intValue());
+        assertNull(testTree.getRoot().right);
+        assertEquals(2, testTree.getRoot().height);
+        assertEquals(2, testTree.getRoot().size);
+        testTree.validate();
+
+        // Test deletion of Root with one child.
+        testTree = testTree.delete(4);
+        assertEquals(3, testTree.getRoot().key.intValue());
+        assertFalse(testTree.getRoot().hasLeft() && testTree.getRoot().hasRight());
+        assertEquals(1, testTree.getRoot().size);
+        assertEquals(1, testTree.getRoot().height);
+        testTree.validate();
+
+        // Test deletion of Root with no child.
+        testTree = testTree.delete(3);
+        assertTrue(testTree.isEmpty());
+
+        // Test deletion of value from empty tree.
+        testTree = testTree.delete(3);
+        assertTrue(testTree.isEmpty());
+    }
+
+    /**
+     * Test deletion of nodes with two children
+     *
+     *              Delete        Delete        Delete
+     *        [4]             [3]             5             5
+     *       /   \           /   \           / \           / \
+     *     1      6         1     6        [1]  6         2   6
+     *    / \    /         / \    /        / \           /
+     *   0  (3) 5         0   2 (5)       0  (2)        0
+     *      /
+     *     2
+     */
+    @Test
+    public void testDelete_nodeWithTwoChildren() throws InvalidSearchTreeException{
+        testTree = testTree.insert(4);
+        testTree = testTree.insert(1);
+        testTree = testTree.insert(6);
+        testTree = testTree.insert(3);
+        testTree = testTree.insert(0);
+        testTree = testTree.insert(5);
+        testTree = testTree.insert(2);
+
+        assertEquals(4, testTree.getRoot().key.intValue());
+        assertEquals(4, testTree.getRoot().height);
+        testTree.validate();
+
+        // Test deletion of root when LEFT subtree is longer.
+        testTree = testTree.delete(4);
+        assertEquals(3, testTree.getRoot().key.intValue());
+        assertEquals(1, testTree.getRoot().getLeft().key.intValue());
+        assertEquals(6, testTree.getRoot().getRight().key.intValue());
+        assertEquals(5, testTree.getRoot().getRight().getLeft().key.intValue());
+        assertEquals(0, testTree.getRoot().getLeft().getLeft().key.intValue());
+        assertEquals(2, testTree.getRoot().getLeft().getRight().key.intValue());
+        assertEquals(3, testTree.getRoot().height);
+        assertEquals(6, testTree.getRoot().size);
+        testTree.validate();
+
+        // Test deletion of root when Right subtree is longer OR subtrees are same size.
+        testTree = testTree.delete(3);
+        assertEquals(5, testTree.getRoot().key.intValue());
+        assertEquals(1, testTree.getRoot().getLeft().key.intValue());
+        assertEquals(6, testTree.getRoot().getRight().key.intValue());
+        assertEquals(0, testTree.getRoot().getLeft().getLeft().key.intValue());
+        assertEquals(2, testTree.getRoot().getLeft().getRight().key.intValue());
+        assertEquals(3, testTree.getRoot().height);
+        assertEquals(5, testTree.getRoot().size);
+        testTree.validate();
+
+        // Test deletion of non-root with two children.
+        testTree = testTree.delete(1);
+        assertEquals(5, testTree.getRoot().key.intValue());
+        assertEquals(2, testTree.getRoot().getLeft().key.intValue());
+        assertEquals(6, testTree.getRoot().getRight().key.intValue());
+        assertEquals(0, testTree.getRoot().getLeft().getLeft().key.intValue());
+        assertEquals(3, testTree.getRoot().height);
+        assertEquals(4, testTree.getRoot().size);
+        testTree.validate();
+    }
+
+    /**
+     * Attempt to delete keys which are not in the tree.
+     */
+    @Test
+    public void testDelete_whenNothingToDelete() throws InvalidSearchTreeException{
+        testTree = testTree.insert(4);
+        testTree = testTree.insert(1);
+
+        // Delete value that isn't in the tree, larger than largest node.
+        testTree = testTree.delete(99);
+
+        // Verify tree is unchanged.
+        assertEquals(testTree.getRoot().key.intValue(), 4);
+        assertEquals(1, testTree.getRoot().getLeft().key.intValue());
+        assertEquals(2, testTree.getRoot().height);
+        assertEquals(2, testTree.getRoot().size);
+        testTree.validate();
+
+        // Delete value that isn't in the tree, smaller than smallest node.
+        testTree = testTree.delete(-199);
+
+        // Verify tree is unchanged.
+        assertEquals(testTree.getRoot().key.intValue(), 4);
+        assertEquals(1, testTree.getRoot().getLeft().key.intValue());
+        assertEquals(2, testTree.getRoot().height);
+        assertEquals(2, testTree.getRoot().size);
+        testTree.validate();
+
+        // Delete value that isn't in the tree, between the available node values.
+        testTree = testTree.delete(3);
+        // Verify tree is unchanged.
+        // Verify same results as before the deletion.
+        assertEquals(testTree.getRoot().key.intValue(), 4);
+        assertEquals(1, testTree.getRoot().getLeft().key.intValue());
+        assertEquals(2, testTree.getRoot().height);
+        assertEquals(2, testTree.getRoot().size);
+        testTree.validate();
     }
 
     /**
@@ -67,30 +282,34 @@ public class BinarySearchTreeTest {
      */
     @Test
     public void testGetSize() throws InvalidSearchTreeException{
-        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
-        assertEquals(0, bsTree.size());
+        assertEquals(0, testTree.size());
 
         // Insert new values and test size.
-        bsTree = bsTree.insert(3);
-        assertEquals(1, bsTree.size());
-        bsTree = bsTree.insert(4);
-        assertEquals(2, bsTree.size());
+        Tree<Integer> treeTwo = testTree.insert(3);
+        assertEquals(0, testTree.size());
+        assertEquals(1, treeTwo.size());
+        Tree<Integer> treeThree = treeTwo.insert(4);
+        assertEquals(0, testTree.size());
+        assertEquals(1, treeTwo.size());
+        assertEquals(2, treeThree.size());
 
         // Inserting duplicate value does not increase size.
-        bsTree = bsTree.insert(3);
-        assertEquals(2, bsTree.size());
+        treeThree = treeThree.insert(3);
+        assertEquals(2, treeThree.size());
 
         // Deleting value not in tree does not decrease size.
-        bsTree = bsTree.delete(999);
-        assertEquals(2, bsTree.size());
+        treeThree = treeThree.delete(999);
+        assertEquals(2, treeThree.size());
 
         // Deleting values decreases size back down to zero.
-        bsTree = bsTree.delete(4);
-        assertEquals(1, bsTree.size());
-        bsTree = bsTree.delete(3);
-        assertEquals(0, bsTree.size());
+        Tree<Integer> treeFour = treeThree.delete(4);
+        assertEquals(2, treeThree.size());
+        assertEquals(1, treeFour.size());
 
-        bsTree.validate();
+        Tree<Integer> treeFive = treeFour.delete(3);
+        assertEquals(0, treeFive.size());
+
+        treeFive.validate();
     }
 
     /**
@@ -98,21 +317,19 @@ public class BinarySearchTreeTest {
      */
     @Test
     public void testToSortedArray() throws InvalidSearchTreeException{
-        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
-
-        List<Integer> emptyList = bsTree.toAscendingList();
-        assertTrue(emptyList.isEmpty());
+        List<Integer> emptyAscendingList = testTree.toAscendingList();
+        assertEquals(new ArrayList<>(), emptyAscendingList);
 
         List<Integer> inputValues = new ArrayList<Integer>(){{add(50); add(2); add(10); add(4); add(1);}};
         for (Integer integer : inputValues) {
-            bsTree = bsTree.insert(integer);
+            testTree = testTree.insert(integer);
         }
 
         Collections.sort(inputValues);
-        List<Integer> sortedList = bsTree.toAscendingList();
+        List<Integer> sortedList = testTree.toAscendingList();
         assertEquals(inputValues, sortedList);
 
-        bsTree.validate();
+        testTree.validate();
     }
 
     /**
@@ -120,23 +337,21 @@ public class BinarySearchTreeTest {
      */
     @Test
     public void testGetRange(){
-        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
-
-        // Test that an empty BSTree returns no values.
-        List<Integer> shouldBeEmpty = bsTree.getRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        // Test that an empty tree returns no values.
+        List<Integer> shouldBeEmpty = testTree.getRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
         assertTrue(shouldBeEmpty.isEmpty());
 
         // Insert values.
         List<Integer> inputValues = new ArrayList<Integer>(){{add(1); add(2); add(3); add(4); add(5);}};
         for (Integer integer : inputValues) {
-            bsTree = bsTree.insert(integer);
+            testTree = testTree.insert(integer);
         }
 
         // Test correct retrieval of a specific range.
         List<Integer> expectedRange = new ArrayList<Integer>(){{add(2); add(3); add(4);}};
         Integer start = 2;
         Integer end = 4;
-        List<Integer> actualRange = bsTree.getRange(start, end);
+        List<Integer> actualRange = testTree.getRange(start, end);
         assertEquals(expectedRange, actualRange);
     }
 
@@ -145,19 +360,17 @@ public class BinarySearchTreeTest {
      */
     @Test
     public void testGetMin_testGetMax(){
-        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>();
-
         // Empty tree returns null values.
-        assertNull(bsTree.getMax());
-        assertNull(bsTree.getMin());
+        assertNull(testTree.getMax());
+        assertNull(testTree.getMin());
 
-        bsTree = bsTree.insert(0);
-        bsTree = bsTree.insert(1);
-        bsTree = bsTree.insert(2);
-        bsTree = bsTree.insert(3);
+        testTree = testTree.insert(1);
+        testTree = testTree.insert(0);
+        testTree = testTree.insert(2);
+        testTree = testTree.insert(3);
 
-        assertEquals(Integer.valueOf(0), bsTree.getMin());
-        assertEquals(Integer.valueOf(3), bsTree.getMax());
+        assertEquals(Integer.valueOf(0), testTree.getMin());
+        assertEquals(Integer.valueOf(3), testTree.getMax());
     }
 
     /**
@@ -167,7 +380,6 @@ public class BinarySearchTreeTest {
      */
     @Test
     public void testCustomComparator(){
-
         // Create comparator that compares all Integers by their absolute value.
         Comparator<Integer> customComparator = (one, two) -> {
             Integer absoluteValueOne = Math.abs(one);
@@ -175,17 +387,18 @@ public class BinarySearchTreeTest {
             return absoluteValueOne.compareTo(absoluteValueTwo);
         };
 
-        BinarySearchTree<Integer> bsTree = new BinarySearchTree<>(customComparator);
+        // Create tree with custom comparator.
+        Tree<Integer> testTree = new BinarySearchTree<>(customComparator);
 
         // Insert values.
         List<Integer> inputValues = new ArrayList<Integer>(){{add(-900); add(-800); add(1); add(2); add(3);}};
         for (Integer integer : inputValues) {
-            bsTree = bsTree.insert(integer);
+            testTree = testTree.insert(integer);
         }
 
         // Due to custom comparator sorting based on Absolute Value, larger negative values should come after smaller positive values.
         List<Integer> expectedOrder = new ArrayList<Integer>(){{add(1); add(2); add(3); add(-800); add(-900);}};
-        List<Integer> actualOrder = bsTree.toAscendingList();
+        List<Integer> actualOrder = testTree.toAscendingList();
 
         assertEquals(expectedOrder, actualOrder);
     }
