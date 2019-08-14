@@ -32,7 +32,7 @@ public class AVLTree<Key extends Comparable<Key>> extends BinarySearchTree<Key>{
      * @param root          Existing root node.
      * @param comparator    Comparator corresponding to current root node.
      */
-    private AVLTree(BinarySearchNode<Key> root, Comparator<Key> comparator){
+    AVLTree(BinarySearchNode<Key> root, Comparator<Key> comparator){
         super(root, comparator);
     }
 
