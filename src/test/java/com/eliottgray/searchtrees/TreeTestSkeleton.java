@@ -25,129 +25,132 @@ public abstract class TreeTestSkeleton {
     }
 
     /**
-     * Initial tree is empty.
+     * A newly-constructed Tree must be empty.
      */
     @Test
-    public void isEmpty(){
+    public void emptyTree(){
         assertTrue(testTree.isEmpty());
+        assertEquals(0, testTree.size());
     }
 
     /**
-     * Test adding a key, and testing for presence.
+     * After inserting a Key, Tree should no longer be empty, and should report that Key is contained.
      */
     @Test
-    public void insert_contains() throws InvalidSearchTreeException {
-        int valueToTest = 3;
-        int valueNotInTree = 4;
+    public void insertKey() throws InvalidSearchTreeException {
+        int valueOne = 3;
+        int valueTwo = 2;
+        int valueNotToTest = 4;
 
-        // Initial tree is empty.
-        assertTrue(testTree.isEmpty());
-        assertFalse(testTree.contains(valueToTest));
-        assertFalse(testTree.contains(valueNotInTree));
+        testTree = testTree.insert(valueOne);
+        assertFalse(testTree.isEmpty());
+        assertEquals(1, testTree.size());
+        assertTrue(testTree.contains(valueOne));
+        assertFalse(testTree.contains(valueTwo));
+        assertFalse(testTree.contains(valueNotToTest));
 
-        // Construct new tree with added value.
-        Tree<Integer> testTreeTwo = testTree.insert(valueToTest);
+        testTree = testTree.insert(valueTwo);
+        assertFalse(testTree.isEmpty());
+        assertEquals(2, testTree.size());
+        assertTrue(testTree.contains(valueOne));
+        assertTrue(testTree.contains(valueTwo));
+        assertFalse(testTree.contains(valueNotToTest));
 
-        // Old tree is still empty.
-        assertTrue(testTree.isEmpty());
-        assertFalse(testTree.contains(valueToTest));
-        assertFalse(testTree.contains(valueNotInTree));
-
-        // New tree correctly has value.
-        assertFalse(testTreeTwo.isEmpty());
-        assertTrue(testTreeTwo.contains(valueToTest));
-        assertFalse(testTreeTwo.contains(valueNotInTree));
-
-        testTreeTwo.validate();
+        testTree.validate();
     }
 
-
     /**
-     * Test inserting a key when that key was already present.
+     * Inserting a duplicate key should result in no change to the Tree.
      */
     @Test
     public void insertDuplicateKey() throws InvalidSearchTreeException {
         int valueToTest = 993;
 
-        // Add value to tree and test properties.
         testTree = testTree.insert(valueToTest);
         assertTrue(testTree.contains(valueToTest));
+        assertEquals(1, testTree.size());
 
         // Add value again.
         testTree = testTree.insert(valueToTest);
         assertTrue(testTree.contains(valueToTest));
+        assertEquals(1, testTree.size());
 
         testTree.validate();
     }
 
     /**
-     * Delete node from the tree.
+     * After deleting a Key, Tree should report a lower Size, and should not contain Key.
      */
     @Test
-    public void delete_contains() throws InvalidSearchTreeException{
-        testTree = testTree.insert(2);
+    public void deleteKey() throws InvalidSearchTreeException{
         testTree = testTree.insert(1);
-        testTree = testTree.insert(3);
-        testTree = testTree.insert(4);
-        assertTrue(testTree.contains(4));
+        testTree = testTree.insert(2);
 
-        // Test tree contains all expected data.
-        assertTrue(testTree.contains(1));
+        // Delete a specific node.
+        testTree = testTree.delete(1);
+
+        // Tree is missing deleted node.
+        assertFalse(testTree.contains(1));
         assertTrue(testTree.contains(2));
-        assertTrue(testTree.contains(3));
-        assertTrue(testTree.contains(4));
 
-        Tree<Integer> testTreeTwo = testTree.delete(4);
+        // Delete remaining node.
+        testTree = testTree.delete(2);
 
-        // Old tree still contains all original data.
-        assertTrue(testTree.contains(1));
-        assertTrue(testTree.contains(2));
-        assertTrue(testTree.contains(3));
-        assertTrue(testTree.contains(4));
-
-        // New tree is missing deleted node.
-        assertTrue(testTreeTwo.contains(1));
-        assertTrue(testTreeTwo.contains(2));
-        assertTrue(testTreeTwo.contains(3));
-        assertFalse(testTreeTwo.contains(4));
+        // Tree must now be empty.
+        assertTrue(testTree.isEmpty());
+        assertFalse(testTree.contains(1));
+        assertFalse(testTree.contains(2));
 
         testTree.validate();
     }
 
-
     /**
-     * Test size changes as nodes increase and decrease.
+     * Deleting a Key that is not within the tree should accomplish nothing.
      */
     @Test
-    public void testGetSize() throws InvalidSearchTreeException{
+    public void deleteKeyNotInTree() throws InvalidSearchTreeException{
+        testTree = testTree.insert(5);
+
+        // Attempting to delete a key not in the Tree accomplishes nothing,
+        testTree = testTree.delete(4);
+        assertFalse(testTree.contains(4));
+        assertTrue(testTree.contains(5));
+        assertEquals(1, testTree.size());
+        assertFalse(testTree.isEmpty());
+
+        testTree.validate();
+    }
+
+    /**
+     * Insertion and deletion of Keys should result in a new Tree.
+     */
+    @Test
+    public void immutability() throws InvalidSearchTreeException{
+        int valueToAdd = 45;
+
+        assertFalse(testTree.contains(valueToAdd));
+        assertTrue(testTree.isEmpty());
         assertEquals(0, testTree.size());
 
-        // Insert new values and test size.
-        Tree<Integer> treeTwo = testTree.insert(3);
-        assertEquals(0, testTree.size());
-        assertEquals(1, treeTwo.size());
-        Tree<Integer> treeThree = treeTwo.insert(4);
-        assertEquals(0, testTree.size());
-        assertEquals(1, treeTwo.size());
-        assertEquals(2, treeThree.size());
+        // Test Insertion
 
-        // Inserting duplicate value does not increase size.
-        treeThree = treeThree.insert(3);
-        assertEquals(2, treeThree.size());
+        Tree<Integer> postInsertTree = testTree.insert(valueToAdd);
+        assertNotEquals(postInsertTree, testTree);
 
-        // Deleting value not in tree does not decrease size.
-        treeThree = treeThree.delete(999);
-        assertEquals(2, treeThree.size());
+        assertTrue(postInsertTree.contains(valueToAdd));
+        assertFalse(postInsertTree.isEmpty());
+        assertEquals(1, postInsertTree.size());
 
-        // Deleting values decreases size back down to zero.
-        Tree<Integer> treeFour = treeThree.delete(4);
-        assertEquals(2, treeThree.size());
-        assertEquals(1, treeFour.size());
+        // Test Deletion
 
-        Tree<Integer> treeFive = treeFour.delete(3);
-        assertEquals(0, treeFive.size());
+        Tree<Integer> postDeleteTree = postInsertTree.delete(valueToAdd);
+        assertNotEquals(postInsertTree, postDeleteTree);
 
-        treeFive.validate();
+        assertFalse(postDeleteTree.contains(valueToAdd));
+        assertTrue(postDeleteTree.isEmpty());
+        assertEquals(0, postDeleteTree.size());
+
+        postInsertTree.validate();
     }
 
     /**
@@ -171,7 +174,7 @@ public abstract class TreeTestSkeleton {
     }
 
     /**
-     * Test retrieval of Values corresponding to an inclusive range of Keys.
+     * Test retrieval of Keys corresponding to an inclusive range.
      */
     @Test
     public void testGetRange(){

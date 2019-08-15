@@ -268,45 +268,6 @@ public class AVLTreeTest extends TreeTestSkeleton {
     }
 
     /**
-     * Attempt to delete keys which are not in the tree.
-     */
-    @Test
-    public void testDelete_whenNothingToDelete() throws InvalidSearchTreeException{
-        testTree = testTree.insert(4);
-        testTree = testTree.insert(1);
-
-        // Delete value that isn't in the tree, larger than largest node.
-        testTree = testTree.delete(99);
-
-        // Verify tree is unchanged.
-        assertEquals(testTree.getRoot().key.intValue(), 4);
-        assertEquals(1, testTree.getRoot().getLeft().key.intValue());
-        assertEquals(2, testTree.getRoot().height);
-        assertEquals(2, testTree.getRoot().size);
-        testTree.validate();
-
-        // Delete value that isn't in the tree, smaller than smallest node.
-        testTree = testTree.delete(-199);
-
-        // Verify tree is unchanged.
-        assertEquals(testTree.getRoot().key.intValue(), 4);
-        assertEquals(1, testTree.getRoot().getLeft().key.intValue());
-        assertEquals(2, testTree.getRoot().height);
-        assertEquals(2, testTree.getRoot().size);
-        testTree.validate();
-
-        // Delete value that isn't in the tree, between the available node values.
-        testTree = testTree.delete(3);
-        // Verify tree is unchanged.
-        // Verify same results as before the deletion.
-        assertEquals(testTree.getRoot().key.intValue(), 4);
-        assertEquals(1, testTree.getRoot().getLeft().key.intValue());
-        assertEquals(2, testTree.getRoot().height);
-        assertEquals(2, testTree.getRoot().size);
-        testTree.validate();
-    }
-
-    /**
      * Test deletion which causes right rotation of tree.
      *
      *             Delete     Rotate

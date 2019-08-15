@@ -265,7 +265,7 @@ public class BinarySearchTree<Key extends Comparable<Key>> extends Tree<Key> {
         }
     }
 
-    public List<Key> recursiveGetRange(Key start, Key end, List<Key> result, BinarySearchNode<Key> current){
+    private List<Key> recursiveGetRange(Key start, Key end, List<Key> result, BinarySearchNode<Key> current){
         boolean isLessThan = comparator.compare(start, current.getKey()) <= 0;
         boolean isGreaterThan = comparator.compare(end, current.getKey()) >= 0;
         if (isLessThan && current.hasLeft()){
