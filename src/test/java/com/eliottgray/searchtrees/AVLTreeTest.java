@@ -12,15 +12,15 @@ import static org.junit.Assert.*;
 public class AVLTreeTest extends TreeTestSkeleton {
 
     @Override
-    public AVLTree<Integer> buildEmptyTree(){
-        return new AVLTree<>();
+    public AVLTree<Integer> buildEmptyTree(Comparator<Integer> comparator){
+        return new AVLTree<>(comparator);
     }
 
     private AVLTree<Integer> testTree;
 
     @Before
     public void setUp(){
-        testTree = buildEmptyTree();
+        testTree = buildEmptyTree(Integer::compareTo);
     }
 
     /**
@@ -343,35 +343,5 @@ public class AVLTreeTest extends TreeTestSkeleton {
         assertEquals(testTree.getRoot().key, postDelete.getRoot().key);
         assertNotEquals(testTree.getRoot(), postDelete.getRoot());
         assertEquals(testTree.getRoot().right, postDelete.getRoot().right);
-    }
-
-    /**
-     * Test overriding default comparator with a custom one.
-     *
-     * The comparator in this example stores and sorts Integers based on Absolute Value, instead of actual value.
-     */
-    @Test
-    public void testCustomComparator(){
-        // Create comparator that compares all Integers by their absolute value.
-        Comparator<Integer> customComparator = (one, two) -> {
-            Integer absoluteValueOne = Math.abs(one);
-            Integer absoluteValueTwo = Math.abs(two);
-            return absoluteValueOne.compareTo(absoluteValueTwo);
-        };
-
-        // Create tree with custom comparator.
-        Tree<Integer> testTree = new AVLTree<>(customComparator);
-
-        // Insert values.
-        List<Integer> inputValues = new ArrayList<Integer>(){{add(-900); add(-800); add(1); add(2); add(3);}};
-        for (Integer integer : inputValues) {
-            testTree = testTree.insert(integer);
-        }
-
-        // Due to custom comparator sorting based on Absolute Value, larger negative values should come after smaller positive values.
-        List<Integer> expectedOrder = new ArrayList<Integer>(){{add(1); add(2); add(3); add(-800); add(-900);}};
-        List<Integer> actualOrder = testTree.toAscendingList();
-
-        assertEquals(expectedOrder, actualOrder);
     }
 }
